@@ -1,5 +1,5 @@
 use crate::objects::Player;
 
-pub struct Session{
+pub struct Session {
     player: Player,
 }

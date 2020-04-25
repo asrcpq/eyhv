@@ -1,17 +1,34 @@
 // Moving objects
 
 use crate::algebra;
-use crate::graphicObjects::GraphicObjects;
+use crate::graphic_objects::GraphicObjects;
 
-struct MovingObject{
+struct MovingObject {
     // Dynamic
-    pos: algebra::Point2f,
-    delta_pos: algebra::Point2f,
+    p: algebra::Point2f,
+    dp: algebra::Point2f,
 
     // Static
     image: GraphicObjects,
 }
 
-pub struct Player{
+impl MovingObject {
+    pub fn set_dp(&mut self, dp: algebra::Point2f) {
+        self.dp = dp;
+    }
+
+    pub fn update_p(&mut self) {
+        self.p += self.dp;
+    }
+}
+
+pub struct Player {
     object: MovingObject,
+
+    // params
+    speed: f32, // per second
+}
+
+impl Player {
+    pub fn set_dp(&mut self, dp: algebra::Point2f) {}
 }
