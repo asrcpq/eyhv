@@ -1,4 +1,4 @@
-use crate::player::Player;
+use crate::objects::Player;
 
 pub struct Session{
     player: Player,

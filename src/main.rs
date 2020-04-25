@@ -1,8 +1,9 @@
 extern crate sdl2; 
 
 mod session;
-mod player;
+mod objects;
 mod algebra;
+mod graphicObjects;
 use session::Session;
 
 use sdl2::pixels::Color;
