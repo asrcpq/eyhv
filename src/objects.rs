@@ -1,8 +1,29 @@
 // Moving objects
 
 use crate::algebra::Point2f;
-use crate::graphic_object::GraphicObject;
+use crate::graphic_object::{GraphicObject, GraphicObjects};
 use crate::key_state::KeyState;
+
+// return shifted graphics
+struct MovingObjectGraphicObjectsIter<'a> {
+    p: Point2f,
+    graphic_objects: &'a GraphicObjects,
+    id: usize,
+}
+
+impl<'a> Iterator for MovingObjectGraphicObjectsIter<'a> {
+    type Item = GraphicObject;
+
+    fn next(&mut self) -> Option<GraphicObject> {
+        match self.graphic_objects.get(self.id) {
+            Some(graphic_object) => {
+                self.id += 1;
+                Some(graphic_object.shift(self.p))
+            }
+            None => None
+        }
+    }
+}
 
 struct MovingObject {
     // Dynamic
@@ -10,7 +31,7 @@ struct MovingObject {
     dp: Point2f,
 
     // Static
-    graphic_objects: Vec<GraphicObject>,
+    graphic_objects: GraphicObjects,
 }
 
 impl MovingObject {
@@ -20,6 +41,14 @@ impl MovingObject {
 
     pub fn update_p(&mut self) {
         self.p += self.dp;
+    }
+
+    pub fn moving_object_graphic_objects_iter(&self) -> MovingObjectGraphicObjectsIter {
+        MovingObjectGraphicObjectsIter {
+            p: self.p,
+            graphic_objects: &self.graphic_objects,
+            id: 0,
+        }
     }
 }
 
