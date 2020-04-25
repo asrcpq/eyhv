@@ -26,3 +26,8 @@ impl GraphicObject {
 }
 
 pub type GraphicObjects = Vec<GraphicObject>;
+
+impl GraphicObjects {
+    pub fn load(path: &str) {  
+    }
+}

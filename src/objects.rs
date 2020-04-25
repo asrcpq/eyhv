@@ -5,13 +5,13 @@ use crate::graphic_object::{GraphicObject, GraphicObjects};
 use crate::key_state::KeyState;
 
 // return shifted graphics
-struct MovingObjectGraphicObjectsIter<'a> {
+struct MovingObjectGraphicsIter<'a> {
     p: Point2f,
     graphic_objects: &'a GraphicObjects,
     id: usize,
 }
 
-impl<'a> Iterator for MovingObjectGraphicObjectsIter<'a> {
+impl<'a> Iterator for MovingObjectGraphicsIter<'a> {
     type Item = GraphicObject;
 
     fn next(&mut self) -> Option<GraphicObject> {
@@ -35,6 +35,12 @@ struct MovingObject {
 }
 
 impl MovingObject {
+    pub fn new(p0: Point2f, img_path: &str) -> MovingObject {
+        p: p0,
+        dp: 0,
+        graphic_objects: GraphicObjects
+    }
+
     pub fn set_dp(&mut self, dp: Point2f) {
         self.dp = dp;
     }
@@ -43,8 +49,8 @@ impl MovingObject {
         self.p += self.dp;
     }
 
-    pub fn moving_object_graphic_objects_iter(&self) -> MovingObjectGraphicObjectsIter {
-        MovingObjectGraphicObjectsIter {
+    pub fn moving_object_graphics_iter(&self) -> MovingObjectGraphicsIter {
+        MovingObjectGraphicsIter {
             p: self.p,
             graphic_objects: &self.graphic_objects,
             id: 0,
@@ -63,6 +69,15 @@ pub struct Player {
 }
 
 impl Player {
+    pub fn new() -> Player {
+        Player {
+            object: MovingObject::new(),
+            key_state: KeyState::new(),
+            // these should be written in a config file
+            speed: 5.0,
+        }   
+    }
+
     // proc_key is executed when valid key is pressed
     pub fn proc_key(&mut self, key_id: i8, updown: bool) {
         self.key_state.proc_key(key_id, updown);
@@ -88,5 +103,9 @@ impl Player {
                 dp *= sqrt_1_2;
             }
         }
+    }
+
+    pub fn graphics_iter(&self) -> MovingObjectGraphicsIter {
+        self.object.moving_object_graphics_iter()
     }
 }
