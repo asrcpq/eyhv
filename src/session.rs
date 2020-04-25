@@ -5,6 +5,5 @@ pub struct Session {
 }
 
 impl Session {
-    pub fn process_key() {
-    }
+    pub fn process_key() {}
 }

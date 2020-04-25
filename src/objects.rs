@@ -1,8 +1,8 @@
 // Moving objects
 
 use crate::algebra::Point2f;
-use crate::key_state::KeyState;
 use crate::graphic_objects::GraphicObjects;
+use crate::key_state::KeyState;
 
 struct MovingObject {
     // Dynamic
@@ -43,9 +43,20 @@ impl Player {
     pub fn set_dp(&mut self) {
         let mut dp = Point2f::new();
         for (key_id, updown) in self.key_state.directions.iter().enumerate() {
-            match key_id {
-                0 => dp.x -= 1.,
-                _ => panic!("unexpected keycode"),
+            if *updown {
+                match key_id {
+                    0 => dp.x -= 1.,
+                    2 => dp.x += 1.,
+                    1 => dp.y -= 1.,
+                    3 => dp.y += 1.,
+                    _ => panic!("unexpected keycode"),
+                }
+            }
+            
+            //diagonal correction
+            const sqrt_1_2: f32 = 0.7071067811865476;
+            if dp.x != 0. && dp.y != 0. {
+                dp *= sqrt_1_2;
             }
         }
     }
