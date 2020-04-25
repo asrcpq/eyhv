@@ -1,11 +1,20 @@
 extern crate derive_more;
-use derive_more::{Add, AddAssign, Sub, SubAssign};
+use derive_more::{Add, AddAssign, Sub, SubAssign, Mul, Div};
 
 // Point2f is also Vec2f
-#[derive(Copy, Clone, Add, AddAssign, Sub, SubAssign)]
+#[derive(Copy, Clone, Add, AddAssign, Sub, SubAssign, Mul, Div)]
 pub struct Point2f {
-    x: f32,
-    y: f32,
+    pub x: f32,
+    pub y: f32,
+}
+
+impl Point2f {
+    pub fn new() -> Point2f {
+        Point2f {
+            x: 0.,
+            y: 0.,
+        }
+    }
 }
 
 #[derive(Copy, Clone)]

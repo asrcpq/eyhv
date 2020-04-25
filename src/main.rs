@@ -4,6 +4,7 @@ mod algebra;
 mod graphic_objects;
 mod objects;
 mod session;
+mod key_state;
 use session::Session;
 
 use sdl2::event::Event;
