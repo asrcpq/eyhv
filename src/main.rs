@@ -1,7 +1,7 @@
 extern crate sdl2;
 
 mod algebra;
-mod graphic_objects;
+mod graphic_object;
 mod key_state;
 mod objects;
 mod session;

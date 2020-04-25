@@ -1,7 +1,7 @@
 // Moving objects
 
 use crate::algebra::Point2f;
-use crate::graphic_objects::GraphicObjects;
+use crate::graphic_object::GraphicObject;
 use crate::key_state::KeyState;
 
 struct MovingObject {
@@ -10,7 +10,7 @@ struct MovingObject {
     dp: Point2f,
 
     // Static
-    image: GraphicObjects,
+    graphic_objects: Vec<GraphicObject>,
 }
 
 impl MovingObject {

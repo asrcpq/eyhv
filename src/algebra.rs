@@ -3,7 +3,7 @@ use derive_more::{
     Add, AddAssign,
     Sub, SubAssign,
     Mul, MulAssign,
-    Div, DivAssign
+    Div, DivAssign,
 };
 
 // Point2f is also Vec2f
@@ -13,7 +13,7 @@ use derive_more::{
     Add, AddAssign,
     Sub, SubAssign,
     Mul, MulAssign,
-    Div, DivAssign
+    Div, DivAssign,
 )]
 pub struct Point2f {
     pub x: f32,
