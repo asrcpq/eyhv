@@ -6,9 +6,9 @@ pub struct Session {
 }
 
 impl Session {
-    pub fn new() -> Session {
+    pub fn new(resource_path: &str) -> Session {
         Session {
-            player: Player::new(),
+            player: Player::new(resource_path),
         }
     }
 

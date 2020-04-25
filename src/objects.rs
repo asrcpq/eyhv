@@ -38,7 +38,7 @@ impl MovingObject {
     pub fn new(p0: Point2f, img_path: &str) -> MovingObject {
         p: p0,
         dp: 0,
-        graphic_objects: GraphicObjects
+        graphic_objects: GraphicObjects::load(&resource_path),
     }
 
     pub fn set_dp(&mut self, dp: Point2f) {
@@ -69,9 +69,9 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn new() -> Player {
+    pub fn new(resource_path: &str) -> Player {
         Player {
-            object: MovingObject::new(),
+            object: MovingObject::new(resource_path),
             key_state: KeyState::new(),
             // these should be written in a config file
             speed: 5.0,

@@ -40,6 +40,31 @@ pub struct Polygen2f {
     pub nodes: Vec<Point2f>,
 }
 
+impl Polygen2f {
+    pub fn from_vec(vertices: Vec<Point2f>) -> Polygen2f {
+        Polygen2f {
+            nodes: vertices,
+        }
+    }
+    pub fn from_floats(floats: Vec<f32>) -> Polygen2f {
+        let vertices = Vec::new();
+        iter = floats.iter();
+        while match iter.next() {
+            Some(v1) => {
+                match iter.next() {
+                    Some(v2) => {
+                        vertices.append(Point2f::from_floats(v1, v2));
+                        True
+                    }
+                    None => panic("odd parse")
+                }
+            }
+            None => False
+        };
+        Polygen2f::from_vec(vertices)
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::Point2f;
