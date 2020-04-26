@@ -67,36 +67,6 @@ impl Rect2f {
     }
 }
 
-#[derive(Clone, Debug)]
-pub struct LineSegs2f {
-    pub vertices: Vec<Point2f>,
-}
-impl LineSegs2f {
-    pub fn from_vec(vertices: Vec<Point2f>) -> LineSegs2f {
-        LineSegs2f { vertices: vertices }
-    }
-    pub fn from_floats(floats: Vec<f32>) -> LineSegs2f {
-        let mut vertices: Vec<Point2f> = Vec::new();
-        let mut iter = floats.iter();
-        while match iter.next() {
-            Some(v1) => match iter.next() {
-                Some(v2) => {
-                    vertices.push(Point2f::from_floats(*v1, *v2));
-                    true
-                }
-                None => panic!("odd parse"),
-            },
-            None => false,
-        } {}
-        LineSegs2f::from_vec(vertices)
-    }
-}
-
-#[derive(Clone, Debug)]
-pub struct Polygon2f {
-    pub vertices: Vec<Point2f>,
-}
-
 #[cfg(test)]
 mod test {
     use super::Point2f;

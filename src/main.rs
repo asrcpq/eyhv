@@ -91,11 +91,16 @@ pub fn main() {
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
 
-        canvas.set_draw_color(Color::RGB(0, 255, 255));
         for graphic_object in session.graphic_object_iter() {
             match graphic_object {
                 GraphicObject::Polygon(_) => unimplemented!(),
                 GraphicObject::LineSegs(line_segs) => {
+                    canvas.set_draw_color(Color::RGBA(
+                        (line_segs.color[0] * 255.) as u8,
+                        (line_segs.color[1] * 255.) as u8,
+                        (line_segs.color[2] * 255.) as u8,
+                        (line_segs.color[3] * 255.) as u8,
+                    ));
                     canvas
                         .draw_lines(
                             line_segs

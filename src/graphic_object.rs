@@ -1,19 +1,59 @@
-use crate::algebra;
+use crate::algebra::Point2f;
 
 use std::fs::File;
 use std::io::{self, BufRead};
 
+#[derive(Clone, Debug)]
+pub struct LineSegs2f {
+    pub vertices: Vec<Point2f>,
+    pub color: [f32; 4], // rgba
+}
+impl LineSegs2f {
+    pub fn new(vertices: Vec<Point2f>, color: [f32; 4]) -> LineSegs2f {
+        LineSegs2f {
+            vertices: vertices,
+            color: color,
+        }
+    }
+    pub fn from_floats(floats: Vec<f32>) -> LineSegs2f {
+        let mut vertices: Vec<Point2f> = Vec::new();
+        let mut iter = floats.iter();
+        let r = iter.next().unwrap();
+        let g = iter.next().unwrap();
+        let b = iter.next().unwrap();
+        let a = iter.next().unwrap();
+        let color: [f32; 4] = [*r, *g, *b, *a];
+        while match iter.next() {
+            Some(v1) => match iter.next() {
+                Some(v2) => {
+                    vertices.push(Point2f::from_floats(*v1, *v2));
+                    true
+                }
+                None => panic!("odd parse"),
+            },
+            None => false,
+        } {}
+        LineSegs2f::new(vertices, color)
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct Polygon2f {
+    pub vertices: Vec<Point2f>,
+    pub color: [f32; 4],
+}
+
 #[derive(Debug)]
 pub enum GraphicObject {
-    LineSegs(algebra::LineSegs2f),
-    Polygon(algebra::Polygon2f),
+    LineSegs(LineSegs2f),
+    Polygon(Polygon2f),
 }
 
 impl GraphicObject {
-    pub fn shift(&self, dp: algebra::Point2f) -> GraphicObject {
+    pub fn shift(&self, dp: Point2f) -> GraphicObject {
         match self {
             GraphicObject::LineSegs(line_segs) => {
-                let mut result: algebra::LineSegs2f = line_segs.clone();
+                let mut result: LineSegs2f = line_segs.clone();
                 for vertex in &mut result.vertices {
                     *vertex += dp;
                 }
@@ -43,7 +83,7 @@ impl GraphicObjects {
                 match splited[0] {
                     "l" => graphic_objects
                         .graphic_objects
-                        .push(GraphicObject::LineSegs(algebra::LineSegs2f::from_floats(
+                        .push(GraphicObject::LineSegs(LineSegs2f::from_floats(
                             splited[1..]
                                 .iter()
                                 .map(|x| x.parse::<f32>().expect("float parse fail"))

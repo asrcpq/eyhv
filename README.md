@@ -1,4 +1,4 @@
-# TODO list
+## TODO list
 
 ---
 
@@ -7,5 +7,7 @@
 * [x] Restrict position
 
 * [x] Slowdown
+
+* [x] Color and transparency
 
 * [ ] Enemy
