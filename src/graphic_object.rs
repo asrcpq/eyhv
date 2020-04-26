@@ -2,7 +2,6 @@ use crate::algebra;
 
 use std::fs::File;
 use std::io::{self, BufRead};
-use std::path::Path;
 
 #[derive(Debug)]
 pub enum GraphicObject {
@@ -35,7 +34,8 @@ pub struct GraphicObjects {
 }
 
 impl GraphicObjects {
-    pub fn from_path(filename: &str) -> GraphicObjects {  
+    pub fn from_path(filename: String) -> GraphicObjects {  
+        println!("GraphicObjects loading from: {}", filename);
         let mut graphic_objects = GraphicObjects {
             graphic_objects: Vec::new(),
         };
@@ -78,7 +78,9 @@ mod test {
     fn graphic_objects_load() {
         std::fs::write("/tmp/graphic_objects_load_test", "p -2 -2 -2 2 2 2 2 -2")
             .expect("unable to write file");
-        let graphic_objects = GraphicObjects::from_path("/tmp/graphic_objects_load_test");
+        let graphic_objects = GraphicObjects::from_path(
+            "/tmp/graphic_objects_load_test".to_string()
+        );
         match graphic_objects.get(0) {
             None => panic!("test failed"),
             Some(graphic_object) => {

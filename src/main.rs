@@ -12,13 +12,18 @@ use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
 use std::time::Duration;
+use std::time::SystemTime;
+
+use graphic_object::GraphicObject;
 
 pub fn main() {
+    let mut arg_collect: Vec<String> = std::env::args().collect();
+
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
 
     let window = video_subsystem
-        .window("rust-sdl2 demo", 500, 750)
+        .window("eyhv", 500, 750)
         .position_centered()
         .build()
         .unwrap();
@@ -30,8 +35,9 @@ pub fn main() {
     canvas.present();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
-    //let mut session = Session::new();
+    let mut session = Session::new(arg_collect.pop().unwrap());
 
+    let mut last_time = SystemTime::now();
     'running: loop {
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
@@ -46,12 +52,44 @@ pub fn main() {
                     keycode: Some(Keycode::Escape),
                     ..
                 } => break 'running,
-                _ => {}
+                Event::KeyDown {
+                    keycode: Some(keycode),
+                    ..
+                } => {
+                    match keycode {
+                        Keycode::Left => session.proc_key(0, true),
+                        Keycode::Up => session.proc_key(1, true),
+                        Keycode::Right => session.proc_key(2, true),
+                        Keycode::Down => session.proc_key(3, true),
+                        _ => {},
+                    }
+                },
+                Event::KeyUp {
+                    keycode: Some(keycode),
+                    ..
+                } => {
+                    match keycode {
+                        Keycode::Left => session.proc_key(0, false),
+                        Keycode::Up => session.proc_key(1, false),
+                        Keycode::Right => session.proc_key(2, false),
+                        Keycode::Down => session.proc_key(3, false),
+                        _ => (),
+                    }
+                },
+                _ => {},
             }
         }
         // The rest of the game loop goes here...
+        let current_time = SystemTime::now();
+        let duration_secs = current_time
+            .duration_since(last_time)
+            .expect("Time error")
+            .as_secs_f32();
+        // println!("{}", 1. / duration_secs); // print fps
+        last_time = current_time;
+        session.tick(duration_secs);
 
         canvas.present();
-        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
+        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 80));
     }
 }

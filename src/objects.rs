@@ -5,6 +5,7 @@ use crate::graphic_object::{GraphicObject, GraphicObjects};
 use crate::key_state::KeyState;
 
 // return shifted graphics
+// So we just need to move the graphic object
 pub struct MovingObjectGraphicsIter<'a> {
     p: Point2f,
     graphic_objects: &'a GraphicObjects,
@@ -35,7 +36,7 @@ struct MovingObject {
 }
 
 impl MovingObject {
-    pub fn new(p0: Point2f, resource_path: &str) -> MovingObject {
+    pub fn new(p0: Point2f, resource_path: String) -> MovingObject {
         MovingObject {
             p: p0,
             dp: Point2f::new(),
@@ -47,8 +48,8 @@ impl MovingObject {
         self.dp = dp;
     }
 
-    pub fn update_p(&mut self) {
-        self.p += self.dp;
+    pub fn update_p(&mut self, dt: f32) {
+        self.p += self.dp * dt;
     }
 
     pub fn moving_object_graphics_iter(&self) -> MovingObjectGraphicsIter {
@@ -71,7 +72,7 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn new(resource_path: &str) -> Player {
+    pub fn new(resource_path: String) -> Player {
         Player {
             object: MovingObject::new(
                 // initial player position
@@ -90,7 +91,7 @@ impl Player {
     }
 
     // set_dp is executed before frame update
-    pub fn set_dp(&mut self) {
+    fn set_dp(&mut self) {
         let mut dp = Point2f::new();
         for (key_id, updown) in self.key_state.directions.iter().enumerate() {
             if *updown {
@@ -109,6 +110,11 @@ impl Player {
                 dp *= SQRT_1_2;
             }
         }
+    }
+
+    pub fn update_p(&mut self, dt: f32) {
+        self.set_dp();
+        self.object.update_p(dt);
     }
 
     pub fn graphics_iter(&self) -> MovingObjectGraphicsIter {
