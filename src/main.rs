@@ -10,7 +10,7 @@ use session::Session;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
-use sdl2::rect::Rect;
+use sdl2::rect::{Rect, Point};
 use std::time::Duration;
 use std::time::SystemTime;
 
@@ -83,7 +83,20 @@ pub fn main() {
         canvas.clear();
 
         canvas.set_draw_color(Color::RGB(0, 255, 255));
-        canvas.draw_rect(Rect::new(50, 50, 100, 60)).unwrap();
+        for graphic_object in session.graphic_object_iter() {
+            match graphic_object {
+                GraphicObject::Polygon(_) => unimplemented!(),
+                GraphicObject::LineSegs(line_segs) => {
+                    canvas.draw_lines(
+                        line_segs.vertices
+                        .iter()
+                        .map(|p| Point::new(p.x as i32, p.y as i32))
+                        .collect::<Vec<Point>>()
+                        .as_slice()
+                    ).unwrap();
+                }
+            }
+        }
 
         canvas.present();
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 80));

@@ -82,7 +82,7 @@ impl Player {
             ),
             key_state: KeyState::new(),
             // these should be written in a config file
-            speed: 5.0,
+            speed: 300.0,
         }
     }
 
@@ -104,13 +104,14 @@ impl Player {
                     _ => panic!("unexpected keycode"),
                 }
             }
-
-            //diagonal correction
-            const SQRT_1_2: f32 = 0.7071067811865476;
-            if dp.x != 0. && dp.y != 0. {
-                dp *= SQRT_1_2;
-            }
         }
+
+        //diagonal correction
+        const SQRT_1_2: f32 = 0.7071067811865476;
+        if dp.x != 0. && dp.y != 0. {
+            dp *= SQRT_1_2;
+        }
+        dp *= self.speed;
         self.object.set_dp(dp);
     }
 
