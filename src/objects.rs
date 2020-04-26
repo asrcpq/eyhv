@@ -1,6 +1,6 @@
 // Moving objects
 
-use crate::algebra::Point2f;
+use crate::algebra::{Point2f, Rect2f};
 use crate::graphic_object::{GraphicObject, GraphicObjects};
 use crate::key_state::KeyState;
 
@@ -26,43 +26,18 @@ impl<'a> Iterator for MovingObjectGraphicsIter<'a> {
     }
 }
 
-struct MovingObject {
+pub trait MovingObject {
+    fn get_p(&self) -> Point2f;
+    fn moving_object_graphics_iter(&self) -> MovingObjectGraphicsIter;
+}
+
+pub struct Player {
     // Dynamic
     p: Point2f,
     dp: Point2f,
 
     // Static
     graphic_objects: GraphicObjects,
-}
-
-impl MovingObject {
-    pub fn new(p0: Point2f, resource_path: String) -> MovingObject {
-        MovingObject {
-            p: p0,
-            dp: Point2f::new(),
-            graphic_objects: GraphicObjects::from_path(resource_path),
-        }
-    }
-
-    pub fn set_dp(&mut self, dp: Point2f) {
-        self.dp = dp;
-    }
-
-    pub fn update_p(&mut self, dt: f32) {
-        self.p += self.dp * dt;
-    }
-
-    pub fn moving_object_graphics_iter(&self) -> MovingObjectGraphicsIter {
-        MovingObjectGraphicsIter {
-            p: self.p,
-            graphic_objects: &self.graphic_objects,
-            id: 0,
-        }
-    }
-}
-
-pub struct Player {
-    object: MovingObject,
 
     // control
     key_state: KeyState,
@@ -74,11 +49,9 @@ pub struct Player {
 impl Player {
     pub fn new(resource_path: String) -> Player {
         Player {
-            object: MovingObject::new(
-                // initial player position
-                Point2f::from_floats(50.0, 50.0),
-                resource_path,
-            ),
+            p: Point2f::from_floats(50.0, 50.0),
+            dp: Point2f::new(),
+            graphic_objects: GraphicObjects::from_path(resource_path),
             key_state: KeyState::new(),
             // these should be written in a config file
             speed: 500.0,
@@ -91,7 +64,7 @@ impl Player {
     }
 
     // set_dp is executed before frame update
-    fn set_dp(&mut self) {
+    pub fn set_dp(&mut self) {
         let mut dp = Point2f::new();
         for (key_id, updown) in self.key_state.directions.iter().enumerate() {
             if *updown {
@@ -111,15 +84,26 @@ impl Player {
             dp *= SQRT_1_2;
         }
         dp *= self.speed;
-        self.object.set_dp(dp);
+        self.dp = dp;
     }
 
-    pub fn update_p(&mut self, dt: f32) {
+    pub fn update_p(&mut self, dt: f32, window_size: Rect2f) {
         self.set_dp();
-        self.object.update_p(dt);
+        self.p += self.dp * dt;
+        self.p = window_size.nearest(self.p);
+    }
+}
+
+impl MovingObject for Player {
+    fn get_p(&self) -> Point2f {
+        self.p
     }
 
-    pub fn graphics_iter(&self) -> MovingObjectGraphicsIter {
-        self.object.moving_object_graphics_iter()
+    fn moving_object_graphics_iter(&self) -> MovingObjectGraphicsIter {
+        MovingObjectGraphicsIter {
+            p: self.p,
+            graphic_objects: &self.graphic_objects,
+            id: 0,
+        }
     }
 }

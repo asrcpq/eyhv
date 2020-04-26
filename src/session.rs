@@ -1,5 +1,5 @@
 use crate::graphic_object::GraphicObject;
-use crate::objects::{MovingObjectGraphicsIter, Player};
+use crate::objects::{MovingObjectGraphicsIter, MovingObject, Player};
 use crate::algebra::Rect2f;
 
 pub struct SessionGraphicObjectsIter<'a> {
@@ -33,11 +33,11 @@ impl Session {
 
     pub fn graphic_object_iter(&self) -> SessionGraphicObjectsIter {
         SessionGraphicObjectsIter {
-            player_iter: self.player.graphics_iter(),
+            player_iter: self.player.moving_object_graphics_iter(),
         }
     }
 
     pub fn tick(&mut self, dt: f32) {
-        self.player.update_p(dt)
+        self.player.update_p(dt, self.window_size)
     }
 }
