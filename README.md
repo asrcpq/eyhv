@@ -6,6 +6,6 @@
 
 * [x] Restrict position
 
-* [ ] Slowdown
+* [x] Slowdown
 
 * [ ] Enemy
