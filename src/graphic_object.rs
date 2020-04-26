@@ -44,8 +44,13 @@ impl GraphicObjects {
                 let splited = line.split_whitespace().collect::<Vec<&str>>();
                 match splited[0] {
                     "p" => {
-                        graphic_objects.graphic_objects.append(GraphicObject::Polygen(
-                            algebra::Polygen2f::from_floats(&splited[1 ..])
+                        graphic_objects.graphic_objects.push(GraphicObject::Polygen(
+                            algebra::Polygen2f::from_floats(
+                                splited[1 ..]
+                                .iter()
+                                .map(|x| x.parse::<f32>().expect("float parse fail"))
+                                .collect()
+                            )
                         ))
                     }
                     "l" => {
@@ -55,6 +60,11 @@ impl GraphicObjects {
                 }
             }
         }
+        graphic_objects
+    }
+
+    pub fn get(&self, id: usize) -> Option<&GraphicObject> {
+        self.graphic_objects.get(id)
     }
 }
 

@@ -5,7 +5,7 @@ use crate::graphic_object::{GraphicObject, GraphicObjects};
 use crate::key_state::KeyState;
 
 // return shifted graphics
-struct MovingObjectGraphicsIter<'a> {
+pub struct MovingObjectGraphicsIter<'a> {
     p: Point2f,
     graphic_objects: &'a GraphicObjects,
     id: usize,
@@ -38,8 +38,8 @@ impl MovingObject {
     pub fn new(p0: Point2f, resource_path: &str) -> MovingObject {
         MovingObject {
             p: p0,
-            dp: 0,
-            graphic_objects: GraphicObjects::load(resource_path),
+            dp: Point2f::new(),
+            graphic_objects: GraphicObjects::from_path(resource_path),
         }
     }
 
@@ -73,7 +73,11 @@ pub struct Player {
 impl Player {
     pub fn new(resource_path: &str) -> Player {
         Player {
-            object: MovingObject::new(resource_path),
+            object: MovingObject::new(
+                // initial player position
+                Point2f::from_floats(50.0, 50.0),
+                resource_path
+            ),
             key_state: KeyState::new(),
             // these should be written in a config file
             speed: 5.0,
@@ -100,9 +104,9 @@ impl Player {
             }
             
             //diagonal correction
-            const sqrt_1_2: f32 = 0.7071067811865476;
+            const SQRT_1_2: f32 = 0.7071067811865476;
             if dp.x != 0. && dp.y != 0. {
-                dp *= sqrt_1_2;
+                dp *= SQRT_1_2;
             }
         }
     }

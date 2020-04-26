@@ -46,14 +46,14 @@ impl Polygen2f {
             nodes: vertices,
         }
     }
-    pub fn from_floats(floats: &[f32]) -> Polygen2f {
-        let mut vertices = Vec::new();
+    pub fn from_floats(floats: Vec<f32>) -> Polygen2f {
+        let mut vertices: Vec<Point2f> = Vec::new();
         let mut iter = floats.iter();
         while match iter.next() {
             Some(v1) => {
                 match iter.next() {
                     Some(v2) => {
-                        vertices.append(Point2f::from_floats(*v1, *v2));
+                        vertices.push(Point2f::from_floats(*v1, *v2));
                         true
                     }
                     None => panic!("odd parse")
