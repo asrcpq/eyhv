@@ -43,7 +43,8 @@ pub struct Player {
     key_state: KeyState,
 
     // params
-    speed: f32, // per second
+    speed_normal: f32, // per second
+    speed_slow: f32,
 }
 
 impl Player {
@@ -54,7 +55,8 @@ impl Player {
             graphic_objects: GraphicObjects::from_path(resource_path),
             key_state: KeyState::new(),
             // these should be written in a config file
-            speed: 500.0,
+            speed_normal: 600.0,
+            speed_slow: 350.0,
         }
     }
 
@@ -83,7 +85,11 @@ impl Player {
         if dp.x != 0. && dp.y != 0. {
             dp *= SQRT_1_2;
         }
-        dp *= self.speed;
+        if self.key_state.slowdown {
+            dp *= self.speed_slow;
+        } else {
+            dp *= self.speed_normal;
+        }
         self.dp = dp;
     }
 
