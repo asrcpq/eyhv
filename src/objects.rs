@@ -50,7 +50,6 @@ impl MovingObject {
 
     pub fn update_p(&mut self, dt: f32) {
         self.p += self.dp * dt;
-        println!("{:?}", self.p);
     }
 
     pub fn moving_object_graphics_iter(&self) -> MovingObjectGraphicsIter {
@@ -82,7 +81,7 @@ impl Player {
             ),
             key_state: KeyState::new(),
             // these should be written in a config file
-            speed: 300.0,
+            speed: 500.0,
         }
     }
 

@@ -5,12 +5,14 @@ mod graphic_object;
 mod key_state;
 mod objects;
 mod session;
+
 use session::Session;
+use algebra::{Point2f, Rect2f};
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
-use sdl2::rect::{Rect, Point};
+use sdl2::rect::Point;
 use std::time::Duration;
 use std::time::SystemTime;
 
@@ -22,8 +24,10 @@ pub fn main() {
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
 
+    let window_rd = Point2f::from_floats(500., 700.);
+
     let window = video_subsystem
-        .window("eyhv", 500, 750)
+        .window("eyhv", window_rd.x as u32, window_rd.y as u32)
         .position_centered()
         .build()
         .unwrap();
@@ -35,7 +39,10 @@ pub fn main() {
     canvas.present();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
-    let mut session = Session::new(arg_collect.pop().unwrap());
+    let mut session = Session::new(
+        Rect2f::from_point2fs(Point2f::new(), window_rd),
+        arg_collect.pop().unwrap(),
+    );
 
     let mut last_time = SystemTime::now();
     'running: loop {
@@ -87,13 +94,16 @@ pub fn main() {
             match graphic_object {
                 GraphicObject::Polygon(_) => unimplemented!(),
                 GraphicObject::LineSegs(line_segs) => {
-                    canvas.draw_lines(
-                        line_segs.vertices
-                        .iter()
-                        .map(|p| Point::new(p.x as i32, p.y as i32))
-                        .collect::<Vec<Point>>()
-                        .as_slice()
-                    ).unwrap();
+                    canvas
+                        .draw_lines(
+                            line_segs
+                                .vertices
+                                .iter()
+                                .map(|p| Point::new(p.x as i32, p.y as i32))
+                                .collect::<Vec<Point>>()
+                                .as_slice(),
+                        )
+                        .unwrap();
                 }
             }
         }

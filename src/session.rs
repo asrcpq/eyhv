@@ -1,5 +1,6 @@
 use crate::graphic_object::GraphicObject;
 use crate::objects::{MovingObjectGraphicsIter, Player};
+use crate::algebra::Rect2f;
 
 pub struct SessionGraphicObjectsIter<'a> {
     player_iter: MovingObjectGraphicsIter<'a>,
@@ -14,13 +15,15 @@ impl<'a> Iterator for SessionGraphicObjectsIter<'a> {
 }
 
 pub struct Session {
+    window_size: Rect2f,
     player: Player,
 }
 
 impl Session {
-    pub fn new(resource_path: String) -> Session {
+    pub fn new(window_size: Rect2f, resource_root: String) -> Session {
         Session {
-            player: Player::new(resource_path + "graphic_objects/player.txt"),
+            window_size: window_size,
+            player: Player::new(resource_root + "graphic_objects/player.txt"),
         }
     }
 

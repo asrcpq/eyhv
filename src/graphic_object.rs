@@ -41,14 +41,14 @@ impl GraphicObjects {
             if let Ok(line) = line_result {
                 let splited = line.split_whitespace().collect::<Vec<&str>>();
                 match splited[0] {
-                    "l" => graphic_objects.graphic_objects.push(GraphicObject::LineSegs(
-                        algebra::LineSegs2f::from_floats(
+                    "l" => graphic_objects
+                        .graphic_objects
+                        .push(GraphicObject::LineSegs(algebra::LineSegs2f::from_floats(
                             splited[1..]
                                 .iter()
                                 .map(|x| x.parse::<f32>().expect("float parse fail"))
                                 .collect(),
-                        ),
-                    )),
+                        ))),
                     "p" => unimplemented!(),
                     _ => panic!("Format error"),
                 }
