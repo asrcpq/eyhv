@@ -1,5 +1,5 @@
-use crate::objects::{Player, MovingObjectGraphicsIter};
 use crate::graphic_object::GraphicObject;
+use crate::objects::{MovingObjectGraphicsIter, Player};
 
 pub struct SessionGraphicObjectsIter<'a> {
     player_iter: MovingObjectGraphicsIter<'a>,

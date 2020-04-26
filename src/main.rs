@@ -39,12 +39,6 @@ pub fn main() {
 
     let mut last_time = SystemTime::now();
     'running: loop {
-        canvas.set_draw_color(Color::RGB(0, 0, 0));
-        canvas.clear();
-
-        canvas.set_draw_color(Color::RGB(255, 210, 0));
-        canvas.fill_rect(Rect::new(50, 50, 100, 60)).unwrap();
-
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. }
@@ -55,28 +49,24 @@ pub fn main() {
                 Event::KeyDown {
                     keycode: Some(keycode),
                     ..
-                } => {
-                    match keycode {
-                        Keycode::Left => session.proc_key(0, true),
-                        Keycode::Up => session.proc_key(1, true),
-                        Keycode::Right => session.proc_key(2, true),
-                        Keycode::Down => session.proc_key(3, true),
-                        _ => {},
-                    }
+                } => match keycode {
+                    Keycode::Left => session.proc_key(0, true),
+                    Keycode::Up => session.proc_key(1, true),
+                    Keycode::Right => session.proc_key(2, true),
+                    Keycode::Down => session.proc_key(3, true),
+                    _ => {}
                 },
                 Event::KeyUp {
                     keycode: Some(keycode),
                     ..
-                } => {
-                    match keycode {
-                        Keycode::Left => session.proc_key(0, false),
-                        Keycode::Up => session.proc_key(1, false),
-                        Keycode::Right => session.proc_key(2, false),
-                        Keycode::Down => session.proc_key(3, false),
-                        _ => (),
-                    }
+                } => match keycode {
+                    Keycode::Left => session.proc_key(0, false),
+                    Keycode::Up => session.proc_key(1, false),
+                    Keycode::Right => session.proc_key(2, false),
+                    Keycode::Down => session.proc_key(3, false),
+                    _ => (),
                 },
-                _ => {},
+                _ => {}
             }
         }
         // The rest of the game loop goes here...
@@ -88,6 +78,12 @@ pub fn main() {
         // println!("{}", 1. / duration_secs); // print fps
         last_time = current_time;
         session.tick(duration_secs);
+
+        canvas.set_draw_color(Color::RGB(0, 0, 0));
+        canvas.clear();
+
+        canvas.set_draw_color(Color::RGB(0, 255, 255));
+        canvas.draw_rect(Rect::new(50, 50, 100, 60)).unwrap();
 
         canvas.present();
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 80));

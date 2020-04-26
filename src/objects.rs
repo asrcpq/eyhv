@@ -21,7 +21,7 @@ impl<'a> Iterator for MovingObjectGraphicsIter<'a> {
                 self.id += 1;
                 Some(graphic_object.shift(self.p))
             }
-            None => None
+            None => None,
         }
     }
 }
@@ -50,6 +50,7 @@ impl MovingObject {
 
     pub fn update_p(&mut self, dt: f32) {
         self.p += self.dp * dt;
+        println!("{:?}", self.p);
     }
 
     pub fn moving_object_graphics_iter(&self) -> MovingObjectGraphicsIter {
@@ -77,12 +78,12 @@ impl Player {
             object: MovingObject::new(
                 // initial player position
                 Point2f::from_floats(50.0, 50.0),
-                resource_path
+                resource_path,
             ),
             key_state: KeyState::new(),
             // these should be written in a config file
             speed: 5.0,
-        }   
+        }
     }
 
     // proc_key is executed when valid key is pressed
@@ -103,13 +104,14 @@ impl Player {
                     _ => panic!("unexpected keycode"),
                 }
             }
-            
+
             //diagonal correction
             const SQRT_1_2: f32 = 0.7071067811865476;
             if dp.x != 0. && dp.y != 0. {
                 dp *= SQRT_1_2;
             }
         }
+        self.object.set_dp(dp);
     }
 
     pub fn update_p(&mut self, dt: f32) {

@@ -18,8 +18,8 @@ impl GraphicObject {
                 result.end += dp;
                 GraphicObject::Line(result)
             }
-            GraphicObject::Polygen(polygen) => {
-                let mut result: algebra::Polygen2f = polygen.clone();
+            GraphicObject::Polygen(polygon) => {
+                let mut result: algebra::Polygen2f = polygon.clone();
                 for vertex in &mut result.vertices {
                     *vertex += dp;
                 }
@@ -34,7 +34,7 @@ pub struct GraphicObjects {
 }
 
 impl GraphicObjects {
-    pub fn from_path(filename: String) -> GraphicObjects {  
+    pub fn from_path(filename: String) -> GraphicObjects {
         println!("GraphicObjects loading from: {}", filename);
         let mut graphic_objects = GraphicObjects {
             graphic_objects: Vec::new(),
@@ -44,19 +44,15 @@ impl GraphicObjects {
             if let Ok(line) = line_result {
                 let splited = line.split_whitespace().collect::<Vec<&str>>();
                 match splited[0] {
-                    "p" => {
-                        graphic_objects.graphic_objects.push(GraphicObject::Polygen(
-                            algebra::Polygen2f::from_floats(
-                                splited[1 ..]
+                    "p" => graphic_objects.graphic_objects.push(GraphicObject::Polygen(
+                        algebra::Polygen2f::from_floats(
+                            splited[1..]
                                 .iter()
                                 .map(|x| x.parse::<f32>().expect("float parse fail"))
-                                .collect()
-                            )
-                        ))
-                    }
-                    "l" => {
-                        unimplemented!()
-                    }
+                                .collect(),
+                        ),
+                    )),
+                    "l" => unimplemented!(),
                     _ => panic!("Format error"),
                 }
             }
@@ -71,30 +67,24 @@ impl GraphicObjects {
 
 #[cfg(test)]
 mod test {
-    use super::{GraphicObjects, GraphicObject};
     use super::algebra;
+    use super::{GraphicObject, GraphicObjects};
 
     #[test]
     fn graphic_objects_load() {
         std::fs::write("/tmp/graphic_objects_load_test", "p -2 -2 -2 2 2 2 2 -2")
             .expect("unable to write file");
-        let graphic_objects = GraphicObjects::from_path(
-            "/tmp/graphic_objects_load_test".to_string()
-        );
+        let graphic_objects =
+            GraphicObjects::from_path("/tmp/graphic_objects_load_test".to_string());
         match graphic_objects.get(0) {
             None => panic!("test failed"),
-            Some(graphic_object) => {
-                match graphic_object {
-                    GraphicObject::Line(_) => panic!("test failed"),
-                    GraphicObject::Polygen(polygen) => {
-                        assert_eq!(
-                            polygen.vertices[0],
-                            algebra::Point2f::from_floats(-2., -2.)
-                        );
-                        assert!(polygen.vertices.get(4).is_none());
-                    },
+            Some(graphic_object) => match graphic_object {
+                GraphicObject::Line(_) => panic!("test failed"),
+                GraphicObject::Polygen(polygon) => {
+                    assert_eq!(polygon.vertices[0], algebra::Point2f::from_floats(-2., -2.));
+                    assert!(polygon.vertices.get(4).is_none());
                 }
-            }
+            },
         }
         assert!(graphic_objects.get(1).is_none());
         std::fs::remove_file("/tmp/graphic_objects_load_test").unwrap();

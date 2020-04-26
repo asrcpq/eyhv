@@ -1,19 +1,9 @@
 extern crate derive_more;
-use derive_more::{
-    Add, AddAssign,
-    Sub, SubAssign,
-    Mul, MulAssign,
-    Div, DivAssign,
-};
+use derive_more::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
 
 // Point2f is also Vec2f
 #[derive(
-    Copy, Clone,
-    PartialEq, Debug,
-    Add, AddAssign,
-    Sub, SubAssign,
-    Mul, MulAssign,
-    Div, DivAssign,
+    Copy, Clone, PartialEq, Debug, Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign,
 )]
 pub struct Point2f {
     pub x: f32,
@@ -42,25 +32,21 @@ pub struct Polygen2f {
 
 impl Polygen2f {
     pub fn from_vec(vertices: Vec<Point2f>) -> Polygen2f {
-        Polygen2f {
-            vertices: vertices,
-        }
+        Polygen2f { vertices: vertices }
     }
     pub fn from_floats(floats: Vec<f32>) -> Polygen2f {
         let mut vertices: Vec<Point2f> = Vec::new();
         let mut iter = floats.iter();
         while match iter.next() {
-            Some(v1) => {
-                match iter.next() {
-                    Some(v2) => {
-                        vertices.push(Point2f::from_floats(*v1, *v2));
-                        true
-                    }
-                    None => panic!("odd parse")
+            Some(v1) => match iter.next() {
+                Some(v2) => {
+                    vertices.push(Point2f::from_floats(*v1, *v2));
+                    true
                 }
-            }
-            None => false
-        } { }
+                None => panic!("odd parse"),
+            },
+            None => false,
+        } {}
         Polygen2f::from_vec(vertices)
     }
 }
@@ -70,7 +56,7 @@ mod test {
     use super::Point2f;
 
     #[test]
-    fn test_derive_more(){
+    fn test_derive_more() {
         let mut point2f = Point2f::from_floats(1.0, 1.0);
         // PartialEq
         assert_eq!(point2f, Point2f::from_floats(1.0, 1.0));
