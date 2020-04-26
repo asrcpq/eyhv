@@ -35,10 +35,12 @@ struct MovingObject {
 }
 
 impl MovingObject {
-    pub fn new(p0: Point2f, img_path: &str) -> MovingObject {
-        p: p0,
-        dp: 0,
-        graphic_objects: GraphicObjects::load(&resource_path),
+    pub fn new(p0: Point2f, resource_path: &str) -> MovingObject {
+        MovingObject {
+            p: p0,
+            dp: 0,
+            graphic_objects: GraphicObjects::load(resource_path),
+        }
     }
 
     pub fn set_dp(&mut self, dp: Point2f) {

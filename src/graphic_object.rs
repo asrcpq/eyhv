@@ -29,24 +29,43 @@ impl GraphicObject {
     }
 }
 
-pub type GraphicObjects = Vec<GraphicObject>;
+pub struct GraphicObjects {
+    graphic_objects: Vec<GraphicObject>,
+}
 
 impl GraphicObjects {
-    pub fn load(&mut self, filename: &str) {  
+    pub fn from_path(filename: &str) -> GraphicObjects {  
+        let mut graphic_objects = GraphicObjects {
+            graphic_objects: Vec::new(),
+        };
         let file = File::open(filename).unwrap();
-        for line in io::BufReader::new(file).lines() {
-            splited = line.split_whitespace().collect::<Vec<&str>>();
-            match splited[0] {
-                "p" => {
-                    self.append(GraphicObject::Polygen(
-                        algebra::Polygen2f::from_floats(splited[1:])
-                    ))
+        for line_result in io::BufReader::new(file).lines() {
+            if let Ok(line) = line_result {
+                let splited = line.split_whitespace().collect::<Vec<&str>>();
+                match splited[0] {
+                    "p" => {
+                        graphic_objects.graphic_objects.append(GraphicObject::Polygen(
+                            algebra::Polygen2f::from_floats(&splited[1 ..])
+                        ))
+                    }
+                    "l" => {
+                        unimplemented!()
+                    }
+                    _ => panic!("Format error"),
                 }
-                "l" => {
-                    unimplemented!()
-                }
-                _ => panic!("Format error"),
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::GraphicObjects;
+
+    #[test]
+    fn graphic_objects_load() {
+        std::fs::write("/tmp/graphic_objects_load_test", "p -2 -2 -2 2 2 2 2 -2")
+            .expect("unable to write file");
+        std::fs::remove_file("/tmp/graphic_objects_load_test").unwrap();
     }
 }
