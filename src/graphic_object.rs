@@ -4,6 +4,7 @@ use std::fs::File;
 use std::io::{self, BufRead};
 use std::path::Path;
 
+#[derive(Debug)]
 pub enum GraphicObject {
     Line(algebra::LineSeg2f),
     Polygen(algebra::Polygen2f),
@@ -20,8 +21,8 @@ impl GraphicObject {
             }
             GraphicObject::Polygen(polygen) => {
                 let mut result: algebra::Polygen2f = polygen.clone();
-                for node in &mut result.nodes {
-                    *node += dp;
+                for vertex in &mut result.vertices {
+                    *vertex += dp;
                 }
                 GraphicObject::Polygen(result)
             }
@@ -70,12 +71,30 @@ impl GraphicObjects {
 
 #[cfg(test)]
 mod test {
-    use super::GraphicObjects;
+    use super::{GraphicObjects, GraphicObject};
+    use super::algebra;
 
     #[test]
     fn graphic_objects_load() {
         std::fs::write("/tmp/graphic_objects_load_test", "p -2 -2 -2 2 2 2 2 -2")
             .expect("unable to write file");
+        let graphic_objects = GraphicObjects::from_path("/tmp/graphic_objects_load_test");
+        match graphic_objects.get(0) {
+            None => panic!("test failed"),
+            Some(graphic_object) => {
+                match graphic_object {
+                    GraphicObject::Line(_) => panic!("test failed"),
+                    GraphicObject::Polygen(polygen) => {
+                        assert_eq!(
+                            polygen.vertices[0],
+                            algebra::Point2f::from_floats(-2., -2.)
+                        );
+                        assert!(polygen.vertices.get(4).is_none());
+                    },
+                }
+            }
+        }
+        assert!(graphic_objects.get(1).is_none());
         std::fs::remove_file("/tmp/graphic_objects_load_test").unwrap();
     }
 }

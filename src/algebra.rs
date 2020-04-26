@@ -29,21 +29,21 @@ impl Point2f {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct LineSeg2f {
     pub begin: Point2f,
     pub end: Point2f,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct Polygen2f {
-    pub nodes: Vec<Point2f>,
+    pub vertices: Vec<Point2f>,
 }
 
 impl Polygen2f {
     pub fn from_vec(vertices: Vec<Point2f>) -> Polygen2f {
         Polygen2f {
-            nodes: vertices,
+            vertices: vertices,
         }
     }
     pub fn from_floats(floats: Vec<f32>) -> Polygen2f {
