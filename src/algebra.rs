@@ -19,22 +19,15 @@ impl Point2f {
     }
 }
 
-#[derive(Copy, Clone, Debug)]
-pub struct LineSeg2f {
-    pub begin: Point2f,
-    pub end: Point2f,
-}
-
 #[derive(Clone, Debug)]
-pub struct Polygen2f {
+pub struct LineSegs2f {
     pub vertices: Vec<Point2f>,
 }
-
-impl Polygen2f {
-    pub fn from_vec(vertices: Vec<Point2f>) -> Polygen2f {
-        Polygen2f { vertices: vertices }
+impl LineSegs2f {
+    pub fn from_vec(vertices: Vec<Point2f>) -> LineSegs2f {
+        LineSegs2f { vertices: vertices }
     }
-    pub fn from_floats(floats: Vec<f32>) -> Polygen2f {
+    pub fn from_floats(floats: Vec<f32>) -> LineSegs2f {
         let mut vertices: Vec<Point2f> = Vec::new();
         let mut iter = floats.iter();
         while match iter.next() {
@@ -47,8 +40,13 @@ impl Polygen2f {
             },
             None => false,
         } {}
-        Polygen2f::from_vec(vertices)
+        LineSegs2f::from_vec(vertices)
     }
+}
+
+#[derive(Clone, Debug)]
+pub struct Polygon2f {
+    pub vertices: Vec<Point2f>,
 }
 
 #[cfg(test)]

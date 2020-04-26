@@ -5,25 +5,22 @@ use std::io::{self, BufRead};
 
 #[derive(Debug)]
 pub enum GraphicObject {
-    Line(algebra::LineSeg2f),
-    Polygen(algebra::Polygen2f),
+    LineSegs(algebra::LineSegs2f),
+    Polygon(algebra::Polygon2f),
 }
 
 impl GraphicObject {
     pub fn shift(&self, dp: algebra::Point2f) -> GraphicObject {
         match self {
-            GraphicObject::Line(line) => {
-                let mut result: algebra::LineSeg2f = *line;
-                result.begin += dp;
-                result.end += dp;
-                GraphicObject::Line(result)
-            }
-            GraphicObject::Polygen(polygon) => {
-                let mut result: algebra::Polygen2f = polygon.clone();
+            GraphicObject::LineSegs(line_segs) => {
+                let mut result: algebra::LineSegs2f = line_segs.clone();
                 for vertex in &mut result.vertices {
                     *vertex += dp;
                 }
-                GraphicObject::Polygen(result)
+                GraphicObject::LineSegs(result)
+            }
+            GraphicObject::Polygon(polygon) => {
+                unimplemented!();
             }
         }
     }
@@ -44,15 +41,15 @@ impl GraphicObjects {
             if let Ok(line) = line_result {
                 let splited = line.split_whitespace().collect::<Vec<&str>>();
                 match splited[0] {
-                    "p" => graphic_objects.graphic_objects.push(GraphicObject::Polygen(
-                        algebra::Polygen2f::from_floats(
+                    "l" => graphic_objects.graphic_objects.push(GraphicObject::LineSegs(
+                        algebra::LineSegs2f::from_floats(
                             splited[1..]
                                 .iter()
                                 .map(|x| x.parse::<f32>().expect("float parse fail"))
                                 .collect(),
                         ),
                     )),
-                    "l" => unimplemented!(),
+                    "p" => unimplemented!(),
                     _ => panic!("Format error"),
                 }
             }
@@ -72,15 +69,15 @@ mod test {
 
     #[test]
     fn graphic_objects_load() {
-        std::fs::write("/tmp/graphic_objects_load_test", "p -2 -2 -2 2 2 2 2 -2")
+        std::fs::write("/tmp/graphic_objects_load_test", "l -2 -2 -2 2 2 2 2 -2")
             .expect("unable to write file");
         let graphic_objects =
             GraphicObjects::from_path("/tmp/graphic_objects_load_test".to_string());
         match graphic_objects.get(0) {
             None => panic!("test failed"),
             Some(graphic_object) => match graphic_object {
-                GraphicObject::Line(_) => panic!("test failed"),
-                GraphicObject::Polygen(polygon) => {
+                GraphicObject::Polygon(_) => panic!("test failed"),
+                GraphicObject::LineSegs(polygon) => {
                     assert_eq!(polygon.vertices[0], algebra::Point2f::from_floats(-2., -2.));
                     assert!(polygon.vertices.get(4).is_none());
                 }
