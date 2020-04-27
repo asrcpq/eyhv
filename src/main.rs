@@ -6,6 +6,7 @@ mod key_state;
 mod moving_object;
 mod player;
 mod session;
+mod time_manager;
 
 use algebra::{Point2f, Rect2f};
 use session::Session;
