@@ -10,4 +10,6 @@
 
 * [x] Color and transparency
 
+* [x] Antialiasing
+
 * [ ] Enemy

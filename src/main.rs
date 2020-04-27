@@ -13,10 +13,20 @@ use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::Point;
+use sdl2::gfx::primitives::DrawRenderer;
 use std::time::Duration;
 use std::time::SystemTime;
 
 use graphic_object::GraphicObject;
+
+fn find_sdl_gl_driver() -> Option<u32> {
+    for (index, item) in sdl2::render::drivers().enumerate() {
+        if item.name == "opengl" {
+            return Some(index as u32);
+        }
+    }
+    None
+}
 
 pub fn main() {
     let mut arg_collect: Vec<String> = std::env::args().collect();
@@ -28,12 +38,18 @@ pub fn main() {
 
     let window = video_subsystem
         .window("eyhv", window_rd.x as u32, window_rd.y as u32)
+        .opengl()
         .position_centered()
         .build()
         .unwrap();
 
-    let mut canvas = window.into_canvas().build().unwrap();
+    let mut canvas = window
+        .into_canvas()
+        .index(find_sdl_gl_driver().unwrap())
+        .build()
+        .unwrap();
 
+    canvas.set_blend_mode(sdl2::render::BlendMode::Blend);
     canvas.set_draw_color(Color::RGB(0, 255, 255));
     canvas.clear();
     canvas.present();
@@ -95,22 +111,28 @@ pub fn main() {
             match graphic_object {
                 GraphicObject::Polygon(_) => unimplemented!(),
                 GraphicObject::LineSegs(line_segs) => {
-                    canvas.set_draw_color(Color::RGBA(
+                    let color = Color::RGBA(
                         (line_segs.color[0] * 255.) as u8,
                         (line_segs.color[1] * 255.) as u8,
                         (line_segs.color[2] * 255.) as u8,
                         (line_segs.color[3] * 255.) as u8,
-                    ));
-                    canvas
-                        .draw_lines(
-                            line_segs
-                                .vertices
-                                .iter()
-                                .map(|p| Point::new(p.x as i32, p.y as i32))
-                                .collect::<Vec<Point>>()
-                                .as_slice(),
-                        )
-                        .unwrap();
+                    );
+                    let mut iter = line_segs.vertices.iter();
+                    let mut last_vertex = iter.next().unwrap();
+                    while match iter.next() {
+                        None => false,
+                        Some(vertex) => {
+                            canvas.aa_line(
+                                last_vertex.x as i16,
+                                last_vertex.y as i16,
+                                vertex.x as i16,
+                                vertex.y as i16,
+                                color,
+                            ).unwrap();
+                            last_vertex = vertex;
+                            true
+                        },
+                    } { }
                 }
             }
         }
