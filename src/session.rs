@@ -21,7 +21,8 @@ struct TimeManager {
     slowdown: bool,
     shifting: bool,
     // absolute value of scaler per second, not percentage of difference
-    shift_rate: f32,
+    shift_rate_down: f32,
+    shift_rate_up: f32,
     dt_scaler_normal: f32,
     dt_scaler_slow: f32,
 }
@@ -32,7 +33,8 @@ impl TimeManager {
             dt_scaler: 1.,
             slowdown: false,
             shifting: false,
-            shift_rate: 0.5,
+            shift_rate_down: 2.5,
+            shift_rate_up: 5.,
             dt_scaler_normal: 1.,
             dt_scaler_slow: 0.5,
         }
@@ -46,24 +48,26 @@ impl TimeManager {
         }
     }
 
-    fn update_scaler(&mut self) {
+    fn update_scaler(&mut self, dt: f32) {
         if self.shifting {
             if self.slowdown {
-                self.dt_scaler -= self.shift_rate;
+                self.dt_scaler -= self.shift_rate_down * dt;
                 if self.dt_scaler < self.dt_scaler_slow {
                     self.dt_scaler = self.dt_scaler_slow;
+                    self.shifting = false
                 }
             } else {
-                self.dt_scaler += self.shift_rate;
+                self.dt_scaler += self.shift_rate_up * dt;
                 if self.dt_scaler > self.dt_scaler_normal {
                     self.dt_scaler = self.dt_scaler_normal;
+                    self.shifting = false
                 }
             }
         }
     }
 
-    pub fn update_and_get_dt_scaler(&mut self) -> f32 {
-        self.update_scaler();
+    pub fn update_and_get_dt_scaler(&mut self, dt: f32) -> f32 {
+        self.update_scaler(dt);
         self.dt_scaler
     }
 }
@@ -95,7 +99,7 @@ impl Session {
     }
 
     pub fn tick(&mut self, mut dt: f32) {
-        dt *= self.time_manager.update_and_get_dt_scaler();
+        dt *= self.time_manager.update_and_get_dt_scaler(dt);
         self.player.update_p(dt, &self.key_state, self.window_size)
     }
 
