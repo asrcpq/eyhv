@@ -12,7 +12,7 @@
 
 * [x] Antialiasing
 
-* [x] World slowdown with accelaration
+* [x] World slowdown with transition
 
 * [ ] Player bullet
 

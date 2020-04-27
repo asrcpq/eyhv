@@ -79,18 +79,24 @@ impl GraphicObjects {
         let file = File::open(filename).unwrap();
         for line_result in io::BufReader::new(file).lines() {
             if let Ok(line) = line_result {
-                let splited = line.split_whitespace().collect::<Vec<&str>>();
-                match splited[0] {
-                    "l" => graphic_objects
-                        .graphic_objects
-                        .push(GraphicObject::LineSegs(LineSegs2f::from_floats(
-                            splited[1..]
-                                .iter()
-                                .map(|x| x.parse::<f32>().expect("float parse fail"))
-                                .collect(),
-                        ))),
-                    "p" => unimplemented!(),
-                    _ => panic!("Format error"),
+                match line.chars().next() {
+                    Some('#') => {},
+                    Some(_) => {
+                        let splited = line.split_whitespace().collect::<Vec<&str>>();
+                        match splited[0] {
+                            "l" => graphic_objects
+                                .graphic_objects
+                                .push(GraphicObject::LineSegs(LineSegs2f::from_floats(
+                                    splited[1..]
+                                        .iter()
+                                        .map(|x| x.parse::<f32>().expect("float parse fail"))
+                                        .collect(),
+                                ))),
+                            "p" => unimplemented!(),
+                            _ => panic!("Format error"),
+                        }
+                    },
+                    None => {},
                 }
             }
         }
