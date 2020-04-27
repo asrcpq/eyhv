@@ -1,5 +1,6 @@
 use crate::graphic_object::GraphicObject;
-use crate::objects::{MovingObjectGraphicsIter, MovingObject, Player};
+use crate::moving_object::{MovingObjectGraphicsIter, MovingObject};
+use crate::player::Player;
 use crate::algebra::Rect2f;
 
 pub struct SessionGraphicObjectsIter<'a> {

@@ -3,7 +3,8 @@ extern crate sdl2;
 mod algebra;
 mod graphic_object;
 mod key_state;
-mod objects;
+mod moving_object;
+mod player;
 mod session;
 
 use session::Session;
