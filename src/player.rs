@@ -1,7 +1,7 @@
-use crate::moving_object::{MovingObject, MovingObjectGraphicsIter};
 use crate::algebra::{Point2f, Rect2f};
 use crate::graphic_object::{GraphicObject, GraphicObjects};
 use crate::key_state::KeyState;
+use crate::moving_object::{MovingObject, MovingObjectGraphicsIter};
 
 pub struct Player {
     // Dynamic
@@ -10,9 +10,6 @@ pub struct Player {
 
     // Static
     graphic_objects: GraphicObjects,
-
-    // control
-    key_state: KeyState,
 
     // params
     speed_normal: f32, // per second
@@ -25,22 +22,16 @@ impl Player {
             p: Point2f::from_floats(50.0, 50.0),
             dp: Point2f::new(),
             graphic_objects: GraphicObjects::from_path(resource_path),
-            key_state: KeyState::new(),
             // these should be written in a config file
             speed_normal: 600.0,
             speed_slow: 350.0,
         }
     }
 
-    // proc_key is executed when valid key is pressed
-    pub fn proc_key(&mut self, key_id: i8, updown: bool) {
-        self.key_state.proc_key(key_id, updown);
-    }
-
     // set_dp is executed before frame update
-    pub fn set_dp(&mut self) {
+    pub fn set_dp(&mut self, key_state: &KeyState) {
         let mut dp = Point2f::new();
-        for (key_id, updown) in self.key_state.directions.iter().enumerate() {
+        for (key_id, updown) in key_state.directions.iter().enumerate() {
             if *updown {
                 match key_id {
                     0 => dp.x -= 1.,
@@ -57,7 +48,7 @@ impl Player {
         if dp.x != 0. && dp.y != 0. {
             dp *= SQRT_1_2;
         }
-        if self.key_state.slowdown {
+        if key_state.slowdown {
             dp *= self.speed_slow;
         } else {
             dp *= self.speed_normal;
@@ -65,9 +56,9 @@ impl Player {
         self.dp = dp;
     }
 
-    pub fn update_p(&mut self, dt: f32, window_size: Rect2f) {
-        self.set_dp();
-        self.p += self.dp * dt;
+    pub fn update_p(&mut self, dt_scaled: f32, key_state: &KeyState, window_size: Rect2f) {
+        self.set_dp(key_state);
+        self.p += self.dp * dt_scaled;
         self.p = window_size.nearest(self.p);
     }
 }

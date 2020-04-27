@@ -7,14 +7,14 @@ mod moving_object;
 mod player;
 mod session;
 
-use session::Session;
 use algebra::{Point2f, Rect2f};
+use session::Session;
 
 use sdl2::event::Event;
+use sdl2::gfx::primitives::DrawRenderer;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::Point;
-use sdl2::gfx::primitives::DrawRenderer;
 use std::time::Duration;
 use std::time::SystemTime;
 
@@ -123,17 +123,19 @@ pub fn main() {
                     while match iter.next() {
                         None => false,
                         Some(vertex) => {
-                            canvas.aa_line(
-                                last_vertex.x as i16,
-                                last_vertex.y as i16,
-                                vertex.x as i16,
-                                vertex.y as i16,
-                                color,
-                            ).unwrap();
+                            canvas
+                                .aa_line(
+                                    last_vertex.x as i16,
+                                    last_vertex.y as i16,
+                                    vertex.x as i16,
+                                    vertex.y as i16,
+                                    color,
+                                )
+                                .unwrap();
                             last_vertex = vertex;
                             true
-                        },
-                    } { }
+                        }
+                    } {}
                 }
             }
         }

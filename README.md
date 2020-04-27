@@ -12,4 +12,8 @@
 
 * [x] Antialiasing
 
+* [ ] World slowdown with accelaration
+
+* [ ] Player bullet
+
 * [ ] Enemy
