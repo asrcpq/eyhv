@@ -27,9 +27,9 @@ impl Player {
     }
 
     // set_dp is executed before frame update
-    pub fn set_dp(&mut self, key_state: &KeyState) {
+    pub fn set_dp(&mut self, directions: &[bool; 4]) {
         let mut dp = Point2f::new();
-        for (key_id, updown) in key_state.directions.iter().enumerate() {
+        for (key_id, updown) in directions.iter().enumerate() {
             if *updown {
                 match key_id {
                     0 => dp.x -= 1.,
@@ -50,8 +50,8 @@ impl Player {
         self.dp = dp;
     }
 
-    pub fn update_p(&mut self, dt_scaled: f32, key_state: &KeyState, window_size: Rect2f) {
-        self.set_dp(key_state);
+    pub fn update_p(&mut self, dt_scaled: f32, directions: &[bool; 4], window_size: Rect2f) {
+        self.set_dp(directions);
         self.p += self.dp * dt_scaled;
         self.p = window_size.nearest(self.p);
     }
