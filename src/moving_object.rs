@@ -1,6 +1,6 @@
 // Moving objects
 
-use crate::algebra::{Point2f, Rect2f};
+use crate::algebra::Point2f;
 use crate::graphic_object::{GraphicObject, GraphicObjects};
 
 // return shifted graphics

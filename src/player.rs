@@ -1,6 +1,5 @@
 use crate::algebra::{Point2f, Rect2f};
-use crate::graphic_object::{GraphicObject, GraphicObjects};
-use crate::key_state::KeyState;
+use crate::graphic_object::GraphicObjects;
 use crate::moving_object::{MovingObject, MovingObjectGraphicsIter};
 
 pub struct Player {
@@ -16,11 +15,13 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn new(resource_path: String) -> Player {
+    pub fn new() -> Player {
         Player {
             p: Point2f::from_floats(50.0, 50.0),
             dp: Point2f::new(),
-            graphic_objects: GraphicObjects::from_path(resource_path),
+            graphic_objects: GraphicObjects::from_strs(
+                vec!["l 0.3 1.0 1.0 1.0 -10 8 0 -10 10 8 3 4 -3 4 -10 8"]
+            ),
             // these should be written in a config file
             speed: 600.0,
         }

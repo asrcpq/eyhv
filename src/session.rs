@@ -28,10 +28,10 @@ pub struct Session {
 }
 
 impl Session {
-    pub fn new(window_size: Rect2f, resource_root: String) -> Session {
+    pub fn new(window_size: Rect2f) -> Session {
         Session {
             window_size: window_size,
-            player: Player::new(resource_root + "graphic_objects/player.txt"),
+            player: Player::new(),
             key_state: KeyState::new(),
             time_manager: TimeManager::new(),
         }

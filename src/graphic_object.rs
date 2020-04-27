@@ -1,8 +1,5 @@
 use crate::algebra::Point2f;
 
-use std::fs::File;
-use std::io::{self, BufRead};
-
 #[derive(Clone, Debug)]
 pub struct LineSegs2f {
     pub vertices: Vec<Point2f>,
@@ -71,33 +68,23 @@ pub struct GraphicObjects {
 }
 
 impl GraphicObjects {
-    pub fn from_path(filename: String) -> GraphicObjects {
-        println!("GraphicObjects loading from: {}", filename);
+    pub fn from_strs(strings: Vec<&str>) -> GraphicObjects {
         let mut graphic_objects = GraphicObjects {
             graphic_objects: Vec::new(),
         };
-        let file = File::open(filename).unwrap();
-        for line_result in io::BufReader::new(file).lines() {
-            if let Ok(line) = line_result {
-                match line.chars().next() {
-                    Some('#') => {},
-                    Some(_) => {
-                        let splited = line.split_whitespace().collect::<Vec<&str>>();
-                        match splited[0] {
-                            "l" => graphic_objects
-                                .graphic_objects
-                                .push(GraphicObject::LineSegs(LineSegs2f::from_floats(
-                                    splited[1..]
-                                        .iter()
-                                        .map(|x| x.parse::<f32>().expect("float parse fail"))
-                                        .collect(),
-                                ))),
-                            "p" => unimplemented!(),
-                            _ => panic!("Format error"),
-                        }
-                    },
-                    None => {},
-                }
+        for line in strings.iter() {
+            let splited = line.split_whitespace().collect::<Vec<&str>>();
+            match splited[0] {
+                "l" => graphic_objects
+                    .graphic_objects
+                    .push(GraphicObject::LineSegs(LineSegs2f::from_floats(
+                        splited[1..]
+                            .iter()
+                            .map(|x| x.parse::<f32>().expect("float parse fail"))
+                            .collect(),
+                    ))),
+                "p" => unimplemented!(),
+                _ => panic!("Format error"),
             }
         }
         graphic_objects
@@ -110,26 +97,23 @@ impl GraphicObjects {
 
 #[cfg(test)]
 mod test {
-    use super::algebra;
+    use super::Point2f;
     use super::{GraphicObject, GraphicObjects};
 
     #[test]
-    fn graphic_objects_load() {
-        std::fs::write("/tmp/graphic_objects_load_test", "l -2 -2 -2 2 2 2 2 -2")
-            .expect("unable to write file");
+    fn graphic_objects_from_strs() {
         let graphic_objects =
-            GraphicObjects::from_path("/tmp/graphic_objects_load_test".to_string());
+            GraphicObjects::from_strs(vec!["l 0.3 1.0 1.0 1.0 -2 -2 -2 2 2 2 2 -2"]);
         match graphic_objects.get(0) {
             None => panic!("test failed"),
             Some(graphic_object) => match graphic_object {
                 GraphicObject::Polygon(_) => panic!("test failed"),
                 GraphicObject::LineSegs(polygon) => {
-                    assert_eq!(polygon.vertices[0], algebra::Point2f::from_floats(-2., -2.));
+                    assert_eq!(polygon.vertices[0], Point2f::from_floats(-2., -2.));
                     assert!(polygon.vertices.get(4).is_none());
                 }
             },
         }
         assert!(graphic_objects.get(1).is_none());
-        std::fs::remove_file("/tmp/graphic_objects_load_test").unwrap();
     }
 }

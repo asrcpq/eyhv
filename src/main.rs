@@ -31,8 +31,6 @@ fn find_sdl_gl_driver() -> Option<u32> {
 }
 
 pub fn main() {
-    let mut arg_collect: Vec<String> = std::env::args().collect();
-
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
 
@@ -59,7 +57,6 @@ pub fn main() {
 
     let mut session = Session::new(
         Rect2f::from_point2fs(Point2f::new(), window_rd),
-        arg_collect.pop().unwrap(),
     );
 
     let mut last_time = SystemTime::now();
