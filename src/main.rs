@@ -55,9 +55,7 @@ pub fn main() {
     canvas.present();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
-    let mut session = Session::new(
-        Rect2f::from_point2fs(Point2f::new(), window_rd),
-    );
+    let mut session = Session::new(Rect2f::from_point2fs(Point2f::new(), window_rd));
 
     let mut last_time = SystemTime::now();
     'running: loop {

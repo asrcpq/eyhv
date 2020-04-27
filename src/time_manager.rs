@@ -24,8 +24,9 @@ impl TimeManager {
 
     pub fn set_state(&mut self, slowdown: bool) {
         self.slowdown = slowdown;
-        if slowdown && self.dt_scaler > self.dt_scaler_slow ||
-            !slowdown && self.dt_scaler < self.dt_scaler_normal {
+        if slowdown && self.dt_scaler > self.dt_scaler_slow
+            || !slowdown && self.dt_scaler < self.dt_scaler_normal
+        {
             self.shifting = true
         }
     }

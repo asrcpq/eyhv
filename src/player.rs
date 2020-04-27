@@ -19,9 +19,9 @@ impl Player {
         Player {
             p: Point2f::from_floats(50.0, 50.0),
             dp: Point2f::new(),
-            graphic_objects: GraphicObjects::from_strs(
-                vec!["l 0.3 1.0 1.0 1.0 -10 8 0 -10 10 8 3 4 -3 4 -10 8"]
-            ),
+            graphic_objects: GraphicObjects::from_strs(vec![
+                "l 0.3 1.0 1.0 1.0 -10 8 0 -10 10 8 3 4 -3 4 -10 8",
+            ]),
             // these should be written in a config file
             speed: 600.0,
         }
