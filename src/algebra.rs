@@ -73,6 +73,10 @@ impl Rect2f {
         }
     }
 
+    pub fn get_size(&self) -> Point2f {
+        Point2f::from_floats(self.rd.x - self.lu.x, self.rd.y - self.lu.y)
+    }
+
     pub fn from_point2fs(lu: Point2f, rd: Point2f) -> Rect2f {
         Rect2f { lu: lu, rd: rd }
     }

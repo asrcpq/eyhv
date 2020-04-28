@@ -20,18 +20,18 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn new() -> Player {
+    pub fn new(window_size: Point2f) -> Player {
         Player {
-            p: Point2f::from_floats(50.0, 50.0),
+            p: Point2f::from_floats(window_size.x / 2., window_size.y - 50.),
             dp: Point2f::new(),
             cannons: vec![
                 SimpleCannon::new(
-                    Point2f::from_floats(-2., 0.),
+                    Point2f::from_floats(-3., -5.),
                     -std::f32::consts::FRAC_PI_2,
                     false,
                 ),
                 SimpleCannon::new(
-                    Point2f::from_floats(2., 0.),
+                    Point2f::from_floats(3., -5.),
                     -std::f32::consts::FRAC_PI_2,
                     false,
                 ),

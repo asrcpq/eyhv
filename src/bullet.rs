@@ -19,7 +19,7 @@ lazy_static! {
                 vec!["l 1 1 0 1 -3 -5 3 -5 0 5 -3 -5"]
             ),
             rectangle: GraphicObjects::from_strs(
-                vec!["l 1 1 1 0.5 -1 -10 1 -10 1 10 -1 10 -1 -10"]
+                vec!["l 1 1 0 0.5 -2 -10 2 -10 2 10 -2 10 -2 -10"]
             ),
         }
     };

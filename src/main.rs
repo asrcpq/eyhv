@@ -4,6 +4,7 @@ mod algebra;
 mod graphic_object;
 mod key_state;
 mod player;
+mod enemy;
 mod session;
 mod time_manager;
 mod bullet;
