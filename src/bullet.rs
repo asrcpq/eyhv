@@ -26,13 +26,49 @@ lazy_static! {
     };
 }
 
-pub trait Bullet: MovingObject {
-    fn tick(&mut self, dt: f32);
-}
-
-pub enum BulletTypes {
+pub enum Bullet {
     SimpleBullet(SimpleBullet),
     RotateBullet(RotateBullet),
+}
+
+impl Bullet {
+    pub fn tick(&mut self, dt: f32) {
+        match self {
+            Bullet::SimpleBullet(simple_bullet) => {
+                simple_bullet.tick(dt);
+            },
+            Bullet::RotateBullet(rotate_bullet) => {
+                unimplemented!();
+            },
+        }
+    }
+}
+
+impl MovingObject for Bullet {
+    fn get_p(&self) -> Point2f {
+        match self {
+            Bullet::SimpleBullet(simple_bullet) => {
+                simple_bullet.get_p()
+            },
+            Bullet::RotateBullet(rotate_bullet) => {
+                unimplemented!()
+            },
+        }
+    }
+
+    fn moving_object_graphics_iter(&self) -> MovingObjectGraphicsIter {
+        match self {
+            Bullet::SimpleBullet(simple_bullet) => {
+                MovingObjectGraphicsIter::new(
+                    simple_bullet.get_p(),
+                    &simple_bullet.graphic_objects
+                )
+            },
+            Bullet::RotateBullet(rotate_bullet) => {
+                unimplemented!();
+            },
+        }
+    }
 }
 
 pub struct SimpleBullet {
@@ -51,9 +87,6 @@ impl SimpleBullet {
             graphic_objects: graphic_objects,
         }
     }
-}
-
-impl MovingObject for SimpleBullet {
     fn get_p(&self) -> Point2f {
         self.p
     }
@@ -61,9 +94,7 @@ impl MovingObject for SimpleBullet {
     fn moving_object_graphics_iter(&self) -> MovingObjectGraphicsIter {
         MovingObjectGraphicsIter::new(self.p, &self.graphic_objects)
     }
-}
 
-impl Bullet for SimpleBullet {
     fn tick(&mut self, dt: f32) {
         self.p += self.v * dt;
         self.v += self.a * dt;

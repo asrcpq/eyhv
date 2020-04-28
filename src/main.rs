@@ -9,6 +9,7 @@ mod session;
 mod time_manager;
 mod bullet;
 mod cannon;
+mod bullet_pool;
 
 use algebra::{Point2f, Rect2f};
 use session::Session;

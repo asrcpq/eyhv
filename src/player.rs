@@ -1,7 +1,10 @@
+use std::collections::VecDeque;
+
 use crate::algebra::{Point2f, Rect2f};
 use crate::graphic_object::GraphicObjects;
 use crate::moving_object::{MovingObject, MovingObjectGraphicsIter};
-use crate::cannon::SimpleCannon;
+use crate::cannon::{SimpleCannon, CannonControllerInterface};
+use crate::bullet::SimpleBullet;
 
 pub struct Player {
     // Dynamic
@@ -37,7 +40,6 @@ impl Player {
             graphic_objects: GraphicObjects::from_strs(vec![
                 "l 0.3 1.0 1.0 1.0 -10 8 0 -10 10 8 3 4 -3 4 -10 8",
             ]),
-            // these should be written in a config file
             speed: 600.0,
         }
     }
@@ -65,10 +67,16 @@ impl Player {
         self.dp = dp;
     }
 
-    pub fn tick(&mut self, dt: f32, directions: &[bool; 4], window_size: Rect2f) {
+    pub fn tick(&mut self, dt: f32, directions: &[bool; 4], window_size: Rect2f) -> VecDeque<SimpleBullet> {
         self.set_dp(directions);
         self.p += self.dp * dt;
         self.p = window_size.nearest(self.p);
+
+        let mut bullet_queue = VecDeque::new();
+        for cannon in self.cannons.iter_mut() {
+            bullet_queue.append(&mut cannon.fire_tick(self.p, dt));
+        }
+        bullet_queue
     }
 }
 

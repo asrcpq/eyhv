@@ -5,7 +5,7 @@ use std::ops::Mul;
 // Point2f is also Vec2f
 // 2f means 2d+f32
 #[derive(
-    Copy, Clone, PartialEq, Debug, Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign,
+    Copy, Clone, PartialEq, Debug, Default, Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign,
 )]
 pub struct Point2f {
     // / x \
@@ -15,7 +15,7 @@ pub struct Point2f {
 }
 
 #[derive(
-    Copy, Clone, PartialEq, Debug, Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign,
+    Copy, Clone, PartialEq, Debug, Default, Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign,
 )]
 pub struct Mat2x2f {
     // / x1 x2 \
@@ -78,7 +78,7 @@ impl Rect2f {
     }
 
     // check if point2f falls inside the rectangle(not falls on)
-    pub fn contains(&self, point2f: Point2f) -> bool {
+    pub fn contain(&self, point2f: Point2f) -> bool {
         point2f.x > self.lu.x
             && point2f.x < self.rd.x
             && point2f.y > self.lu.y

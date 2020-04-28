@@ -4,6 +4,7 @@ use crate::key_state::KeyState;
 use crate::moving_object::{MovingObject, MovingObjectGraphicsIter};
 use crate::player::Player;
 use crate::time_manager::TimeManager;
+use crate::bullet_pool::BulletPool;
 
 pub struct SessionGraphicObjectsIter<'a> {
     player_iter: MovingObjectGraphicsIter<'a>,
@@ -21,6 +22,8 @@ pub struct Session {
     window_size: Rect2f,
     player: Player,
 
+    player_bullet_pool: BulletPool,
+
     // control
     key_state: KeyState,
 
@@ -32,6 +35,7 @@ impl Session {
         Session {
             window_size: window_size,
             player: Player::new(),
+            player_bullet_pool: BulletPool::new(),
             key_state: KeyState::new(),
             time_manager: TimeManager::new(),
         }
@@ -46,7 +50,7 @@ impl Session {
     pub fn tick(&mut self, mut dt: f32) {
         dt *= self.time_manager.update_and_get_dt_scaler(dt);
         self.player
-            .tick(dt, &self.key_state.directions, self.window_size)
+            .tick(dt, &self.key_state.directions, self.window_size);
     }
 
     pub fn proc_key(&mut self, key_id: i8, updown: bool) {
