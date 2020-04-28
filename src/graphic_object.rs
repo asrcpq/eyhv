@@ -40,7 +40,7 @@ pub struct Polygon2f {
     pub color: [f32; 4],
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub enum GraphicObject {
     LineSegs(LineSegs2f),
     Polygon(Polygon2f),
@@ -63,6 +63,7 @@ impl GraphicObject {
     }
 }
 
+#[derive(Clone)]
 pub struct GraphicObjects {
     graphic_objects: Vec<GraphicObject>,
 }

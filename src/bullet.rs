@@ -17,17 +17,30 @@ impl BulletGraphicObjects {
     }
 }
 
-pub struct Bullet {
+pub trait Bullet {
+    fn tick(&mut self, dt: f32);
+    fn get_p(&self) -> Point2f;
+}
+
+pub struct CommonBullet {
     p: Point2f,
     v: Point2f,
     a: Point2f,
     theta: f32,
     omega: f32,
-    graphic_objects: &GraphicObjects,
+    graphic_objects: GraphicObjects,
+}
+
+pub struct RotateBullet {
+    p: Point2f,
+    v: Point2f,
+    a: Point2f,
+    theta: f32,
+    graphic_objects: GraphicObjects,
 }
 
 impl Bullet {
-    pub fn new(p: Point2f, v: Point2f, a: Point2f, theta: f32, omega: f32, graphic_objects: &GraphicObjects) -> Bullet {
+    pub fn new(p: Point2f, v: Point2f, a: Point2f, theta: f32, omega: f32, graphic_objects: GraphicObjects) -> Bullet {
         Bullet {
             p: p,
             v: v,

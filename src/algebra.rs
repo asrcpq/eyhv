@@ -1,5 +1,6 @@
 extern crate derive_more;
 use derive_more::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
+use std::ops::{Mul, MulAssign};
 
 // Point2f is also Vec2f
 // 2f means 2d+f32
@@ -7,8 +8,46 @@ use derive_more::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign
     Copy, Clone, PartialEq, Debug, Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign,
 )]
 pub struct Point2f {
+    // / x \
+    // \ y /
     pub x: f32,
     pub y: f32,
+}
+
+#[derive(
+    Copy, Clone, PartialEq, Debug, Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign,
+)]
+pub struct Mat2x2f {
+    // / x1 x2 \
+    // \ y1 y2 /
+    pub x1: f32,
+    pub x2: f32,
+    pub y1: f32,
+    pub y2: f32,
+}
+
+impl Mul<Point2f> for Mat2x2f {
+    type Output = Point2f;
+
+    fn mul(self, rhs: Point2f) -> Point2f {
+        Point2f {
+            x: self.x1 * rhs.x + self.x2 * rhs.y,
+            y: self.y1 * rhs.x + self.y2 * rhs.y,
+        }
+    }
+}
+
+impl Mat2x2f {
+    pub fn from_theta(theta: f32) -> Mat2x2f {
+        let sin_theta = theta.sin();
+        let cos_theta = theta.cos();
+        Mat2x2f {
+            x1: cos_theta,
+            x2: -sin_theta,
+            y1: sin_theta,
+            y2: cos_theta,
+        }
+    }
 }
 
 impl Point2f {
@@ -69,10 +108,10 @@ impl Rect2f {
 
 #[cfg(test)]
 mod test {
-    use super::Point2f;
+    use super::{Point2f, Mat2x2f};
 
     #[test]
-    fn test_derive_more() {
+    fn test_point2f_derive_more() {
         let mut point2f = Point2f::from_floats(1.0, 1.0);
         // PartialEq
         assert_eq!(point2f, Point2f::from_floats(1.0, 1.0));
@@ -84,5 +123,24 @@ mod test {
         // MulAssign
         point2f *= 2.;
         assert_eq!(point2f, Point2f::from_floats(4.0, 4.0));
+    }
+
+    #[test]
+    fn test_mat2x2f() {
+        let pi: f32 = 3.141592653589793;
+        let mat2x2f = Mat2x2f::from_theta(pi / 2.);
+        let eps:f32 = 1e-6;
+        // / 0 -1 \
+        // \ 1  0 /
+        assert!(mat2x2f.x1.abs() < eps);
+        assert!((mat2x2f.x2 + 1.).abs() < eps);
+        assert!((mat2x2f.y1 - 1.).abs() < eps);
+        assert!(mat2x2f.y2.abs() < eps);
+
+        // Rotate
+        let point2f = Point2f::from_floats(3.0, 4.0);
+        let point2f = mat2x2f * point2f;
+        assert!((point2f.x + 4.).abs() < eps);
+        assert!((point2f.y - 3.).abs() < eps);
     }
 }
