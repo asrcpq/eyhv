@@ -3,7 +3,7 @@ use std::collections::VecDeque;
 use crate::algebra::{Point2f, Rect2f};
 use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
 use crate::cannon::{SimpleCannon, CannonControllerInterface};
-use crate::bullet::SimpleBullet;
+use crate::bullet::{Bullet, SimpleBullet};
 
 pub struct Player {
     // Dynamic
@@ -66,7 +66,7 @@ impl Player {
         self.dp = dp;
     }
 
-    pub fn tick(&mut self, dt: f32, directions: &[bool; 4], window_size: Rect2f) -> VecDeque<SimpleBullet> {
+    pub fn tick(&mut self, dt: f32, directions: &[bool; 4], window_size: Rect2f) -> VecDeque<Bullet> {
         self.set_dp(directions);
         self.p += self.dp * dt;
         self.p = window_size.nearest(self.p);
@@ -80,5 +80,11 @@ impl Player {
 
     pub fn graphic_objects_iter(&self) -> GraphicObjectsIntoIter {
         GraphicObjectsIntoIter::new(self.graphic_objects.shift(self.p))
+    }
+
+    pub fn switch_cannons(&mut self, switch: bool) {
+        for cannon in self.cannons.iter_mut() {
+            cannon.switch(switch);
+        }
     }
 }

@@ -5,14 +5,13 @@ use crate::bullet::{Bullet, BULLET_GRAPHIC_OBJECTS, SimpleBullet};
 use crate::graphic_object::GraphicObjects;
 
 pub trait CannonControllerInterface {
-    type BulletType;
     // once a cannon is turned off, it immediately resets the state of itself
     // static implementation
     fn switch(&mut self, switch: bool);
 
     // this is called fire_tick as there might be other tick functions
     // like PlayerLocker's update_theta
-    fn fire_tick(&mut self, host_p: Point2f, dt: f32) -> VecDeque<Self::BulletType>;
+    fn fire_tick(&mut self, host_p: Point2f, dt: f32) -> VecDeque<Bullet>;
 }
 
 pub struct PlayerLocker {
@@ -67,8 +66,6 @@ impl PlayerLocker {
 }
 
 impl CannonControllerInterface for PlayerLocker {
-    type BulletType = SimpleBullet;
-
     fn switch(&mut self, switch: bool) {
         if self.switch {
             if !switch {
@@ -83,7 +80,7 @@ impl CannonControllerInterface for PlayerLocker {
         }
     }
 
-    fn fire_tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<Self::BulletType> {
+    fn fire_tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<Bullet> {
         unimplemented!()
         //if self.phase_timer > self.fire_duration {
         //    self.phase_timer += dt;
@@ -117,7 +114,7 @@ pub struct SimpleCannon {
 
 impl SimpleCannon {
     pub fn new(p: Point2f, theta: f32, sw: bool) -> SimpleCannon {
-        let fire_interval: f32 = 0.1;
+        let fire_interval: f32 = 0.05;
         SimpleCannon {
             p: p,
             fire_interval: fire_interval,
@@ -130,8 +127,6 @@ impl SimpleCannon {
 }
 
 impl CannonControllerInterface for SimpleCannon {
-    type BulletType = SimpleBullet;
-
     fn switch(&mut self, switch: bool) {
         if self.switch {
             if !switch {
@@ -145,9 +140,12 @@ impl CannonControllerInterface for SimpleCannon {
         }
     }
 
-    fn fire_tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<Self::BulletType> {
-        const BULLET_SPEED: f32 = 2000.;
+    fn fire_tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<Bullet> {
+        const BULLET_SPEED: f32 = 2500.;
         let mut bullet_queue = VecDeque::new();
+        if !self.switch {
+            return bullet_queue;
+        }
         loop {
             if self.fire_cd - dt > 0. {
                 self.fire_cd -= dt;
@@ -155,14 +153,14 @@ impl CannonControllerInterface for SimpleCannon {
             } else {
                 dt -= self.fire_cd;
                 self.fire_cd = self.fire_interval;
-                bullet_queue.push_back(
+                bullet_queue.push_back(Bullet::SimpleBullet(
                     SimpleBullet::new(
                         self.p + host_p,
                         Point2f::from_floats(0., -BULLET_SPEED),
                         Point2f::new(),
                         BULLET_GRAPHIC_OBJECTS.rectangle.clone(),
                     )
-                );
+                ));
             }
         }
     }

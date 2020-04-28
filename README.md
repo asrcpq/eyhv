@@ -14,6 +14,6 @@
 
 * [x] World slowdown with transition
 
-* [ ] Simple Cannon & Simple Bullet
+* [x] Simple Cannon & Simple Bullet
 
 * [ ] Enemy

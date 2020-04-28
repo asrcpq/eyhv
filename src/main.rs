@@ -77,6 +77,7 @@ pub fn main() {
                     Keycode::Right => session.proc_key(2, true),
                     Keycode::Down => session.proc_key(3, true),
                     Keycode::LShift => session.proc_key(4, true),
+                    Keycode::Z => session.proc_key(5, true),
                     _ => {}
                 },
                 Event::KeyUp {
@@ -88,6 +89,7 @@ pub fn main() {
                     Keycode::Right => session.proc_key(2, false),
                     Keycode::Down => session.proc_key(3, false),
                     Keycode::LShift => session.proc_key(4, false),
+                    Keycode::Z => session.proc_key(5, false),
                     _ => (),
                 },
                 _ => {}

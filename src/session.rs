@@ -52,19 +52,23 @@ impl Session {
     pub fn graphic_object_iter(&self) -> SessionGraphicObjectsIter {
         SessionGraphicObjectsIter {
             player_iter: self.player.graphic_objects_iter(),
-            player_bullet_iter: self.player.graphic_objects_iter(),
+            player_bullet_iter: self.player_bullet_pool.graphic_objects_iter(),
         }
     }
 
     pub fn tick(&mut self, mut dt: f32) {
         dt *= self.time_manager.update_and_get_dt_scaler(dt);
-        self.player
-            .tick(dt, &self.key_state.directions, self.window_size);
+        self.player_bullet_pool.tick(self.window_size, dt);
+        self.player_bullet_pool.extend(self.player.tick(
+            dt, &self.key_state.directions, self.window_size
+        ));
     }
 
     pub fn proc_key(&mut self, key_id: i8, updown: bool) {
         if key_id == 4 {
             self.time_manager.set_state(updown);
+        } else if key_id == 5 {
+            self.player.switch_cannons(updown);
         } else {
             self.key_state.proc_key(key_id, updown);
         }

@@ -19,7 +19,7 @@ lazy_static! {
                 vec!["l 1 1 0 1 -3 -5 3 -5 0 5 -3 -5"]
             ),
             rectangle: GraphicObjects::from_strs(
-                vec!["l 1 1 1 0.5 -1 -5 1 -5 1 5 1 -5 -1 -5"]
+                vec!["l 1 1 1 0.5 -1 -10 1 -10 1 10 -1 10 -1 -10"]
             ),
         }
     };
@@ -75,7 +75,6 @@ pub struct SimpleBullet {
 
 impl SimpleBullet {
     pub fn new(p: Point2f, v: Point2f, a: Point2f, graphic_objects: GraphicObjects) -> SimpleBullet {
-        println!("new!");
         SimpleBullet {
             p: p,
             v: v,
