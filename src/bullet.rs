@@ -13,14 +13,15 @@ pub const bullet_graphic_objects: BulletGraphicObjects<'static> = BulletGraphicO
     wedge: GraphicObjects::from_strs(
         vec!["l 1 1 0 1 -3 -5 3 -5 0 5 -3 -5"]
     ),
+    rectangle: GraphicObjects::from_strs(
+        vec!["l 1 1 1 0.5 -1 -5 1 -5 1 5 1 -5 -1 -5"]
+    ),
+
 }
 
-pub trait Bullet {
+pub trait Bullet: MovingObject {
     fn tick(&mut self, dt: f32);
-    fn get_p(&self) -> Point2f;
 }
-
-impl 
 
 pub struct SimpleBullet {
     p: Point2f,
@@ -30,17 +31,37 @@ pub struct SimpleBullet {
 }
 
 impl SimpleBullet {
-    pub fn new(p: Point2f, v: Point2f, a: Point2f, theta, graphic_objects) {
+    pub fn new(p: Point2f, v: Point2f, a: Point2f, graphic_objects: GraphicObjects) -> SimpleBullet {
+        SimpleBullet {
+            p: p,
+            v: v,
+            a: a,
+            graphic_objects: graphic_objects,
+        }
+    }
+}
+
+impl MovingObject for SimpleBullet {
+    fn get_p(&self) -> Point2f {
+        return p,
+    }
+    fn moving_object_graphics_iter(&self) -> MovingObjectGraphicsIter {
+        MovingObjectGraphicsIter::new(self.p, &self.graphic_objects)
     }
 }
 
 impl Bullet for SimpleBullet {
+    fn tick(&mut self, dt: f32) {
+        self.p += v * dt,
+        self.v += a * dt,
+    }
 }
 
 pub struct RotateBullet {
     p: Point2f,
     v: Point2f,
     a: Point2f,
+    // theta is rotate angle, not direction pointing!
     theta: f32,
     rotate_matrix: Mat2x2f,
     graphic_objects: GraphicObjects,

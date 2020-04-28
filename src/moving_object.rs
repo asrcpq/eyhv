@@ -12,6 +12,7 @@ pub struct MovingObjectGraphicsIter<'a> {
 }
 
 impl<'a> MovingObjectGraphicsIter<'a> {
+    // p is position of moving object
     pub fn new(p: Point2f, graphic_objects: &'a GraphicObjects) -> MovingObjectGraphicsIter {
         MovingObjectGraphicsIter {
             p: p,

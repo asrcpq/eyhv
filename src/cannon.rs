@@ -9,9 +9,6 @@ pub trait CannonControllerInterface {
     // static implementation
     fn switch(&mut self, switch: bool);
 
-    // static implementation
-    fn get_absolute_p(&self, unit_p: Point2f) -> Point2f;
-
     // this is called fire_tick as there might be other tick functions
     // like PlayerLocker's update_theta
     fn fire_tick<T: Bullet>(&mut self, dt: f32) -> VecDeque<T>;
@@ -83,10 +80,6 @@ impl Cannon for PlayerLocker {
         }
     }
 
-    fn get_absolute_p(&self, unit_p: Point2f) -> Point2f {
-        unit_p + self.p
-    }
-
     fn tick<SimpleBullet>(&mut self, mut dt: f32) -> VecDeque<SimpleBullet> {
         if self.phase_timer > self.fire_duration {
             self.phase_timer += dt;
@@ -149,11 +142,23 @@ impl Cannon for SimpleCannon {
         }
     }
 
-    fn get_absolute_p(&self, unit_p: Point2f) -> Point2f {
-        unit_p + self.p
-    }
-
-    fn fire_tick<SimpleBullet>(&mut self, dt: f32) -> VecDeque<SimpleBullet> {
+    fn fire_tick<SimpleBullet>(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<SimpleBullet> {
+        const bullet_speed: f32 = 2000.
         let mut bullet_queue = VecDeque::new();
+        loop {
+            if self.fire_cd - dt > 0 {
+                self.fire_cd -= dt;
+                break bullet_queue;
+            } else {
+                dt -= self.fire_cd;
+                self.fire_cd = self.fire_interval;
+                bullet_queue.push_back(SimpleBullet::new(
+                    self.p + host_p,
+                    bullet_speed,
+                    0,
+                    bullet_graphic_objects::rectangle.clone(),
+                ));
+            }
+        }
     }
 }
