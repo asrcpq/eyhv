@@ -8,13 +8,22 @@ use crate::bullet_pool::BulletPool;
 
 pub struct SessionGraphicObjectsIter<'a> {
     player_iter: MovingObjectGraphicsIter<'a>,
+    player_bullet_iter: MovingObjectGraphicsIter<'a>,
 }
 
 impl<'a> Iterator for SessionGraphicObjectsIter<'a> {
     type Item = GraphicObject;
 
     fn next(&mut self) -> Option<GraphicObject> {
-        self.player_iter.next()
+        match self.player_iter.next() {
+            None => {},
+            option => return option,
+        }
+        match self.player_bullet_iter.next() {
+            None => {},
+            option => return option,
+        }
+        None
     }
 }
 
@@ -44,6 +53,7 @@ impl Session {
     pub fn graphic_object_iter(&self) -> SessionGraphicObjectsIter {
         SessionGraphicObjectsIter {
             player_iter: self.player.moving_object_graphics_iter(),
+            player_bullet_iter: self.player.moving_object_graphics_iter(),
         }
     }
 

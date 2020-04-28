@@ -80,6 +80,7 @@ pub struct SimpleBullet {
 
 impl SimpleBullet {
     pub fn new(p: Point2f, v: Point2f, a: Point2f, graphic_objects: GraphicObjects) -> SimpleBullet {
+        println!("new!");
         SimpleBullet {
             p: p,
             v: v,

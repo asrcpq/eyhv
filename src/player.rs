@@ -74,7 +74,7 @@ impl Player {
 
         let mut bullet_queue = VecDeque::new();
         for cannon in self.cannons.iter_mut() {
-            bullet_queue.append(&mut cannon.fire_tick(self.p, dt));
+            bullet_queue.extend(cannon.fire_tick(self.p, dt));
         }
         bullet_queue
     }
@@ -86,6 +86,6 @@ impl MovingObject for Player {
     }
 
     fn moving_object_graphics_iter(&self) -> MovingObjectGraphicsIter {
-        MovingObjectGraphicsIter::new(self.p, &self.graphic_objects)
+        MovingObjectGraphicsIter::new(&self.graphic_objects.shift(self.p))
     }
 }

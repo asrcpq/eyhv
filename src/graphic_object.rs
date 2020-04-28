@@ -86,6 +86,26 @@ pub struct GraphicObjects {
 }
 
 impl GraphicObjects {
+    pub fn shift(&mut self, point2f: Point2f) -> GraphicObjects {
+        GraphicObjets {
+            graphic_objects: self
+                .graphic_objects
+                .iter()
+                .shift(point2f)
+                .collect()
+        }
+    }
+
+    pub fn extend(&mut self, other: GraphicObjects) {
+        self.graphic_objects.extend(other.graphic_objects);
+    }
+
+    //pub fn new(graphic_objects: Vec<GraphicObject>) -> GraphicObjects{
+    //    GraphicObjects {
+    //        graphic_objects: graphic_objects,
+    //    }
+    //}
+
     pub fn from_strs(strings: Vec<&str>) -> GraphicObjects {
         let mut graphic_objects = GraphicObjects {
             graphic_objects: Vec::new(),
