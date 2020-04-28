@@ -14,6 +14,6 @@
 
 * [x] World slowdown with transition
 
-* [ ] Cannon: PlayerLocker and bullet
+* [ ] Simple Cannon & Simple Bullet
 
 * [ ] Enemy
