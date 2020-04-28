@@ -25,12 +25,12 @@ impl Player {
             cannons: vec![
                 SimpleCannon::new(
                     Point2f::from_floats(-2., 0.),
-                    -std::f32::consts::PI / 2.,
+                    -std::f32::consts::FRAC_PI_2,
                     false,
                 ),
                 SimpleCannon::new(
                     Point2f::from_floats(2., 0.),
-                    -std::f32::consts::PI / 2.,
+                    -std::f32::consts::FRAC_PI_2,
                     false,
                 ),
             ],
@@ -58,9 +58,8 @@ impl Player {
         }
 
         //diagonal correction
-        const SQRT_1_2: f32 = 0.7071067811865476;
         if dp.x != 0. && dp.y != 0. {
-            dp *= SQRT_1_2;
+            dp *= std::f32::consts::FRAC_1_SQRT_2;
         }
         dp *= self.speed;
         self.dp = dp;

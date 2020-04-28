@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 
 use crate::algebra::Point2f;
-use crate::bullet::{Bullet, bullet_graphic_objects, SimpleBullet, BulletTypes};
+use crate::bullet::{Bullet, BULLET_GRAPHIC_OBJECTS, SimpleBullet, BulletTypes};
 use crate::graphic_object::GraphicObjects;
 
 pub trait CannonControllerInterface {
@@ -141,7 +141,7 @@ impl CannonControllerInterface for SimpleCannon {
     }
 
     fn fire_tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<BulletTypes> {
-        const bullet_speed: f32 = 2000.;
+        const BULLET_SPEED: f32 = 2000.;
         let mut bullet_queue = VecDeque::new();
         loop {
             if self.fire_cd - dt > 0. {
@@ -153,9 +153,9 @@ impl CannonControllerInterface for SimpleCannon {
                 bullet_queue.push_back(BulletTypes::SimpleBullet(
                     SimpleBullet::new(
                         self.p + host_p,
-                        Point2f::from_floats(0., -bullet_speed),
+                        Point2f::from_floats(0., -BULLET_SPEED),
                         Point2f::new(),
-                        bullet_graphic_objects.rectangle.clone(),
+                        BULLET_GRAPHIC_OBJECTS.rectangle.clone(),
                     )
                 ));
             }
