@@ -46,7 +46,7 @@ impl Session {
     pub fn tick(&mut self, mut dt: f32) {
         dt *= self.time_manager.update_and_get_dt_scaler(dt);
         self.player
-            .update_p(dt, &self.key_state.directions, self.window_size)
+            .tick(dt, &self.key_state.directions, self.window_size)
     }
 
     pub fn proc_key(&mut self, key_id: i8, updown: bool) {

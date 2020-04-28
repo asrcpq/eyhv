@@ -2,6 +2,7 @@ use std::collections::VecDeque;
 
 use crate::algebra::{Point2f, Mat2x2f};
 use crate::graphic_objects::GraphicObjects;
+use crate::moving_object::MovingObject;
 
 // This struct is static, created by Session::new() only once
 pub struct BulletGraphicObjects {
@@ -19,12 +20,21 @@ pub trait Bullet {
     fn get_p(&self) -> Point2f;
 }
 
-pub struct CommonBullet {
+impl 
+
+pub struct SimpleBullet {
     p: Point2f,
     v: Point2f,
     a: Point2f,
-    theta: f32,
     graphic_objects: GraphicObjects,
+}
+
+impl SimpleBullet {
+    pub fn new(p: Point2f, v: Point2f, a: Point2f, theta, graphic_objects) {
+    }
+}
+
+impl Bullet for SimpleBullet {
 }
 
 pub struct RotateBullet {

@@ -51,9 +51,9 @@ impl Player {
         self.dp = dp;
     }
 
-    pub fn update_p(&mut self, dt_scaled: f32, directions: &[bool; 4], window_size: Rect2f) {
+    pub fn tick(&mut self, dt: f32, directions: &[bool; 4], window_size: Rect2f) {
         self.set_dp(directions);
-        self.p += self.dp * dt_scaled;
+        self.p += self.dp * dt;
         self.p = window_size.nearest(self.p);
     }
 }

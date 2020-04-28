@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 
 use crate::algebra::Point2f;
-use crate::bullet::{Bullet, bullet_graphic_objects};
+use crate::bullet::{Bullet, bullet_graphic_objects, SimpleBullet};
 use crate::graphic_objects::GraphicObjects;
 
 pub trait CannonControllerInterface {
@@ -87,7 +87,7 @@ impl Cannon for PlayerLocker {
         unit_p + self.p
     }
 
-    fn tick(&mut self, mut dt: f32) -> VecDeque<Bullet> {
+    fn tick<SimpleBullet>(&mut self, mut dt: f32) -> VecDeque<SimpleBullet> {
         if self.phase_timer > self.fire_duration {
             self.phase_timer += dt;
             if self.phase_timer < self.cycle_duration {
@@ -153,6 +153,7 @@ impl Cannon for SimpleCannon {
         unit_p + self.p
     }
 
-    fn fire_tick(&mut self, dt: f32) -> BulletQueue {
+    fn fire_tick<SimpleBullet>(&mut self, dt: f32) -> VecDeque<SimpleBullet> {
+        let mut bullet_queue = VecDeque::new();
     }
 }
