@@ -1,8 +1,8 @@
 use std::collections::VecDeque;
 
 use crate::algebra::Point2f;
-use crate::bullet::{Bullet, bullet_graphic_objects, SimpleBullet};
-use crate::graphic_objects::GraphicObjects;
+use crate::bullet::{Bullet, bullet_graphic_objects, SimpleBullet, BulletTypes};
+use crate::graphic_object::GraphicObjects;
 
 pub trait CannonControllerInterface {
     // once a cannon is turned off, it immediately resets the state of itself
@@ -11,7 +11,7 @@ pub trait CannonControllerInterface {
 
     // this is called fire_tick as there might be other tick functions
     // like PlayerLocker's update_theta
-    fn fire_tick<T: Bullet>(&mut self, dt: f32) -> VecDeque<T>;
+    fn fire_tick(&mut self, host_p: Point2f, dt: f32) -> VecDeque<BulletTypes>;
 }
 
 pub struct PlayerLocker {
@@ -52,8 +52,8 @@ impl PlayerLocker {
             cycle_duration: cd,
             fire_interval: fi,
             fire_cd: fi,
-            theta: 0, // not initialized
-            angle: oa,
+            theta: 0., // not initialized
+            open_angle: oa,
             count: cn,
             switch: sw,
             phase_timer: 0.,
@@ -65,12 +65,12 @@ impl PlayerLocker {
     }
 }
 
-impl Cannon for PlayerLocker {
+impl CannonControllerInterface for PlayerLocker {
     fn switch(&mut self, switch: bool) {
         if self.switch {
             if !switch {
                 self.switch = false;
-                self.phase_timer = 0;
+                self.phase_timer = 0.;
                 self.fire_cd = self.fire_interval;
             }
         } else {
@@ -80,18 +80,19 @@ impl Cannon for PlayerLocker {
         }
     }
 
-    fn tick<SimpleBullet>(&mut self, mut dt: f32) -> VecDeque<SimpleBullet> {
-        if self.phase_timer > self.fire_duration {
-            self.phase_timer += dt;
-            if self.phase_timer < self.cycle_duration {
-                VecDequeue::new()
-            } else {
-                self.phase_timer -= self.cycle_duration;
-                // will enter firing phase in next condition
-            } }
-        if self.phase_timer < self.fire_duration {
-            unimplemented!()
-        }
+    fn fire_tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<BulletTypes> {
+        unimplemented!()
+        //if self.phase_timer > self.fire_duration {
+        //    self.phase_timer += dt;
+        //    if self.phase_timer < self.cycle_duration {
+        //        VecDeque::new()
+        //    } else {
+        //        self.phase_timer -= self.cycle_duration;
+        //        // will enter firing phase in next condition
+        //    }
+        //}
+        //if self.phase_timer < self.fire_duration {
+        //}
     }
 }
 
@@ -109,26 +110,23 @@ pub struct SimpleCannon {
     theta: f32,
 
     switch: bool,
-
-    bullet_graphic_objects: &GraphicObjects,
 }
 
 impl SimpleCannon {
-    pub fn new(p: Point2f, fi: f32, theta: f32, sw: bool) -> SimpleCannon {
+    pub fn new(p: Point2f, theta: f32, sw: bool) -> SimpleCannon {
+        let fire_interval: f32 = 0.1;
         SimpleCannon {
             p: p,
-            bullet_speed, bs,
-            fire_interval, fi,
+            fire_interval: fire_interval,
             // player should not benefit from a rapid fire controller
-            fire_cd, fi,
+            fire_cd: fire_interval,
             theta: theta,
-            switch: switch,
-            bullet_graphic_objects: &bullet_graphic_objects::wedge,
+            switch: sw,
         }
     }
 }
 
-impl Cannon for SimpleCannon {
+impl CannonControllerInterface for SimpleCannon {
     fn switch(&mut self, switch: bool) {
         if self.switch {
             if !switch {
@@ -142,21 +140,23 @@ impl Cannon for SimpleCannon {
         }
     }
 
-    fn fire_tick<SimpleBullet>(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<SimpleBullet> {
-        const bullet_speed: f32 = 2000.
+    fn fire_tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<BulletTypes> {
+        const bullet_speed: f32 = 2000.;
         let mut bullet_queue = VecDeque::new();
         loop {
-            if self.fire_cd - dt > 0 {
+            if self.fire_cd - dt > 0. {
                 self.fire_cd -= dt;
                 break bullet_queue;
             } else {
                 dt -= self.fire_cd;
                 self.fire_cd = self.fire_interval;
-                bullet_queue.push_back(SimpleBullet::new(
-                    self.p + host_p,
-                    bullet_speed,
-                    0,
-                    bullet_graphic_objects::rectangle.clone(),
+                bullet_queue.push_back(BulletTypes::SimpleBullet(
+                    SimpleBullet::new(
+                        self.p + host_p,
+                        Point2f::from_floats(0., -bullet_speed),
+                        Point2f::new(),
+                        bullet_graphic_objects.rectangle.clone(),
+                    )
                 ));
             }
         }

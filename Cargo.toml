@@ -11,3 +11,4 @@ features = ["gfx", "mixer"]
 
 [dependencies]
 derive_more = "0.99.0"
+lazy_static = "1.4.0"

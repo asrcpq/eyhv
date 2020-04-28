@@ -127,8 +127,7 @@ mod test {
 
     #[test]
     fn test_mat2x2f() {
-        let pi: f32 = 3.141592653589793;
-        let mat2x2f = Mat2x2f::from_theta(pi / 2.);
+        let mat2x2f = Mat2x2f::from_theta(std::f32::consts::PI / 2.);
         let eps:f32 = 1e-6;
         // / 0 -1 \
         // \ 1  0 /

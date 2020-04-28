@@ -1,11 +1,14 @@
 use crate::algebra::{Point2f, Rect2f};
 use crate::graphic_object::GraphicObjects;
 use crate::moving_object::{MovingObject, MovingObjectGraphicsIter};
+use crate::cannon::SimpleCannon;
 
 pub struct Player {
     // Dynamic
     p: Point2f,
     dp: Point2f,
+
+    cannons: Vec<SimpleCannon>,
 
     // Static
     graphic_objects: GraphicObjects,
@@ -19,6 +22,18 @@ impl Player {
         Player {
             p: Point2f::from_floats(50.0, 50.0),
             dp: Point2f::new(),
+            cannons: vec![
+                SimpleCannon::new(
+                    Point2f::from_floats(-2., 0.),
+                    -std::f32::consts::PI / 2.,
+                    false,
+                ),
+                SimpleCannon::new(
+                    Point2f::from_floats(2., 0.),
+                    -std::f32::consts::PI / 2.,
+                    false,
+                ),
+            ],
             graphic_objects: GraphicObjects::from_strs(vec![
                 "l 0.3 1.0 1.0 1.0 -10 8 0 -10 10 8 3 4 -3 4 -10 8",
             ]),

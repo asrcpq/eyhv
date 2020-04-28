@@ -7,6 +7,8 @@ mod moving_object;
 mod player;
 mod session;
 mod time_manager;
+mod bullet;
+mod cannon;
 
 use algebra::{Point2f, Rect2f};
 use session::Session;

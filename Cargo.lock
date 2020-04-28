@@ -34,6 +34,7 @@ name = "eyhv"
 version = "0.1.0"
 dependencies = [
  "derive_more",
+ "lazy_static",
  "sdl2",
 ]
 
