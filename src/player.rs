@@ -78,11 +78,7 @@ impl Player {
         bullet_queue
     }
 
-    fn get_p(&self) -> Point2f {
-        self.p
-    }
-
-    fn graphic_objects_iter(&self) -> GraphicObjectsIntoIter {
+    pub fn graphic_objects_iter(&self) -> GraphicObjectsIntoIter {
         GraphicObjectsIntoIter::new(self.graphic_objects.shift(self.p))
     }
 }

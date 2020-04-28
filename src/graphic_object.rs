@@ -86,7 +86,7 @@ pub struct GraphicObjects {
 }
 
 impl GraphicObjects {
-    pub fn shift(&mut self, point2f: Point2f) -> GraphicObjects {
+    pub fn shift(&self, point2f: Point2f) -> GraphicObjects {
         GraphicObjects {
             graphic_objects: self
                 .graphic_objects
@@ -158,14 +158,12 @@ mod test {
 
 pub struct GraphicObjectsIntoIter {
     graphic_objects: GraphicObjects,
-    id: usize,
 }
 
 impl GraphicObjectsIntoIter {
     pub fn new(graphic_objects: GraphicObjects) -> GraphicObjectsIntoIter {
         GraphicObjectsIntoIter {
             graphic_objects: graphic_objects,
-            id: 0,
         }
     }
 }
@@ -174,12 +172,6 @@ impl Iterator for GraphicObjectsIntoIter {
     type Item = GraphicObject;
 
     fn next(&mut self) -> Option<GraphicObject> {
-        match self.graphic_objects.get(self.id) {
-            Some(graphic_object) => {
-                self.id += 1;
-                Some(graphic_object)
-            }
-            None => None,
-        }
+        self.graphic_objects.graphic_objects.pop()
     }
 }

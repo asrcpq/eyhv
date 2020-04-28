@@ -51,8 +51,8 @@ impl Session {
 
     pub fn graphic_object_iter(&self) -> SessionGraphicObjectsIter {
         SessionGraphicObjectsIter {
-            player_iter: self.player.moving_object_graphics_iter(),
-            player_bullet_iter: self.player.moving_object_graphics_iter(),
+            player_iter: self.player.graphic_objects_iter(),
+            player_bullet_iter: self.player.graphic_objects_iter(),
         }
     }
 
