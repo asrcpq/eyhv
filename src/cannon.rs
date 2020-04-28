@@ -1,10 +1,8 @@
 use std::collections::VecDeque;
 
 use crate::algebra::Point2f;
-
-pub enum CannonTypes {
-    PlayerLocker(PlayerLocker),
-}
+use crate::bullet::{Bullet, bullet_graphic_objects};
+use crate::graphic_objects::GraphicObjects;
 
 pub trait CannonControllerInterface {
     // once a cannon is turned off, it immediately resets the state of itself
@@ -16,12 +14,10 @@ pub trait CannonControllerInterface {
 
     // this is called fire_tick as there might be other tick functions
     // like PlayerLocker's update_theta
-    fn fire_tick(&mut self, dt: f32) -> BulletQueue;
+    fn fire_tick<T: Bullet>(&mut self, dt: f32) -> VecDeque<T>;
 }
 
 pub struct PlayerLocker {
-    // static parameters
-
     // relative to moving object
     p: Point2f,
 
@@ -29,11 +25,14 @@ pub struct PlayerLocker {
     fire_duration: f32,
     cycle_duration: f32,
 
+    // phase_timer takes value from 0-cycle_duration, and reset
+    phase_timer: f32,
+
     // bullet shooted during fire phase
     fire_interval: f32,
 
     // timer between intervals
-    fire_countdown: f32,
+    fire_cd: f32,
 
     // direction, opening angle and bullet number
     // bullets are uniformly distributed on opening angle
@@ -45,9 +44,6 @@ pub struct PlayerLocker {
     // status
 
     switch: bool, // on/off
-
-    // phase_timer takes value from 0-cycle_duration, and reset
-    phase_timer: f32,
 }
 
 impl PlayerLocker {
@@ -58,7 +54,7 @@ impl PlayerLocker {
             fire_duration: fd,
             cycle_duration: cd,
             fire_interval: fi,
-            fire_countdown: 0, //fire immediately
+            fire_cd: fi,
             theta: 0, // not initialized
             angle: oa,
             count: cn,
@@ -67,7 +63,8 @@ impl PlayerLocker {
         }
     }
 
-    fn update_theta() {
+    fn update_theta(player_p: Point2f, self_p:Point2f) {
+        unimplemented!();
     }
 }
 
@@ -97,9 +94,65 @@ impl Cannon for PlayerLocker {
                 VecDequeue::new()
             } else {
                 self.phase_timer -= self.cycle_duration;
+                // will enter firing phase in next condition
+            } }
+        if self.phase_timer < self.fire_duration {
+            unimplemented!()
+        }
+    }
+}
+
+// SimpleCannon fires bullets with the same and constant speed
+// in the same direction at regular intervals
+// It is designed for Player
+pub struct SimpleCannon {
+    // relative to moving object
+    p: Point2f,
+
+    fire_interval: f32,
+    fire_cd: f32,
+
+    // for player, -90 deg is facing forward
+    theta: f32,
+
+    switch: bool,
+
+    bullet_graphic_objects: &GraphicObjects,
+}
+
+impl SimpleCannon {
+    pub fn new(p: Point2f, fi: f32, theta: f32, sw: bool) -> SimpleCannon {
+        SimpleCannon {
+            p: p,
+            bullet_speed, bs,
+            fire_interval, fi,
+            // player should not benefit from a rapid fire controller
+            fire_cd, fi,
+            theta: theta,
+            switch: switch,
+            bullet_graphic_objects: &bullet_graphic_objects::wedge,
+        }
+    }
+}
+
+impl Cannon for SimpleCannon {
+    fn switch(&mut self, switch: bool) {
+        if self.switch {
+            if !switch {
+                self.switch = false;
+                self.fire_cd = self.fire_interval;
             }
         } else {
-            
+            if switch {
+                self.switch = true;
+            }
         }
+    }
+
+    fn get_absolute_p(&self, unit_p: Point2f) -> Point2f {
+        unit_p + self.p
+    }
+
+    fn fire_tick(&mut self, dt: f32) -> BulletQueue {
     }
 }

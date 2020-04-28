@@ -1,6 +1,6 @@
 extern crate derive_more;
 use derive_more::{Add, AddAssign, Div, DivAssign, Mul, MulAssign, Sub, SubAssign};
-use std::ops::{Mul, MulAssign};
+use std::ops::Mul;
 
 // Point2f is also Vec2f
 // 2f means 2d+f32
