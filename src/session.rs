@@ -1,17 +1,16 @@
 use crate::algebra::Rect2f;
-use crate::graphic_object::GraphicObject;
+use crate::graphic_object::{GraphicObject, GraphicObjectsIntoIter};
 use crate::key_state::KeyState;
-use crate::moving_object::{MovingObject, MovingObjectGraphicsIter};
 use crate::player::Player;
 use crate::time_manager::TimeManager;
 use crate::bullet_pool::BulletPool;
 
-pub struct SessionGraphicObjectsIter<'a> {
-    player_iter: MovingObjectGraphicsIter<'a>,
-    player_bullet_iter: MovingObjectGraphicsIter<'a>,
+pub struct SessionGraphicObjectsIter {
+    player_iter: GraphicObjectsIntoIter,
+    player_bullet_iter: GraphicObjectsIntoIter,
 }
 
-impl<'a> Iterator for SessionGraphicObjectsIter<'a> {
+impl Iterator for SessionGraphicObjectsIter {
     type Item = GraphicObject;
 
     fn next(&mut self) -> Option<GraphicObject> {

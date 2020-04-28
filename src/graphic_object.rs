@@ -87,11 +87,11 @@ pub struct GraphicObjects {
 
 impl GraphicObjects {
     pub fn shift(&mut self, point2f: Point2f) -> GraphicObjects {
-        GraphicObjets {
+        GraphicObjects {
             graphic_objects: self
                 .graphic_objects
                 .iter()
-                .shift(point2f)
+                .map(|graphic_object| graphic_object.shift(point2f))
                 .collect()
         }
     }
@@ -100,11 +100,11 @@ impl GraphicObjects {
         self.graphic_objects.extend(other.graphic_objects);
     }
 
-    //pub fn new(graphic_objects: Vec<GraphicObject>) -> GraphicObjects{
-    //    GraphicObjects {
-    //        graphic_objects: graphic_objects,
-    //    }
-    //}
+    pub fn new() -> GraphicObjects{
+        GraphicObjects {
+            graphic_objects: Vec::new(),
+        }
+    }
 
     pub fn from_strs(strings: Vec<&str>) -> GraphicObjects {
         let mut graphic_objects = GraphicObjects {
@@ -153,5 +153,33 @@ mod test {
             },
         }
         assert!(graphic_objects.get(1).is_none());
+    }
+}
+
+pub struct GraphicObjectsIntoIter {
+    graphic_objects: GraphicObjects,
+    id: usize,
+}
+
+impl GraphicObjectsIntoIter {
+    pub fn new(graphic_objects: GraphicObjects) -> GraphicObjectsIntoIter {
+        GraphicObjectsIntoIter {
+            graphic_objects: graphic_objects,
+            id: 0,
+        }
+    }
+}
+
+impl Iterator for GraphicObjectsIntoIter {
+    type Item = GraphicObject;
+
+    fn next(&mut self) -> Option<GraphicObject> {
+        match self.graphic_objects.get(self.id) {
+            Some(graphic_object) => {
+                self.id += 1;
+                Some(graphic_object)
+            }
+            None => None,
+        }
     }
 }

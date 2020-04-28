@@ -3,7 +3,6 @@ extern crate sdl2;
 mod algebra;
 mod graphic_object;
 mod key_state;
-mod moving_object;
 mod player;
 mod session;
 mod time_manager;

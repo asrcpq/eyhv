@@ -2,8 +2,7 @@ use std::collections::VecDeque;
 
 use crate::bullet::Bullet;
 use crate::algebra::Rect2f;
-use crate::moving_object::{MovingObject, MovingObjectGraphicsIter};
-use crate::graphic_object::GraphicObjects;
+use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
 
 pub struct BulletPool {
     bullets: VecDeque<Bullet>,
@@ -36,10 +35,11 @@ impl BulletPool {
         }
     }
 
-    pub fn moving_object_graphics_iter(&self) -> MovingObjectGraphicsIter {
-        
+    pub fn moving_object_graphics_iter(&self) -> GraphicObjectsIntoIter {
+        let mut graphic_objects = GraphicObjects::new();
         for bullet in self.bullets.iter() {
-            bullet.moving_object_graphics_iter().shift(bullet.get_p())
+            graphic_objects.extend(bullet.moving_object_graphics_iter().shift(bullet.get_p()));
         }
+        GraphicObjectsIntoIter::new(graphic_objects)
     }
 }

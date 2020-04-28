@@ -1,8 +1,7 @@
 use std::collections::VecDeque;
 
 use crate::algebra::{Point2f, Rect2f};
-use crate::graphic_object::GraphicObjects;
-use crate::moving_object::{MovingObject, MovingObjectGraphicsIter};
+use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
 use crate::cannon::{SimpleCannon, CannonControllerInterface};
 use crate::bullet::SimpleBullet;
 
@@ -78,14 +77,12 @@ impl Player {
         }
         bullet_queue
     }
-}
 
-impl MovingObject for Player {
     fn get_p(&self) -> Point2f {
         self.p
     }
 
-    fn moving_object_graphics_iter(&self) -> MovingObjectGraphicsIter {
-        MovingObjectGraphicsIter::new(&self.graphic_objects.shift(self.p))
+    fn graphic_objects_iter(&self) -> GraphicObjectsIntoIter {
+        GraphicObjectsIntoIter::new(self.graphic_objects.shift(self.p))
     }
 }

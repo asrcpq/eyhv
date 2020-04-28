@@ -3,8 +3,7 @@ use lazy_static::lazy_static;
 use std::collections::VecDeque;
 
 use crate::algebra::{Point2f, Mat2x2f};
-use crate::graphic_object::GraphicObjects;
-use crate::moving_object::{MovingObject, MovingObjectGraphicsIter};
+use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
 
 // This struct is static, created by Session::new() only once
 pub struct BulletGraphicObjects {
@@ -42,9 +41,7 @@ impl Bullet {
             },
         }
     }
-}
 
-impl MovingObject for Bullet {
     fn get_p(&self) -> Point2f {
         match self {
             Bullet::SimpleBullet(simple_bullet) => {
@@ -56,13 +53,10 @@ impl MovingObject for Bullet {
         }
     }
 
-    fn moving_object_graphics_iter(&self) -> MovingObjectGraphicsIter {
+    fn moving_object_graphics_iter(&self) -> GraphicObjectsIntoIter {
         match self {
             Bullet::SimpleBullet(simple_bullet) => {
-                MovingObjectGraphicsIter::new(
-                    simple_bullet.get_p(),
-                    &simple_bullet.graphic_objects
-                )
+                GraphicObjectsIntoIter::new(&self.graphic_objects.shift(self.p))
             },
             Bullet::RotateBullet(rotate_bullet) => {
                 unimplemented!();
@@ -92,8 +86,8 @@ impl SimpleBullet {
         self.p
     }
 
-    fn moving_object_graphics_iter(&self) -> MovingObjectGraphicsIter {
-        MovingObjectGraphicsIter::new(self.p, &self.graphic_objects)
+    fn moving_object_graphics_iter(&self) -> GraphicObjectsIntoIter {
+        GraphicObjectsIntoIter::new(self.p, &self.graphic_objects)
     }
 
     fn tick(&mut self, dt: f32) {
