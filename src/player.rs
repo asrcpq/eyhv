@@ -84,7 +84,7 @@ impl Player {
     }
 
     pub fn graphic_objects_iter(&self) -> GraphicObjectsIntoIter {
-        GraphicObjectsIntoIter::new(self.graphic_objects.shift(self.p))
+        self.graphic_objects.shift(self.p).into_iter()
     }
 
     pub fn switch_cannons(&mut self, switch: bool) {

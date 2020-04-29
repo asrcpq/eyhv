@@ -16,7 +16,7 @@
 
 * [x] Simple cannon & simple bullet
 
-* [ ] Enemy path and graphics
+* [x] Enemy path and graphics
 
 * [ ] Enemy collision box
 

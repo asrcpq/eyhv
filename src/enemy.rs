@@ -64,7 +64,7 @@ impl DummyEnemy {
             // this p=(0, 0) should never be rendered!
             p: Point2f::new(),
             path: enemy_path::EnemyPath::Straight(
-                enemy_path::StraightDown::new(200., 100.)
+                enemy_path::StraightDown::new(250., 50.)
             ),
             graphic_objects: ENEMY_GRAPHIC_OBJECTS.dummy.clone(),
         }

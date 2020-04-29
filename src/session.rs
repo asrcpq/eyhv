@@ -33,6 +33,14 @@ impl Iterator for SessionGraphicObjectsIter {
     }
 }
 
+fn collision_enemy(enemy_pool:&mut EnemyPool, player_bullet_pool: &mut BulletPool) {
+    // Time complexity notes:
+    // O(l_e * l_pb)
+    // player_bullet_pool < 10^2
+    // enemy_pool < 10^2
+
+}
+
 pub struct Session {
     player: Player,
 

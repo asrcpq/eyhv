@@ -10,8 +10,8 @@ pub struct WaveGenerator {
 impl WaveGenerator {
     pub fn new() -> WaveGenerator {
         WaveGenerator {
-            wave_cd: 2.,
-            wave_interval: 10.,
+            wave_cd: 1.,
+            wave_interval: 6.,
         }
     }
 

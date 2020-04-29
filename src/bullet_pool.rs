@@ -36,11 +36,21 @@ impl BulletPool {
         }
     }
 
+    // only for collision
+    pub fn pop(&mut self) -> Option<Bullet> {
+        self.bullets.pop_front()
+    }
+
+    // only for collision
+    pub fn push(&mut self, bullet: Bullet) {
+        self.bullets.push_back(bullet)
+    }
+
     pub fn graphic_objects_iter(&self) -> GraphicObjectsIntoIter {
         let mut graphic_objects = GraphicObjects::new();
         for bullet in self.bullets.iter() {
             graphic_objects.extend(bullet.get_shifted_graphic_objects());
         }
-        GraphicObjectsIntoIter::new(graphic_objects)
+        graphic_objects.into_iter()
     }
 }

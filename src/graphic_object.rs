@@ -131,6 +131,12 @@ impl GraphicObjects {
     pub fn get(&self, id: usize) -> Option<&GraphicObject> {
         self.graphic_objects.get(id)
     }
+
+    pub fn into_iter(self) -> GraphicObjectsIntoIter {
+        GraphicObjectsIntoIter {
+            graphic_objects: self,
+        }
+    }
 }
 
 #[cfg(test)]
