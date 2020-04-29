@@ -5,8 +5,9 @@ mod graphic_object;
 mod key_state;
 mod player;
 mod enemy;
-mod enemy_pool;
 mod enemy_path;
+mod enemy_pool;
+mod collision_pipe_interface;
 mod wave_generator;
 mod session;
 mod time_manager;
@@ -113,6 +114,7 @@ pub fn main() {
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
 
+        // draw after tick
         for graphic_object in session.graphic_object_iter() {
             match graphic_object {
                 GraphicObject::Polygon(_) => unimplemented!(),

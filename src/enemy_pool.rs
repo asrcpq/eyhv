@@ -2,10 +2,7 @@ use std::collections::VecDeque;
 
 use crate::enemy::{Enemy, EnemyTickReturnOption};
 use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
-
-pub struct EnemyPoolSnapshotIter {
-    
-}
+use crate::collision_pipe_interface::CollisionPipeInterface;
 
 pub struct EnemyPool {
     enemies: VecDeque<Enemy>,
@@ -20,10 +17,6 @@ impl EnemyPool {
 
     pub fn extend(&mut self, enemy_queue: VecDeque<Enemy>) {
         self.enemies.extend(enemy_queue);
-    }
-
-    pub fn push(&mut self, enemy: Enemy) {
-        self.enemies.push_back(enemy);
     }
 
     pub fn tick(&mut self, dt: f32) {
@@ -48,5 +41,19 @@ impl EnemyPool {
             graphic_objects.extend(enemy.get_shifted_graphic_objects());
         }
         graphic_objects.into_iter()
+    }
+}
+
+impl CollisionPipeInterface for EnemyPool {
+    type Object = Enemy;
+
+    fn push(&mut self, enemy: Enemy) {
+        self.enemies.push_back(enemy);
+    }
+    fn pop(&mut self) -> Option<Enemy> {
+        self.enemies.pop_front()
+    }
+    fn len(&self) -> usize {
+        self.enemies.len()
     }
 }

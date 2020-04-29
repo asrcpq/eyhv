@@ -6,6 +6,7 @@ use crate::graphic_object::GraphicObjects;
 use crate::enemy_path;
 use crate::algebra::Point2f;
 use crate::bullet::Bullet;
+use crate::collision_pipe_interface::ObjectPositionInterface;
 
 // This struct is static, created by Session::new() only once
 #[derive(Clone)]
@@ -51,8 +52,27 @@ impl Enemy {
     }
 }
 
+impl ObjectPositionInterface for Enemy {
+    fn get_p(&self) -> Option<Point2f> {
+        match self {
+            Enemy::Dummy(enemy) => {
+                enemy.get_p()
+            }
+        }
+    }
+
+    fn get_last_p(&self) -> Option<Point2f> {
+        match self {
+            Enemy::Dummy(enemy) => {
+                enemy.get_last_p()
+            }
+        }
+    }
+}
+
 pub struct DummyEnemy {
-    p: Point2f,
+    p: Option<Point2f>,
+    last_p: Option<Point2f>,
     path: enemy_path::EnemyPath,
 
     graphic_objects: GraphicObjects,
@@ -61,8 +81,8 @@ pub struct DummyEnemy {
 impl DummyEnemy {
     pub fn new() -> DummyEnemy {
         DummyEnemy {
-            // this p=(0, 0) should never be rendered!
-            p: Point2f::new(),
+            p: None,
+            last_p: None,
             path: enemy_path::EnemyPath::Straight(
                 enemy_path::StraightDown::new(250., 50.)
             ),
@@ -75,7 +95,8 @@ impl DummyEnemy {
             // update p first to prevent displaying (0, 0)
             None => return EnemyTickReturnOption::Removed,
             Some(point2f) => {
-               self.p = point2f;
+                self.last_p = self.p;
+                self.p = Some(point2f);
             },
         }
 
@@ -83,7 +104,15 @@ impl DummyEnemy {
         EnemyTickReturnOption::Normal(VecDeque::new())
     }
 
-    pub fn get_shifted_graphic_objects(&self) -> GraphicObjects {
-        self.graphic_objects.shift(self.p)
+    fn get_shifted_graphic_objects(&self) -> GraphicObjects {
+        self.graphic_objects.shift(self.p.unwrap())
+    }
+
+    fn get_p(&self) -> Option<Point2f> {
+        self.p
+    }
+
+    fn get_last_p(&self) -> Option<Point2f> {
+        self.last_p
     }
 }

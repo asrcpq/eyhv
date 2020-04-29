@@ -6,6 +6,7 @@ use crate::enemy_pool::EnemyPool;
 use crate::time_manager::TimeManager;
 use crate::bullet_pool::BulletPool;
 use crate::wave_generator::WaveGenerator;
+use crate::collision_pipe_interface::{CollisionPipeInterface, ObjectPositionInterface};
 
 pub struct SessionGraphicObjectsIter {
     player_iter: GraphicObjectsIntoIter,
@@ -33,12 +34,25 @@ impl Iterator for SessionGraphicObjectsIter {
     }
 }
 
+// collision will also remove dead bullet for efficiency
 fn collision_enemy(enemy_pool:&mut EnemyPool, player_bullet_pool: &mut BulletPool) {
     // Time complexity notes:
     // O(l_e * l_pb)
     // player_bullet_pool < 10^2
     // enemy_pool < 10^2
+    let enemy_len = enemy_pool.len();
+    for _ in 0..enemy_len {
+        let enemy = enemy_pool.pop().unwrap();
+        let enemy_last_p = enemy.get_last_p();
+        let enemy_p = enemy.get_p();
 
+        let bullet_len = player_bullet_pool.len();
+        for _ in 0..bullet_len {
+            let bullet = player_bullet_pool.pop().unwrap();
+            // Mechanism note: detect collision before detect dead bullet
+
+        }
+    }
 }
 
 pub struct Session {
@@ -83,6 +97,10 @@ impl Session {
         ));
         self.enemy_pool.extend(self.wave_generator.tick(dt));
         self.enemy_pool.tick(dt);
+        collision_enemy(
+            &mut self.enemy_pool,
+            &mut self.player_bullet_pool,
+        );
     }
 
     pub fn proc_key(&mut self, key_id: i8, updown: bool) {

@@ -14,6 +14,23 @@ pub struct Point2f {
     pub y: f32,
 }
 
+// test if ab cross cd(including end point)
+pub fn intersection_test(a: Point2f, b: Point2f, c: Point2f, d: Point2f) -> bool{
+    // strict check only
+    let ab = a - b;
+    let ac = a - c;
+    let ad = a - d;
+    let ba = b - a;
+    let bc = b - c;
+    let bd = b - d;
+    if (ab.x * ac.y - ab.y * ac.x) * (ab.x * ad.y - ab.y * ad.x) <= 0. &&
+        (ba.x * bc.y - ba.y * bc.x) * (ba.x * bd.y - ba.y * bd.x) <= 0. {
+        true
+    } else {
+        false
+    }
+}
+
 #[derive(
     Copy, Clone, PartialEq, Debug, Default, Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign,
 )]
@@ -119,7 +136,7 @@ impl Rect2f {
 
 #[cfg(test)]
 mod test {
-    use super::{Point2f, Mat2x2f};
+    use super::{Point2f, Mat2x2f, intersection_test};
 
     #[test]
     fn test_point2f_derive_more() {
@@ -152,5 +169,26 @@ mod test {
         let point2f = mat2x2f * point2f;
         assert!((point2f.x + 4.).abs() < eps);
         assert!((point2f.y - 3.).abs() < eps);
+    }
+
+    #[test]
+    fn test_intersection() {
+        macro_rules! t { //test_intersection_from_8_floats 
+            ($x1: expr, $y1: expr,
+                $x2: expr, $y2: expr,
+                $x3: expr, $y3: expr,
+                $x4: expr, $y4: expr,
+                $expect: expr) => (
+                let a = Point2f::from_floats($x1, $y1);
+                let b = Point2f::from_floats($x2, $y2);
+                let c = Point2f::from_floats($x3, $y3);
+                let d = Point2f::from_floats($x4, $y4);
+                assert_eq!(intersection_test(a, b, c, d), $expect);
+            )
+        }
+        t!(0., 0., 1., 1., 0., 1., 1., 0., true); //X
+        t!(0., -0.1, 0., 1., -0.1, 0., 1., 0., true); //L(cross)
+        t!(0., 0.1, 0., 1., 0.1, 0., 1., 0., false); //L(not cross)
+        t!(0., 0., 0., 1., 1., 0., 1., 1., false); //||
     }
 }
