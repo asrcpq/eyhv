@@ -7,7 +7,7 @@ pub enum EnemyPath {
 }
 
 impl EnemyPath {
-    pub fn tick(&mut self, dt: f32) -> Option<f32> {
+    pub fn tick(&mut self, dt: f32) -> Option<Point2f> {
         match self {
             EnemyPath::Straight(enemy_path) => {
                 enemy_path.tick(dt)
@@ -32,13 +32,13 @@ impl StraightDown {
     }
 
     // return None if path ends
-    pub fn tick(&mut self, dt: f32) -> Option<f32> {
+    pub fn tick(&mut self, dt: f32) -> Option<Point2f> {
         self.timer += dt;
         let y = self.vy * self.timer;
         if y > WINDOW_RECT.rd.y {
             None
         } else {
-            Some(y)
+            Some(Point2f::from_floats(self.x, y))
         }
     }
 }

@@ -1,9 +1,10 @@
 use std::collections::VecDeque;
 
 use crate::enemy::Enemy;
+use crate::graphic_objects::{GraphicObjects, GraphicObjectsIntoIter};
 
 pub struct EnemyPool {
-    enemys: VecDeque<Enemy>,
+    enemies: VecDeque<Enemy>,
 }
 
 impl EnemyPool {
@@ -24,5 +25,13 @@ impl EnemyPool {
 
             //
         }
+    }
+
+    pub fn graphic_objects_iter(&self) -> GraphicObjectsIntoIter {
+        let mut graphic_objects = GraphicObjects::new();
+        for enemy in self.enemies {
+            graphic_objects.extend(enemy.get_shifted_graphic_objects());
+        }
+        graphic_objects
     }
 }
