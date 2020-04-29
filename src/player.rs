@@ -1,9 +1,9 @@
 use std::collections::VecDeque;
 
 use crate::algebra::Point2f;
-use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
-use crate::cannon::{SimpleCannon, CannonControllerInterface};
 use crate::bullet::{Bullet, SimpleBullet};
+use crate::cannon::{CannonControllerInterface, SimpleCannon};
+use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
 use crate::window_rect::WINDOW_RECT;
 
 pub struct Player {
@@ -24,10 +24,7 @@ impl Player {
     pub fn new() -> Player {
         let window_size = WINDOW_RECT.get_size();
         Player {
-            p: Point2f::from_floats(
-                window_size.x / 2.,
-                window_size.y - 50.,
-            ),
+            p: Point2f::from_floats(window_size.x / 2., window_size.y - 50.),
             dp: Point2f::new(),
             cannons: vec![
                 SimpleCannon::new(

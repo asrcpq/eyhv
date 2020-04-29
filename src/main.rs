@@ -1,19 +1,19 @@
 extern crate sdl2;
 
 mod algebra;
-mod graphic_object;
-mod key_state;
-mod player;
+mod bullet;
+mod bullet_pool;
+mod cannon;
+mod collision_pipe_interface;
 mod enemy;
 mod enemy_path;
 mod enemy_pool;
-mod collision_pipe_interface;
-mod wave_generator;
+mod graphic_object;
+mod key_state;
+mod player;
 mod session;
 mod time_manager;
-mod bullet;
-mod cannon;
-mod bullet_pool;
+mod wave_generator;
 mod window_rect;
 
 use algebra::{Point2f, Rect2f};

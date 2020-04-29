@@ -1,8 +1,8 @@
 use std::collections::VecDeque;
 
+use crate::collision_pipe_interface::CollisionPipeInterface;
 use crate::enemy::{Enemy, EnemyTickReturnOption};
 use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
-use crate::collision_pipe_interface::CollisionPipeInterface;
 
 pub struct EnemyPool {
     enemies: VecDeque<Enemy>,
@@ -28,9 +28,8 @@ impl EnemyPool {
                 EnemyTickReturnOption::Normal(bullet_queue) => {
                     // enemy bullet not implemented yet
                     self.enemies.push_back(enemy);
-                },
-                EnemyTickReturnOption::Destroyed |
-                EnemyTickReturnOption::Removed => { }
+                }
+                EnemyTickReturnOption::Destroyed | EnemyTickReturnOption::Removed => {}
             }
         }
     }

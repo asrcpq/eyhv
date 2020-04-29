@@ -1,6 +1,6 @@
-use std::collections::VecDeque;
 use crate::enemy;
 use crate::enemy::Enemy;
+use std::collections::VecDeque;
 
 pub struct WaveGenerator {
     wave_cd: f32,

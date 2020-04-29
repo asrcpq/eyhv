@@ -1,10 +1,10 @@
 use std::collections::VecDeque;
 
-use crate::bullet::Bullet;
 use crate::algebra::Rect2f;
-use crate::window_rect::WINDOW_RECT;
-use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
+use crate::bullet::Bullet;
 use crate::collision_pipe_interface::{CollisionPipeInterface, ObjectPositionInterface};
+use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
+use crate::window_rect::WINDOW_RECT;
 
 pub struct BulletPool {
     bullets: VecDeque<Bullet>,
@@ -31,7 +31,7 @@ impl BulletPool {
             // check pos
             if let Some(p) = bullet.get_p() {
                 if !WINDOW_RECT.contain(p) {
-                    continue
+                    continue;
                 }
             }
 

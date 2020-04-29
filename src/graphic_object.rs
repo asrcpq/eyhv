@@ -1,4 +1,4 @@
-use crate::algebra::{Point2f, Mat2x2f};
+use crate::algebra::{Mat2x2f, Point2f};
 
 #[derive(Clone, Debug)]
 pub struct LineSegs2f {
@@ -64,15 +64,14 @@ impl GraphicObject {
 
     pub fn rotate(&self, rotate_mat: Mat2x2f) -> GraphicObject {
         match self {
-            GraphicObject::LineSegs(line_segs) => {
-                GraphicObject::LineSegs(LineSegs2f::new(
-                    line_segs.vertices
-                        .iter()
-                        .map(|x| rotate_mat * x.clone())
-                        .collect(),
-                    line_segs.color,
-                ))
-            }
+            GraphicObject::LineSegs(line_segs) => GraphicObject::LineSegs(LineSegs2f::new(
+                line_segs
+                    .vertices
+                    .iter()
+                    .map(|x| rotate_mat * x.clone())
+                    .collect(),
+                line_segs.color,
+            )),
             GraphicObject::Polygon(polygon) => {
                 unimplemented!();
             }
@@ -92,7 +91,7 @@ impl GraphicObjects {
                 .graphic_objects
                 .iter()
                 .map(|graphic_object| graphic_object.shift(point2f))
-                .collect()
+                .collect(),
         }
     }
 
@@ -100,7 +99,7 @@ impl GraphicObjects {
         self.graphic_objects.extend(other.graphic_objects);
     }
 
-    pub fn new() -> GraphicObjects{
+    pub fn new() -> GraphicObjects {
         GraphicObjects {
             graphic_objects: Vec::new(),
         }

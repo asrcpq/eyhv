@@ -2,11 +2,11 @@ use lazy_static::lazy_static;
 
 use std::collections::VecDeque;
 
-use crate::graphic_object::GraphicObjects;
-use crate::enemy_path;
 use crate::algebra::Point2f;
 use crate::bullet::Bullet;
 use crate::collision_pipe_interface::ObjectPositionInterface;
+use crate::enemy_path;
+use crate::graphic_object::GraphicObjects;
 
 // This struct is static, created by Session::new() only once
 #[derive(Clone)]
@@ -17,9 +17,7 @@ pub struct EnemyGraphicObjects {
 lazy_static! {
     pub static ref ENEMY_GRAPHIC_OBJECTS: EnemyGraphicObjects = {
         EnemyGraphicObjects {
-            dummy: GraphicObjects::from_strs(
-                vec!["l 1 1 1 1 -10 -10 -10 10 10 10 10 -10 -10 -10"]
-            ),
+            dummy: GraphicObjects::from_strs(vec!["l 1 1 1 1 -10 -10 -10 10 10 10 10 -10 -10 -10"]),
         }
     };
 }
@@ -37,17 +35,13 @@ pub enum Enemy {
 impl Enemy {
     pub fn tick(&mut self, dt: f32) -> EnemyTickReturnOption {
         match self {
-            Enemy::Dummy(enemy) => {
-                enemy.tick(dt)
-            }
+            Enemy::Dummy(enemy) => enemy.tick(dt),
         }
     }
 
     pub fn get_shifted_graphic_objects(&self) -> GraphicObjects {
         match self {
-            Enemy::Dummy(enemy) => {
-                enemy.get_shifted_graphic_objects()
-            }
+            Enemy::Dummy(enemy) => enemy.get_shifted_graphic_objects(),
         }
     }
 }
@@ -55,17 +49,13 @@ impl Enemy {
 impl ObjectPositionInterface for Enemy {
     fn get_p(&self) -> Option<Point2f> {
         match self {
-            Enemy::Dummy(enemy) => {
-                enemy.get_p()
-            }
+            Enemy::Dummy(enemy) => enemy.get_p(),
         }
     }
 
     fn get_last_p(&self) -> Option<Point2f> {
         match self {
-            Enemy::Dummy(enemy) => {
-                enemy.get_last_p()
-            }
+            Enemy::Dummy(enemy) => enemy.get_last_p(),
         }
     }
 }
@@ -83,9 +73,7 @@ impl DummyEnemy {
         DummyEnemy {
             p: None,
             last_p: None,
-            path: enemy_path::EnemyPath::Straight(
-                enemy_path::StraightDown::new(250., 50.)
-            ),
+            path: enemy_path::EnemyPath::Straight(enemy_path::StraightDown::new(250., 50.)),
             graphic_objects: ENEMY_GRAPHIC_OBJECTS.dummy.clone(),
         }
     }
@@ -97,7 +85,7 @@ impl DummyEnemy {
             Some(point2f) => {
                 self.last_p = self.p;
                 self.p = Some(point2f);
-            },
+            }
         }
 
         // Fire here

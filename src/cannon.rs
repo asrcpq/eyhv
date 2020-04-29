@@ -39,7 +39,6 @@ pub struct PlayerLocker {
     count: u32,
 
     // status
-
     switch: bool, // on/off
 }
 
@@ -60,7 +59,7 @@ impl PlayerLocker {
         }
     }
 
-    fn update_theta(player_p: Point2f, self_p:Point2f) {
+    fn update_theta(player_p: Point2f, self_p: Point2f) {
         unimplemented!();
     }
 }
@@ -153,14 +152,12 @@ impl CannonControllerInterface for SimpleCannon {
             } else {
                 dt -= self.fire_cd;
                 self.fire_cd = self.fire_interval;
-                bullet_queue.push_back(bullet::Bullet::Simple(
-                    bullet::SimpleBullet::new(
-                        self.p + host_p,
-                        Point2f::from_floats(0., -BULLET_SPEED),
-                        Point2f::new(),
-                        bullet::BULLET_GRAPHIC_OBJECTS.rectangle.clone(),
-                    )
-                ));
+                bullet_queue.push_back(bullet::Bullet::Simple(bullet::SimpleBullet::new(
+                    self.p + host_p,
+                    Point2f::from_floats(0., -BULLET_SPEED),
+                    Point2f::new(),
+                    bullet::BULLET_GRAPHIC_OBJECTS.rectangle.clone(),
+                )));
             }
         }
     }

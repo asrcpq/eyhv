@@ -9,9 +9,7 @@ pub enum EnemyPath {
 impl EnemyPath {
     pub fn tick(&mut self, dt: f32) -> Option<Point2f> {
         match self {
-            EnemyPath::Straight(enemy_path) => {
-                enemy_path.tick(dt)
-            }
+            EnemyPath::Straight(enemy_path) => enemy_path.tick(dt),
         }
     }
 }

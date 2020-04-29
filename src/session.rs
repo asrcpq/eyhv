@@ -1,12 +1,12 @@
-use crate::algebra::{Rect2f, intersection_test};
+use crate::algebra::{intersection_test, Rect2f};
+use crate::bullet_pool::BulletPool;
+use crate::collision_pipe_interface::{CollisionPipeInterface, ObjectPositionInterface};
+use crate::enemy_pool::EnemyPool;
 use crate::graphic_object::{GraphicObject, GraphicObjectsIntoIter};
 use crate::key_state::KeyState;
 use crate::player::Player;
-use crate::enemy_pool::EnemyPool;
 use crate::time_manager::TimeManager;
-use crate::bullet_pool::BulletPool;
 use crate::wave_generator::WaveGenerator;
-use crate::collision_pipe_interface::{CollisionPipeInterface, ObjectPositionInterface};
 
 pub struct SessionGraphicObjectsIter {
     player_iter: GraphicObjectsIntoIter,
@@ -19,22 +19,22 @@ impl Iterator for SessionGraphicObjectsIter {
 
     fn next(&mut self) -> Option<GraphicObject> {
         match self.player_iter.next() {
-            None => {},
+            None => {}
             option => return option,
         }
         match self.player_bullet_iter.next() {
-            None => {},
+            None => {}
             option => return option,
         }
         match self.enemy_iter.next() {
-            None => {},
+            None => {}
             option => return option,
         }
         None
     }
 }
 
-fn collision_enemy(enemy_pool:&mut EnemyPool, player_bullet_pool: &mut BulletPool) {
+fn collision_enemy(enemy_pool: &mut EnemyPool, player_bullet_pool: &mut BulletPool) {
     // Time complexity notes:
     // O(l_e * l_pb)
     // player_bullet_pool < 10^2
@@ -50,15 +50,10 @@ fn collision_enemy(enemy_pool:&mut EnemyPool, player_bullet_pool: &mut BulletPoo
                     let bullet = player_bullet_pool.pop().unwrap();
                     if let Some(bullet_p) = bullet.get_p() {
                         if let Some(bullet_last_p) = bullet.get_last_p() {
-                            if intersection_test(
-                                enemy_p,
-                                enemy_last_p,
-                                bullet_p,
-                                bullet_last_p,
-                                ) {
+                            if intersection_test(enemy_p, enemy_last_p, bullet_p, bullet_last_p) {
                                 keep_enemy = false;
                                 println!("BANG!");
-                                break
+                                break;
                             }
                         }
                     }
@@ -108,16 +103,11 @@ impl Session {
     pub fn tick(&mut self, mut dt: f32) {
         dt *= self.time_manager.update_and_get_dt_scaler(dt);
         self.player_bullet_pool.tick(dt);
-        self.player_bullet_pool.extend(self.player.tick(
-            dt,
-            &self.key_state.directions
-        ));
+        self.player_bullet_pool
+            .extend(self.player.tick(dt, &self.key_state.directions));
         self.enemy_pool.extend(self.wave_generator.tick(dt));
         self.enemy_pool.tick(dt);
-        collision_enemy(
-            &mut self.enemy_pool,
-            &mut self.player_bullet_pool,
-        );
+        collision_enemy(&mut self.enemy_pool, &mut self.player_bullet_pool);
     }
 
     pub fn proc_key(&mut self, key_id: i8, updown: bool) {

@@ -5,7 +5,19 @@ use std::ops::Mul;
 // Point2f is also Vec2f
 // 2f means 2d+f32
 #[derive(
-    Copy, Clone, PartialEq, Debug, Default, Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign,
+    Copy,
+    Clone,
+    PartialEq,
+    Debug,
+    Default,
+    Add,
+    AddAssign,
+    Sub,
+    SubAssign,
+    Mul,
+    MulAssign,
+    Div,
+    DivAssign,
 )]
 pub struct Point2f {
     // / x \
@@ -15,7 +27,7 @@ pub struct Point2f {
 }
 
 // test if ab cross cd(including end point)
-pub fn intersection_test(a: Point2f, b: Point2f, c: Point2f, d: Point2f) -> bool{
+pub fn intersection_test(a: Point2f, b: Point2f, c: Point2f, d: Point2f) -> bool {
     // strict check only
     let ab = a - b;
     let ac = a - c;
@@ -23,8 +35,9 @@ pub fn intersection_test(a: Point2f, b: Point2f, c: Point2f, d: Point2f) -> bool
     let ba = b - a;
     let bc = b - c;
     let bd = b - d;
-    if (ab.x * ac.y - ab.y * ac.x) * (ab.x * ad.y - ab.y * ad.x) <= 0. &&
-        (ba.x * bc.y - ba.y * bc.x) * (ba.x * bd.y - ba.y * bd.x) <= 0. {
+    if (ab.x * ac.y - ab.y * ac.x) * (ab.x * ad.y - ab.y * ad.x) <= 0.
+        && (ba.x * bc.y - ba.y * bc.x) * (ba.x * bd.y - ba.y * bd.x) <= 0.
+    {
         true
     } else {
         false
@@ -32,7 +45,19 @@ pub fn intersection_test(a: Point2f, b: Point2f, c: Point2f, d: Point2f) -> bool
 }
 
 #[derive(
-    Copy, Clone, PartialEq, Debug, Default, Add, AddAssign, Sub, SubAssign, Mul, MulAssign, Div, DivAssign,
+    Copy,
+    Clone,
+    PartialEq,
+    Debug,
+    Default,
+    Add,
+    AddAssign,
+    Sub,
+    SubAssign,
+    Mul,
+    MulAssign,
+    Div,
+    DivAssign,
 )]
 pub struct Mat2x2f {
     // / x1 x2 \
@@ -98,7 +123,7 @@ impl Rect2f {
         Rect2f { lu: lu, rd: rd }
     }
 
-    pub fn from_floats(x1: f32, y1: f32, x2: f32, y2: f32) -> Rect2f{
+    pub fn from_floats(x1: f32, y1: f32, x2: f32, y2: f32) -> Rect2f {
         Rect2f {
             lu: Point2f::from_floats(x1, y1),
             rd: Point2f::from_floats(x2, y2),
@@ -136,7 +161,7 @@ impl Rect2f {
 
 #[cfg(test)]
 mod test {
-    use super::{Point2f, Mat2x2f, intersection_test};
+    use super::{intersection_test, Mat2x2f, Point2f};
 
     #[test]
     fn test_point2f_derive_more() {
@@ -156,7 +181,7 @@ mod test {
     #[test]
     fn test_mat2x2f() {
         let mat2x2f = Mat2x2f::from_theta(std::f32::consts::PI / 2.);
-        let eps:f32 = 1e-6;
+        let eps: f32 = 1e-6;
         // / 0 -1 \
         // \ 1  0 /
         assert!(mat2x2f.x1.abs() < eps);
@@ -173,18 +198,19 @@ mod test {
 
     #[test]
     fn test_intersection() {
-        macro_rules! t { //test_intersection_from_8_floats 
+        macro_rules! t {
+            //test_intersection_from_8_floats
             ($x1: expr, $y1: expr,
                 $x2: expr, $y2: expr,
                 $x3: expr, $y3: expr,
                 $x4: expr, $y4: expr,
-                $expect: expr) => (
+                $expect: expr) => {
                 let a = Point2f::from_floats($x1, $y1);
                 let b = Point2f::from_floats($x2, $y2);
                 let c = Point2f::from_floats($x3, $y3);
                 let d = Point2f::from_floats($x4, $y4);
                 assert_eq!(intersection_test(a, b, c, d), $expect);
-            )
+            };
         }
         t!(0., 0., 1., 1., 0., 1., 1., 0., true); //X
         t!(0., -0.1, 0., 1., -0.1, 0., 1., 0., true); //L(cross)
