@@ -1,4 +1,4 @@
-## TODO list
+## TODO
 
 ---
 
@@ -14,7 +14,7 @@
 
 * [x] World slowdown with transition
 
-* [x] Simple Cannon & Simple Bullet
+* [x] Simple cannon & simple bullet
 
 * [ ] Enemy path and graphics
 

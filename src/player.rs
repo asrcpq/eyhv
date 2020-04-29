@@ -1,9 +1,10 @@
 use std::collections::VecDeque;
 
-use crate::algebra::{Point2f, Rect2f};
+use crate::algebra::Point2f;
 use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
 use crate::cannon::{SimpleCannon, CannonControllerInterface};
 use crate::bullet::{Bullet, SimpleBullet};
+use crate::window_rect::WINDOW_RECT;
 
 pub struct Player {
     // Dynamic
@@ -20,9 +21,13 @@ pub struct Player {
 }
 
 impl Player {
-    pub fn new(window_size: Point2f) -> Player {
+    pub fn new() -> Player {
+        let window_size = WINDOW_RECT.get_size();
         Player {
-            p: Point2f::from_floats(window_size.x / 2., window_size.y - 50.),
+            p: Point2f::from_floats(
+                window_size.x / 2.,
+                window_size.y - 50.,
+            ),
             dp: Point2f::new(),
             cannons: vec![
                 SimpleCannon::new(
@@ -66,10 +71,10 @@ impl Player {
         self.dp = dp;
     }
 
-    pub fn tick(&mut self, dt: f32, directions: &[bool; 4], window_size: Rect2f) -> VecDeque<Bullet> {
+    pub fn tick(&mut self, dt: f32, directions: &[bool; 4]) -> VecDeque<Bullet> {
         self.set_dp(directions);
         self.p += self.dp * dt;
-        self.p = window_size.nearest(self.p);
+        self.p = WINDOW_RECT.nearest(self.p);
 
         let mut bullet_queue = VecDeque::new();
         for cannon in self.cannons.iter_mut() {

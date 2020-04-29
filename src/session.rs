@@ -27,7 +27,6 @@ impl Iterator for SessionGraphicObjectsIter {
 }
 
 pub struct Session {
-    window_rect: Rect2f,
     player: Player,
 
     player_bullet_pool: BulletPool,
@@ -39,10 +38,9 @@ pub struct Session {
 }
 
 impl Session {
-    pub fn new(window_rect: Rect2f) -> Session {
+    pub fn new() -> Session {
         Session {
-            window_rect: window_rect,
-            player: Player::new(window_rect.get_size()),
+            player: Player::new(),
             player_bullet_pool: BulletPool::new(),
             key_state: KeyState::new(),
             time_manager: TimeManager::new(),
@@ -58,9 +56,10 @@ impl Session {
 
     pub fn tick(&mut self, mut dt: f32) {
         dt *= self.time_manager.update_and_get_dt_scaler(dt);
-        self.player_bullet_pool.tick(self.window_rect, dt);
+        self.player_bullet_pool.tick(dt);
         self.player_bullet_pool.extend(self.player.tick(
-            dt, &self.key_state.directions, self.window_rect
+            dt,
+            &self.key_state.directions
         ));
     }
 

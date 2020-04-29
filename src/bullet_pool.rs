@@ -2,6 +2,7 @@ use std::collections::VecDeque;
 
 use crate::bullet::Bullet;
 use crate::algebra::Rect2f;
+use crate::window_rect::WINDOW_RECT;
 use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
 
 pub struct BulletPool {
@@ -19,7 +20,7 @@ impl BulletPool {
         self.bullets.extend(bullet_queue);
     }
 
-    pub fn tick(&mut self, window_rect: Rect2f, dt: f32) {
+    pub fn tick(&mut self, dt: f32) {
         let len = self.bullets.len();
         for _ in 0..len {
             let mut bullet = self.bullets.pop_front().unwrap();
@@ -27,7 +28,7 @@ impl BulletPool {
             bullet.tick(dt);
 
             // check pos
-            if !window_rect.contain(bullet.get_p()) {
+            if !WINDOW_RECT.contain(bullet.get_p()) {
                 continue
             }
 

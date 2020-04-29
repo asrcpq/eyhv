@@ -82,15 +82,15 @@ impl SimpleBullet {
             graphic_objects: graphic_objects,
         }
     }
-    pub fn get_p(&self) -> Point2f {
+    fn get_p(&self) -> Point2f {
         self.p
     }
 
-    pub fn get_shifted_graphic_objects(&self) -> GraphicObjects {
+    fn get_shifted_graphic_objects(&self) -> GraphicObjects {
         self.graphic_objects.shift(self.p)
     }
 
-    pub fn tick(&mut self, dt: f32) {
+    fn tick(&mut self, dt: f32) {
         self.p += self.v * dt;
         self.v += self.a * dt;
     }

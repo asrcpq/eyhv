@@ -61,8 +61,8 @@ impl Point2f {
 
 #[derive(Copy, Clone, Debug)]
 pub struct Rect2f {
-    lu: Point2f,
-    rd: Point2f,
+    pub lu: Point2f,
+    pub rd: Point2f,
 }
 
 impl Rect2f {
@@ -79,6 +79,13 @@ impl Rect2f {
 
     pub fn from_point2fs(lu: Point2f, rd: Point2f) -> Rect2f {
         Rect2f { lu: lu, rd: rd }
+    }
+
+    pub fn from_floats(x1: f32, y1: f32, x2: f32, y2: f32) -> Rect2f{
+        Rect2f {
+            lu: Point2f::from_floats(x1, y1),
+            rd: Point2f::from_floats(x2, y2),
+        }
     }
 
     // check if point2f falls inside the rectangle(not falls on)

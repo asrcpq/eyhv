@@ -1,6 +1,5 @@
 use lazy_static::lazy_static;
 
-use crate::algebra::{Point2f, Mat2x2f};
 use crate::graphic_object::GraphicObjects;
 use crate::enemy_path;
 
@@ -38,5 +37,9 @@ impl DummyEnemy {
             ),
             graphic_objects: ENEMY_GRAPHIC_OBJECTS.dummy.clone(),
         }
+    }
+
+    pub fn get_shifted_graphic_objects() {
+        
     }
 }

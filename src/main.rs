@@ -11,9 +11,11 @@ mod time_manager;
 mod bullet;
 mod cannon;
 mod bullet_pool;
+mod window_rect;
 
 use algebra::{Point2f, Rect2f};
 use session::Session;
+use window_rect::WINDOW_RECT;
 
 use sdl2::event::Event;
 use sdl2::gfx::primitives::DrawRenderer;
@@ -37,11 +39,10 @@ fn find_sdl_gl_driver() -> Option<u32> {
 pub fn main() {
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
-
-    let window_rd = Point2f::from_floats(500., 700.);
+    let window_size = WINDOW_RECT.get_size();
 
     let window = video_subsystem
-        .window("eyhv", window_rd.x as u32, window_rd.y as u32)
+        .window("eyhv", window_size.x as u32, window_size.y as u32)
         .opengl()
         .position_centered()
         .build()
@@ -59,7 +60,7 @@ pub fn main() {
     canvas.present();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
-    let mut session = Session::new(Rect2f::from_point2fs(Point2f::new(), window_rd));
+    let mut session = Session::new();
 
     let mut last_time = SystemTime::now();
     'running: loop {
