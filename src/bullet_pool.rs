@@ -4,7 +4,7 @@ use crate::bullet::Bullet;
 use crate::algebra::Rect2f;
 use crate::window_rect::WINDOW_RECT;
 use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
-use crate::collision_pipe_interface::CollisionPipeInterface;
+use crate::collision_pipe_interface::{CollisionPipeInterface, ObjectPositionInterface};
 
 pub struct BulletPool {
     bullets: VecDeque<Bullet>,
@@ -28,10 +28,12 @@ impl BulletPool {
             // update pos
             bullet.tick(dt);
 
-            // check pos will be integrated into collision detecting part
-            //if !WINDOW_RECT.contain(bullet.get_p()) {
-            //    continue
-            //}
+            // check pos
+            if let Some(p) = bullet.get_p() {
+                if !WINDOW_RECT.contain(p) {
+                    continue
+                }
+            }
 
             self.bullets.push_back(bullet);
         }

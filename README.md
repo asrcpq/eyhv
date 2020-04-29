@@ -18,7 +18,9 @@
 
 * [x] Enemy path and graphics
 
-* [ ] Enemy collision box
+* [x] Simple collision test with position(not tested!)
+
+* [ ] Collision box for enemy and player bullet
 
 * [ ] Enemy cannon
 

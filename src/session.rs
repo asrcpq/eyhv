@@ -1,4 +1,4 @@
-use crate::algebra::Rect2f;
+use crate::algebra::{Rect2f, intersection_test};
 use crate::graphic_object::{GraphicObject, GraphicObjectsIntoIter};
 use crate::key_state::KeyState;
 use crate::player::Player;
@@ -34,7 +34,6 @@ impl Iterator for SessionGraphicObjectsIter {
     }
 }
 
-// collision will also remove dead bullet for efficiency
 fn collision_enemy(enemy_pool:&mut EnemyPool, player_bullet_pool: &mut BulletPool) {
     // Time complexity notes:
     // O(l_e * l_pb)
@@ -43,14 +42,32 @@ fn collision_enemy(enemy_pool:&mut EnemyPool, player_bullet_pool: &mut BulletPoo
     let enemy_len = enemy_pool.len();
     for _ in 0..enemy_len {
         let enemy = enemy_pool.pop().unwrap();
-        let enemy_last_p = enemy.get_last_p();
-        let enemy_p = enemy.get_p();
-
-        let bullet_len = player_bullet_pool.len();
-        for _ in 0..bullet_len {
-            let bullet = player_bullet_pool.pop().unwrap();
-            // Mechanism note: detect collision before detect dead bullet
-
+        let mut keep_enemy: bool = true;
+        if let Some(enemy_last_p) = enemy.get_last_p() {
+            if let Some(enemy_p) = enemy.get_p() {
+                let bullet_len = player_bullet_pool.len();
+                for _ in 0..bullet_len {
+                    let bullet = player_bullet_pool.pop().unwrap();
+                    if let Some(bullet_p) = bullet.get_p() {
+                        if let Some(bullet_last_p) = bullet.get_last_p() {
+                            if intersection_test(
+                                enemy_p,
+                                enemy_last_p,
+                                bullet_p,
+                                bullet_last_p,
+                                ) {
+                                keep_enemy = false;
+                                println!("BANG!");
+                                break
+                            }
+                        }
+                    }
+                    player_bullet_pool.push(bullet);
+                }
+            }
+        }
+        if keep_enemy {
+            enemy_pool.push(enemy);
         }
     }
 }
