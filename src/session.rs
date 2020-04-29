@@ -1,6 +1,6 @@
-use crate::algebra::{intersection_test, Rect2f};
+use crate::algebra::{linesegs_distance, Rect2f};
 use crate::bullet_pool::BulletPool;
-use crate::collision_pipe_interface::{CollisionPipeInterface, ObjectPositionInterface};
+use crate::collision_pipe_interface::CollisionPipeInterface;
 use crate::enemy_pool::EnemyPool;
 use crate::graphic_object::{GraphicObject, GraphicObjectsIntoIter};
 use crate::key_state::KeyState;
@@ -46,14 +46,23 @@ fn collision_enemy(enemy_pool: &mut EnemyPool, player_bullet_pool: &mut BulletPo
         if let Some(enemy_last_p) = enemy.get_last_p() {
             if let Some(enemy_p) = enemy.get_p() {
                 let bullet_len = player_bullet_pool.len();
-                for _ in 0..bullet_len {
+                'bullet_loop: for _ in 0..bullet_len {
                     let bullet = player_bullet_pool.pop().unwrap();
                     if let Some(bullet_p) = bullet.get_p() {
                         if let Some(bullet_last_p) = bullet.get_last_p() {
-                            if intersection_test(enemy_p, enemy_last_p, bullet_p, bullet_last_p) {
-                                keep_enemy = false;
-                                println!("BANG!");
-                                break;
+                            for hitbox in enemy.get_hitboxes().iter() {
+                                let dist = linesegs_distance(
+                                    enemy_p + hitbox.center,
+                                    enemy_last_p + hitbox.center,
+                                    bullet_p,
+                                    bullet_last_p,
+                                );
+                                //println!("{} {:?} {:?}", dist, bullet_p, bullet_last_p);
+                                if dist < hitbox.r + bullet.get_r() {
+                                    keep_enemy = false;
+                                    println!("BANG!");
+                                    break 'bullet_loop;
+                                }
                             }
                         }
                     }

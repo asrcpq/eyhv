@@ -11,7 +11,7 @@ impl WaveGenerator {
     pub fn new() -> WaveGenerator {
         WaveGenerator {
             wave_cd: 1.,
-            wave_interval: 6.,
+            wave_interval: 7.,
         }
     }
 

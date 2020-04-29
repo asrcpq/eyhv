@@ -141,6 +141,7 @@ impl CannonControllerInterface for SimpleCannon {
 
     fn fire_tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<bullet::Bullet> {
         const BULLET_SPEED: f32 = 2500.;
+        const BULLET_RADIUS: f32 = 3.;
         let mut bullet_queue = VecDeque::new();
         if !self.switch {
             return bullet_queue;
@@ -156,6 +157,7 @@ impl CannonControllerInterface for SimpleCannon {
                     self.p + host_p,
                     Point2f::from_floats(0., -BULLET_SPEED),
                     Point2f::new(),
+                    BULLET_RADIUS,
                     bullet::BULLET_GRAPHIC_OBJECTS.rectangle.clone(),
                 )));
             }

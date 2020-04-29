@@ -20,7 +20,7 @@
 
 * [x] Simple collision test with position(not tested!)
 
-* [ ] Collision box for enemy and player bullet
+* [x] Collision box for enemy and player bullet(lineseg\_distance function)
 
 * [ ] Enemy cannon
 

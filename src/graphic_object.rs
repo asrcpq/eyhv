@@ -165,14 +165,6 @@ pub struct GraphicObjectsIntoIter {
     graphic_objects: GraphicObjects,
 }
 
-impl GraphicObjectsIntoIter {
-    pub fn new(graphic_objects: GraphicObjects) -> GraphicObjectsIntoIter {
-        GraphicObjectsIntoIter {
-            graphic_objects: graphic_objects,
-        }
-    }
-}
-
 impl Iterator for GraphicObjectsIntoIter {
     type Item = GraphicObject;
 

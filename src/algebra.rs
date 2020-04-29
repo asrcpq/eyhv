@@ -26,21 +26,93 @@ pub struct Point2f {
     pub y: f32,
 }
 
+impl Point2f {
+    pub fn norm(&self) -> f32 {
+        (self.x * self.x + self.y * self.y).sqrt()
+    }
+
+    pub fn dotx(&self, other: Point2f) -> f32 {
+        self.x * other.x + self.y * other.y
+    }
+
+    pub fn crossx(&self, other: Point2f) -> f32 {
+        self.x * other.y - self.y * other.x
+    }
+}
+
+#[derive(
+    Copy,
+    Clone,
+    PartialEq,
+    Debug,
+    Default,
+    Add,
+    AddAssign,
+    Sub,
+    SubAssign,
+    Mul,
+    MulAssign,
+    Div,
+    DivAssign,
+)]
+pub struct Circle2f {
+    pub center: Point2f,
+    pub r: f32,
+}
+
+impl Circle2f {
+    pub fn from_floats(x: f32, y: f32, r: f32) -> Circle2f {
+        Circle2f {
+            center: Point2f::from_floats(x, y),
+            r: r,
+        }
+    }
+}
+
 // test if ab cross cd(including end point)
-pub fn intersection_test(a: Point2f, b: Point2f, c: Point2f, d: Point2f) -> bool {
+pub fn linesegs_distance(a: Point2f, b: Point2f, c: Point2f, d: Point2f) -> f32 {
     // strict check only
-    let ab = a - b;
-    let ac = a - c;
-    let ad = a - d;
-    let ba = b - a;
-    let bc = b - c;
-    let bd = b - d;
-    if (ab.x * ac.y - ab.y * ac.x) * (ab.x * ad.y - ab.y * ad.x) <= 0.
-        && (ba.x * bc.y - ba.y * bc.x) * (ba.x * bd.y - ba.y * bd.x) <= 0.
-    {
-        true
+    let ab = b - a;
+    let ac = c - a;
+    let ad = d - a;
+    let bc = c - b;
+    let cd = d - c;
+    if ab.crossx(ac) * ab.crossx(ad) < 0. && cd.crossx(ac) * cd.crossx(bc) < 0. {
+        0.
     } else {
-        false
+        let bd = d - b;
+        let ab_norm = ab.norm();
+        let cd_norm = cd.norm();
+        let ac_norm = ac.norm();
+        let ad_norm = ad.norm();
+        let bc_norm = bc.norm();
+        let bd_norm = bd.norm();
+        let mut possible_value = vec![ac_norm, ad_norm, bc_norm, bd_norm];
+
+        let tmp = ab.dotx(ac) / ab_norm;
+        if tmp > 0. && tmp < ab_norm {
+            // is using sqrt safe here?
+            possible_value.push((ac_norm * ac_norm - tmp * tmp).sqrt())
+        }
+
+        let tmp = ab.dotx(ad) / ab_norm;
+        if tmp > 0. && tmp < ab_norm {
+            possible_value.push((ad_norm * ad_norm - tmp * tmp).sqrt())
+        }
+
+        let tmp = cd.dotx(ac) / cd_norm;
+        if tmp < 0. && tmp > -cd_norm {
+            possible_value.push((ac_norm * ac_norm - tmp * tmp).sqrt())
+        }
+
+        let tmp = cd.dotx(bc) / cd_norm;
+        if tmp < 0. && tmp > -cd_norm {
+            possible_value.push((bc_norm * bc_norm - tmp * tmp).sqrt())
+        }
+
+        return possible_value
+            .iter()
+            .fold(f32::INFINITY, |min, x| min.min(*x));
     }
 }
 
@@ -161,7 +233,7 @@ impl Rect2f {
 
 #[cfg(test)]
 mod test {
-    use super::{intersection_test, Mat2x2f, Point2f};
+    use super::{linesegs_distance, Mat2x2f, Point2f};
 
     #[test]
     fn test_point2f_derive_more() {
@@ -197,7 +269,16 @@ mod test {
     }
 
     #[test]
-    fn test_intersection() {
+    fn test_crossx() {
+        let eps: f32 = 1e-6;
+        let p1 = Point2f::from_floats(1.0, 2.0);
+        let p2 = Point2f::from_floats(-2.0, 1.0);
+        assert!((p1.crossx(p2) - 5.0).abs() < eps)
+    }
+
+    #[test]
+    fn test_linesegs_distance() {
+        let eps: f32 = 1e-5;
         macro_rules! t {
             //test_intersection_from_8_floats
             ($x1: expr, $y1: expr,
@@ -209,12 +290,19 @@ mod test {
                 let b = Point2f::from_floats($x2, $y2);
                 let c = Point2f::from_floats($x3, $y3);
                 let d = Point2f::from_floats($x4, $y4);
-                assert_eq!(intersection_test(a, b, c, d), $expect);
+                let result = linesegs_distance(a, b, c, d);
+                println!("expect {} = {}", result, $expect);
+                assert!((result - $expect).abs() < eps);
             };
         }
-        t!(0., 0., 1., 1., 0., 1., 1., 0., true); //X
-        t!(0., -0.1, 0., 1., -0.1, 0., 1., 0., true); //L(cross)
-        t!(0., 0.1, 0., 1., 0.1, 0., 1., 0., false); //L(not cross)
-        t!(0., 0., 0., 1., 1., 0., 1., 1., false); //||
+        t!(0., 0., 1., 1., 0., 1., 1., 0., 0.); //X
+        t!(0., -0.1, 0., 1., -0.1, 0., 1., 0., 0.); //L(cross)
+        t!(0., 0.1, 0., 1., 0., 0., 1., 0., 0.1); //L(not cross)
+        t!(0., 0., 0., 1., 1., 0., 1., 1., 1.); //||
+        t!(0., 0., 0., 1., 0., 1., 0., 2., 0.); //--
+        t!(0., 0., 0., 1., 0., 2., 0., 3., 1.); //- -
+        t!(0., 0., 0., 3., 0., 1., 0., 2., 0.); //long overlap
+        t!(0., 0., 0., 3., 0.1, 1., 0.1, 2., 0.1); // almost long overlap
+        t!(247.0, 249.90126, 247.0, 282.8828, 250.0, 269.59827, 250.0, 268.93863, 3.);
     }
 }

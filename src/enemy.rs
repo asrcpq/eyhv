@@ -2,9 +2,8 @@ use lazy_static::lazy_static;
 
 use std::collections::VecDeque;
 
-use crate::algebra::Point2f;
+use crate::algebra::{Point2f, Circle2f};
 use crate::bullet::Bullet;
-use crate::collision_pipe_interface::ObjectPositionInterface;
 use crate::enemy_path;
 use crate::graphic_object::GraphicObjects;
 
@@ -44,18 +43,22 @@ impl Enemy {
             Enemy::Dummy(enemy) => enemy.get_shifted_graphic_objects(),
         }
     }
-}
 
-impl ObjectPositionInterface for Enemy {
-    fn get_p(&self) -> Option<Point2f> {
+    pub fn get_p(&self) -> Option<Point2f> {
         match self {
             Enemy::Dummy(enemy) => enemy.get_p(),
         }
     }
 
-    fn get_last_p(&self) -> Option<Point2f> {
+    pub fn get_last_p(&self) -> Option<Point2f> {
         match self {
             Enemy::Dummy(enemy) => enemy.get_last_p(),
+        }
+    }
+
+    pub fn get_hitboxes(&self) -> &Vec<Circle2f> {
+        match self {
+            Enemy::Dummy(enemy) => enemy.get_hitboxes(),
         }
     }
 }
@@ -66,6 +69,7 @@ pub struct DummyEnemy {
     path: enemy_path::EnemyPath,
 
     graphic_objects: GraphicObjects,
+    hitboxes: Vec<Circle2f>,
 }
 
 impl DummyEnemy {
@@ -75,6 +79,7 @@ impl DummyEnemy {
             last_p: None,
             path: enemy_path::EnemyPath::Straight(enemy_path::StraightDown::new(250., 50.)),
             graphic_objects: ENEMY_GRAPHIC_OBJECTS.dummy.clone(),
+            hitboxes: vec![Circle2f::from_floats(0., 0., 10.)],
         }
     }
 
@@ -102,5 +107,9 @@ impl DummyEnemy {
 
     fn get_last_p(&self) -> Option<Point2f> {
         self.last_p
+    }
+
+    fn get_hitboxes(&self) -> &Vec<Circle2f> {
+        &self.hitboxes
     }
 }

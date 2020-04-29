@@ -3,7 +3,6 @@ use lazy_static::lazy_static;
 use std::collections::VecDeque;
 
 use crate::algebra::{Mat2x2f, Point2f};
-use crate::collision_pipe_interface::ObjectPositionInterface;
 use crate::graphic_object::GraphicObjects;
 
 // This struct is static, created by Session::new() only once
@@ -48,19 +47,26 @@ impl Bullet {
             }
         }
     }
-}
 
-impl ObjectPositionInterface for Bullet {
-    fn get_p(&self) -> Option<Point2f> {
+    pub fn get_p(&self) -> Option<Point2f> {
         match self {
             Bullet::Simple(simple_bullet) => simple_bullet.get_p(),
             Bullet::Rotate(rotate_bullet) => unimplemented!(),
         }
     }
 
-    fn get_last_p(&self) -> Option<Point2f> {
+    pub fn get_last_p(&self) -> Option<Point2f> {
         match self {
             Bullet::Simple(simple_bullet) => simple_bullet.get_last_p(),
+            Bullet::Rotate(rotate_bullet) => {
+                unimplemented!();
+            }
+        }
+    }
+
+    pub fn get_r(&self) -> f32 {
+        match self {
+            Bullet::Simple(simple_bullet) => simple_bullet.get_r(),
             Bullet::Rotate(rotate_bullet) => {
                 unimplemented!();
             }
@@ -73,6 +79,7 @@ pub struct SimpleBullet {
     last_p: Option<Point2f>,
     v: Point2f,
     a: Point2f,
+    r: f32, // radius
     graphic_objects: GraphicObjects,
 }
 
@@ -81,6 +88,7 @@ impl SimpleBullet {
         p: Point2f,
         v: Point2f,
         a: Point2f,
+        r: f32,
         graphic_objects: GraphicObjects,
     ) -> SimpleBullet {
         SimpleBullet {
@@ -88,6 +96,7 @@ impl SimpleBullet {
             last_p: None,
             v: v,
             a: a,
+            r: r,
             graphic_objects: graphic_objects,
         }
     }
@@ -98,6 +107,10 @@ impl SimpleBullet {
 
     fn get_last_p(&self) -> Option<Point2f> {
         self.last_p
+    }
+
+    fn get_r(&self) -> f32 {
+        self.r
     }
 
     fn get_shifted_graphic_objects(&self) -> GraphicObjects {
