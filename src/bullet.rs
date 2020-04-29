@@ -19,24 +19,24 @@ lazy_static! {
                 vec!["l 1 1 0 1 -3 -5 3 -5 0 5 -3 -5"]
             ),
             rectangle: GraphicObjects::from_strs(
-                vec!["l 1 1 0 0.5 -2 -10 2 -10 2 10 -2 10 -2 -10"]
+                vec!["l 1 1 0.5 0.5 -2 -10 2 -10 2 10 -2 10 -2 -10"]
             ),
         }
     };
 }
 
 pub enum Bullet {
-    SimpleBullet(SimpleBullet),
-    RotateBullet(RotateBullet),
+    Simple(SimpleBullet),
+    Rotate(RotateBullet),
 }
 
 impl Bullet {
     pub fn tick(&mut self, dt: f32) {
         match self {
-            Bullet::SimpleBullet(simple_bullet) => {
+            Bullet::Simple(simple_bullet) => {
                 simple_bullet.tick(dt);
             },
-            Bullet::RotateBullet(rotate_bullet) => {
+            Bullet::Rotate(rotate_bullet) => {
                 unimplemented!();
             },
         }
@@ -45,10 +45,10 @@ impl Bullet {
     // bullet's get_p is only used for window contain check
     pub fn get_p(&self) -> Point2f {
         match self {
-            Bullet::SimpleBullet(simple_bullet) => {
+            Bullet::Simple(simple_bullet) => {
                 simple_bullet.get_p()
             },
-            Bullet::RotateBullet(rotate_bullet) => {
+            Bullet::Rotate(rotate_bullet) => {
                 unimplemented!()
             },
         }
@@ -56,10 +56,10 @@ impl Bullet {
 
     pub fn get_shifted_graphic_objects(&self) -> GraphicObjects {
         match self {
-            Bullet::SimpleBullet(simple_bullet) => {
+            Bullet::Simple(simple_bullet) => {
                 simple_bullet.get_shifted_graphic_objects()
             },
-            Bullet::RotateBullet(rotate_bullet) => {
+            Bullet::Rotate(rotate_bullet) => {
                 unimplemented!();
             },
         }

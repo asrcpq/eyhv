@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 
 use crate::algebra::Point2f;
-use crate::bullet::{Bullet, BULLET_GRAPHIC_OBJECTS, SimpleBullet};
+use crate::bullet;
 use crate::graphic_object::GraphicObjects;
 
 pub trait CannonControllerInterface {
@@ -11,7 +11,7 @@ pub trait CannonControllerInterface {
 
     // this is called fire_tick as there might be other tick functions
     // like PlayerLocker's update_theta
-    fn fire_tick(&mut self, host_p: Point2f, dt: f32) -> VecDeque<Bullet>;
+    fn fire_tick(&mut self, host_p: Point2f, dt: f32) -> VecDeque<bullet::Bullet>;
 }
 
 pub struct PlayerLocker {
@@ -80,7 +80,7 @@ impl CannonControllerInterface for PlayerLocker {
         }
     }
 
-    fn fire_tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<Bullet> {
+    fn fire_tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<bullet::Bullet> {
         unimplemented!()
         //if self.phase_timer > self.fire_duration {
         //    self.phase_timer += dt;
@@ -140,7 +140,7 @@ impl CannonControllerInterface for SimpleCannon {
         }
     }
 
-    fn fire_tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<Bullet> {
+    fn fire_tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<bullet::Bullet> {
         const BULLET_SPEED: f32 = 2500.;
         let mut bullet_queue = VecDeque::new();
         if !self.switch {
@@ -153,12 +153,12 @@ impl CannonControllerInterface for SimpleCannon {
             } else {
                 dt -= self.fire_cd;
                 self.fire_cd = self.fire_interval;
-                bullet_queue.push_back(Bullet::SimpleBullet(
-                    SimpleBullet::new(
+                bullet_queue.push_back(bullet::Bullet::Simple(
+                    bullet::SimpleBullet::new(
                         self.p + host_p,
                         Point2f::from_floats(0., -BULLET_SPEED),
                         Point2f::new(),
-                        BULLET_GRAPHIC_OBJECTS.rectangle.clone(),
+                        bullet::BULLET_GRAPHIC_OBJECTS.rectangle.clone(),
                     )
                 ));
             }

@@ -16,4 +16,10 @@
 
 * [x] Simple Cannon & Simple Bullet
 
-* [ ] Enemy
+* [ ] Enemy path and graphics
+
+* [ ] Enemy collision box
+
+* [ ] Enemy cannon
+
+* [ ] Player collision box

@@ -5,6 +5,7 @@ mod graphic_object;
 mod key_state;
 mod player;
 mod enemy;
+mod enemy_path;
 mod session;
 mod time_manager;
 mod bullet;
