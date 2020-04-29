@@ -73,13 +73,14 @@ impl DummyEnemy {
     fn tick(&mut self, dt: f32) -> EnemyTickReturnOption {
         match self.path.tick(dt) {
             // update p first to prevent displaying (0, 0)
-            None => return None,
+            None => return EnemyTickReturnOption::Removed,
             Some(point2f) => {
                self.p = point2f;
             },
         }
 
         // Fire here
+        EnemyTickReturnOption::Normal(VecDeque::new())
     }
 
     pub fn get_shifted_graphic_objects(&self) -> GraphicObjects {

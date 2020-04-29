@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 
-use crate::enemy::Enemy;
-use crate::graphic_objects::{GraphicObjects, GraphicObjectsIntoIter};
+use crate::enemy::{Enemy, EnemyTickReturnOption};
+use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
 
 pub struct EnemyPool {
     enemies: VecDeque<Enemy>,
@@ -9,29 +9,36 @@ pub struct EnemyPool {
 
 impl EnemyPool {
     pub fn new() -> EnemyPool {
-        enemys:: VecDeque::new(),
+        EnemyPool {
+            enemies: VecDeque::new(),
+        }
     }
 
     pub fn extend(&mut self, enemy_queue: VecDeque<Enemy>) {
-        self.enemys.extend(enemy_queue);
+        self.enemies.extend(enemy_queue);
     }
 
     pub fn tick(&mut self, dt: f32) {
-        let len = self.enemys.len();
+        let len = self.enemies.len();
         for _ in 0..len {
-            let mut enemy = self.enemys.pop_front().unwrap();
+            let mut enemy = self.enemies.pop_front().unwrap();
             // update pos
-            enemy.tick(dt);
-
-            //
+            match enemy.tick(dt) {
+                EnemyTickReturnOption::Normal(bullet_queue) => {
+                    // enemy bullet not implemented yet
+                    self.enemies.push_back(enemy);
+                },
+                EnemyTickReturnOption::Destroyed |
+                EnemyTickReturnOption::Removed => { }
+            }
         }
     }
 
     pub fn graphic_objects_iter(&self) -> GraphicObjectsIntoIter {
         let mut graphic_objects = GraphicObjects::new();
-        for enemy in self.enemies {
+        for enemy in self.enemies.iter() {
             graphic_objects.extend(enemy.get_shifted_graphic_objects());
         }
-        graphic_objects
+        GraphicObjectsIntoIter::new(graphic_objects)
     }
 }

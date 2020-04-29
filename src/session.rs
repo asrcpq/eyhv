@@ -2,12 +2,15 @@ use crate::algebra::Rect2f;
 use crate::graphic_object::{GraphicObject, GraphicObjectsIntoIter};
 use crate::key_state::KeyState;
 use crate::player::Player;
+use crate::enemy_pool::EnemyPool;
 use crate::time_manager::TimeManager;
 use crate::bullet_pool::BulletPool;
+use crate::wave_generator::WaveGenerator;
 
 pub struct SessionGraphicObjectsIter {
     player_iter: GraphicObjectsIntoIter,
     player_bullet_iter: GraphicObjectsIntoIter,
+    enemy_iter: GraphicObjectsIntoIter,
 }
 
 impl Iterator for SessionGraphicObjectsIter {
@@ -22,6 +25,10 @@ impl Iterator for SessionGraphicObjectsIter {
             None => {},
             option => return option,
         }
+        match self.enemy_iter.next() {
+            None => {},
+            option => return option,
+        }
         None
     }
 }
@@ -30,6 +37,8 @@ pub struct Session {
     player: Player,
 
     player_bullet_pool: BulletPool,
+    enemy_pool: EnemyPool,
+    wave_generator: WaveGenerator,
 
     // control
     key_state: KeyState,
@@ -42,6 +51,8 @@ impl Session {
         Session {
             player: Player::new(),
             player_bullet_pool: BulletPool::new(),
+            enemy_pool: EnemyPool::new(),
+            wave_generator: WaveGenerator::new(),
             key_state: KeyState::new(),
             time_manager: TimeManager::new(),
         }
@@ -51,6 +62,7 @@ impl Session {
         SessionGraphicObjectsIter {
             player_iter: self.player.graphic_objects_iter(),
             player_bullet_iter: self.player_bullet_pool.graphic_objects_iter(),
+            enemy_iter: self.enemy_pool.graphic_objects_iter(),
         }
     }
 
@@ -61,6 +73,8 @@ impl Session {
             dt,
             &self.key_state.directions
         ));
+        self.enemy_pool.extend(self.wave_generator.tick(dt));
+        self.enemy_pool.tick(dt);
     }
 
     pub fn proc_key(&mut self, key_id: i8, updown: bool) {

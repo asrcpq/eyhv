@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
-use std::enemy;
-use std::enemy::Enemy;
+use crate::enemy;
+use crate::enemy::Enemy;
 
 pub struct WaveGenerator {
     wave_cd: f32,
@@ -16,15 +16,15 @@ impl WaveGenerator {
     }
 
     // dummy
-    pub fn tick(dt: f32) -> VecDeque<Enemy> {
+    pub fn tick(&mut self, mut dt: f32) -> VecDeque<Enemy> {
         let mut enemy_queue: VecDeque<Enemy> = VecDeque::new();
-        while dt > 0 {
-            if wave_cd > dt {
-                wave_cd -= dt;
-                dt = 0;
+        while dt > 0. {
+            if self.wave_cd > dt {
+                self.wave_cd -= dt;
+                dt = 0.;
             } else {
-                wave_cd = wave_interval;
-                enemy_queue.push_back(Enemy::dummy(enemy::DummyEnemy::new()));
+                self.wave_cd = self.wave_interval;
+                enemy_queue.push_back(Enemy::Dummy(enemy::DummyEnemy::new()));
             }
         }
         enemy_queue
