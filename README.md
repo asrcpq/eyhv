@@ -22,6 +22,10 @@
 
 * [x] Collision box for enemy and player bullet(lineseg\_distance function)
 
-* [ ] Enemy cannon
+* [x] Enemy cannon
+
+* [ ] Randomize cannon and bullet param
+
+* [ ] Wave generator and wave manager
 
 * [ ] Player collision box

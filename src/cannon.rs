@@ -8,7 +8,6 @@ pub trait CannonControllerInterface {
     // once a cannon is turned off, it immediately resets the state of itself
     // static implementation
     fn switch(&mut self, switch: bool);
-
     // this is called fire_tick as there might be other tick functions
     // like PlayerLocker's update_theta
     fn fire_tick(&mut self, host_p: Point2f, dt: f32) -> VecDeque<bullet::Bullet>;
@@ -59,8 +58,10 @@ impl PlayerLocker {
         }
     }
 
-    fn update_theta(player_p: Point2f, self_p: Point2f) {
-        unimplemented!();
+    fn update_theta(&mut self, player_p: Point2f, self_p: Point2f) {
+        // r points to player
+        let r = player_p - self_p;
+        self.theta = r.y.atan2(r.x);
     }
 }
 
@@ -80,18 +81,43 @@ impl CannonControllerInterface for PlayerLocker {
     }
 
     fn fire_tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<bullet::Bullet> {
-        unimplemented!()
-        //if self.phase_timer > self.fire_duration {
-        //    self.phase_timer += dt;
-        //    if self.phase_timer < self.cycle_duration {
-        //        VecDeque::new()
-        //    } else {
-        //        self.phase_timer -= self.cycle_duration;
-        //        // will enter firing phase in next condition
-        //    }
-        //}
-        //if self.phase_timer < self.fire_duration {
-        //}
+        let mut bullet_queue = VecDeque::new();
+        const BULLET_SPEED: f32 = 100.;
+        const BULLET_RADIUS: f32 = 3.;
+        'cycle: loop {
+            if self.phase_timer > self.fire_duration {
+                // note that fire_cd should be re-initialized somewhere
+                // (when entering cd phase(here) or when entering fire phase)
+                // if phase_timer < self.fire_duration and fire_cd > dt
+                // the phase_timer is shifted leaving fire_cd a dangling value
+                // if phase_timer has gone out of fire phase
+
+                if self.phase_timer + dt < self.cycle_duration {
+                    self.phase_timer += dt;
+                    break bullet_queue;
+                } else {
+                    dt -= self.cycle_duration - self.phase_timer;
+                    self.phase_timer = 0.;
+                    self.fire_cd = self.fire_interval;
+                }
+            }
+            while self.phase_timer < self.fire_duration {
+                if self.fire_cd > dt {
+                    self.fire_cd -= dt;
+                    self.phase_timer += dt;
+                    break'cycle bullet_queue;
+                }
+                dt -= self.fire_cd;
+                bullet_queue.push_back(bullet::Bullet::Simple(bullet::SimpleBullet::new(
+                    self.p + host_p,
+                    Point2f::from_floats(0., -BULLET_SPEED),
+                    Point2f::new(),
+                    BULLET_RADIUS,
+                    bullet::BULLET_GRAPHIC_OBJECTS.wedge.clone(),
+                )));
+                self.fire_cd = self.fire_interval;
+            }
+        }
     }
 }
 
@@ -106,20 +132,19 @@ pub struct SimpleCannon {
     fire_cd: f32,
 
     // for player, -90 deg is facing forward
-    theta: f32,
+    v: Point2f,
 
     switch: bool,
 }
 
 impl SimpleCannon {
-    pub fn new(p: Point2f, theta: f32, sw: bool) -> SimpleCannon {
-        let fire_interval: f32 = 0.05;
+    pub fn new(p: Point2f, v: Point2f, fi: f32, sw: bool) -> SimpleCannon {
         SimpleCannon {
             p: p,
-            fire_interval: fire_interval,
+            fire_interval: fi,
             // player should not benefit from a rapid fire controller
-            fire_cd: fire_interval,
-            theta: theta,
+            fire_cd: fi,
+            v: v,
             switch: sw,
         }
     }
@@ -155,7 +180,7 @@ impl CannonControllerInterface for SimpleCannon {
                 self.fire_cd = self.fire_interval;
                 bullet_queue.push_back(bullet::Bullet::Simple(bullet::SimpleBullet::new(
                     self.p + host_p,
-                    Point2f::from_floats(0., -BULLET_SPEED),
+                    self.v,
                     Point2f::new(),
                     BULLET_RADIUS,
                     bullet::BULLET_GRAPHIC_OBJECTS.rectangle.clone(),

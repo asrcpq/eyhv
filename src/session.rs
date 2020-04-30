@@ -12,6 +12,7 @@ pub struct SessionGraphicObjectsIter {
     player_iter: GraphicObjectsIntoIter,
     player_bullet_iter: GraphicObjectsIntoIter,
     enemy_iter: GraphicObjectsIntoIter,
+    enemy_bullet_iter: GraphicObjectsIntoIter,
 }
 
 impl Iterator for SessionGraphicObjectsIter {
@@ -27,6 +28,10 @@ impl Iterator for SessionGraphicObjectsIter {
             option => return option,
         }
         match self.enemy_iter.next() {
+            None => {}
+            option => return option,
+        }
+        match self.enemy_bullet_iter.next() {
             None => {}
             option => return option,
         }
@@ -78,9 +83,10 @@ fn collision_enemy(enemy_pool: &mut EnemyPool, player_bullet_pool: &mut BulletPo
 
 pub struct Session {
     player: Player,
-
     player_bullet_pool: BulletPool,
     enemy_pool: EnemyPool,
+    enemy_bullet_pool: BulletPool,
+
     wave_generator: WaveGenerator,
 
     // control
@@ -95,6 +101,7 @@ impl Session {
             player: Player::new(),
             player_bullet_pool: BulletPool::new(),
             enemy_pool: EnemyPool::new(),
+            enemy_bullet_pool: BulletPool::new(),
             wave_generator: WaveGenerator::new(),
             key_state: KeyState::new(),
             time_manager: TimeManager::new(),
@@ -106,6 +113,7 @@ impl Session {
             player_iter: self.player.graphic_objects_iter(),
             player_bullet_iter: self.player_bullet_pool.graphic_objects_iter(),
             enemy_iter: self.enemy_pool.graphic_objects_iter(),
+            enemy_bullet_iter: self.enemy_bullet_pool.graphic_objects_iter(),
         }
     }
 
@@ -115,8 +123,18 @@ impl Session {
         self.player_bullet_pool
             .extend(self.player.tick(dt, &self.key_state.directions));
         self.enemy_pool.extend(self.wave_generator.tick(dt));
-        self.enemy_pool.tick(dt);
+        self.enemy_bullet_pool.tick(dt);
+        self.enemy_bullet_pool
+            .extend(self.enemy_pool.tick(dt));
         collision_enemy(&mut self.enemy_pool, &mut self.player_bullet_pool);
+
+        // memleak monitor
+        // println!(
+        //     "{} {} {}",
+        //     self.player_bullet_pool.len(),
+        //     self.enemy_bullet_pool.len(),
+        //     self.enemy_pool.len()
+        // );
     }
 
     pub fn proc_key(&mut self, key_id: i8, updown: bool) {

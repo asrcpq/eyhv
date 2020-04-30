@@ -29,12 +29,14 @@ impl Player {
             cannons: vec![
                 SimpleCannon::new(
                     Point2f::from_floats(-3., -5.),
-                    -std::f32::consts::FRAC_PI_2,
+                    Point2f::from_floats(0., -2500.),
+                    0.05,
                     false,
                 ),
                 SimpleCannon::new(
                     Point2f::from_floats(3., -5.),
-                    -std::f32::consts::FRAC_PI_2,
+                    Point2f::from_floats(0., -2500.),
+                    0.05,
                     false,
                 ),
             ],

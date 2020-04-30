@@ -3,6 +3,7 @@ use std::collections::VecDeque;
 use crate::collision_pipe_interface::CollisionPipeInterface;
 use crate::enemy::{Enemy, EnemyTickReturnOption};
 use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
+use crate::bullet::Bullet;
 
 pub struct EnemyPool {
     enemies: VecDeque<Enemy>,
@@ -19,19 +20,22 @@ impl EnemyPool {
         self.enemies.extend(enemy_queue);
     }
 
-    pub fn tick(&mut self, dt: f32) {
+    pub fn tick(&mut self, dt: f32) -> VecDeque<Bullet> {
         let len = self.enemies.len();
+        let mut bullet_queue_return = VecDeque::new();
         for _ in 0..len {
             let mut enemy = self.enemies.pop_front().unwrap();
             // update pos
             match enemy.tick(dt) {
                 EnemyTickReturnOption::Normal(bullet_queue) => {
-                    // enemy bullet not implemented yet
+                    bullet_queue_return.extend(bullet_queue);
                     self.enemies.push_back(enemy);
                 }
                 EnemyTickReturnOption::Destroyed | EnemyTickReturnOption::Removed => {}
             }
         }
+
+        bullet_queue_return
     }
 
     pub fn graphic_objects_iter(&self) -> GraphicObjectsIntoIter {
