@@ -6,8 +6,8 @@ use crate::algebra::{Point2f, Circle2f};
 use crate::bullet::Bullet;
 use crate::enemy_path;
 use crate::graphic_object::GraphicObjects;
-use crate::cannon::SimpleCannon;
-use crate::cannon::CannonControllerInterface;
+use crate::cannon::{SimpleCannon, PlayerLocker};
+use crate::cannon::{CannonControllerInterface, CannonGeneratorInterface};
 
 // This struct is static, created by Session::new() only once
 #[derive(Clone)]
@@ -70,7 +70,7 @@ pub struct DummyEnemy {
     last_p: Option<Point2f>,
     path: enemy_path::EnemyPath,
 
-    cannon: SimpleCannon,
+    cannon: PlayerLocker,
 
     graphic_objects: GraphicObjects,
     hitboxes: Vec<Circle2f>,
@@ -82,11 +82,10 @@ impl DummyEnemy {
             p: None,
             last_p: None,
             path: enemy_path::EnemyPath::Straight(enemy_path::StraightDown::new(250., 50.)),
-            cannon: SimpleCannon::new(
-                    Point2f::from_floats(0., 0.),
-                    Point2f::from_floats(0., 100.),
-                    0.5,
-                    true,
+            cannon: PlayerLocker::generate(
+                Point2f::from_floats(0., 0.),
+                12345,
+                10.,
             ),
             graphic_objects: ENEMY_GRAPHIC_OBJECTS.dummy.clone(),
             hitboxes: vec![Circle2f::from_floats(0., 0., 20.)],

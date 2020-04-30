@@ -7,6 +7,7 @@ use rand_pcg;
 use crate::algebra::Point2f;
 use crate::bullet;
 use crate::graphic_object::GraphicObjects;
+use crate::random_tools::spliter;
 
 pub trait CannonControllerInterface {
     // once a cannon is turned off, it immediately resets the state of itself
@@ -21,6 +22,11 @@ pub trait CannonGeneratorInterface {
     fn generate(p: Point2f, seed: u64, difficulty: f32) -> Self;
 }
 
+pub enum EnemyCannon {
+    PlayerLocker(PlayerLocker),
+}
+
+#[derive(Debug)]
 pub struct PlayerLocker {
     // relative to moving object
     p: Point2f,
@@ -45,6 +51,8 @@ pub struct PlayerLocker {
     open_angle: f32,
     count: u32,
 
+    bullet_speed: f32,
+
     // status
     switch: bool, // on/off
 }
@@ -53,30 +61,34 @@ impl CannonGeneratorInterface for PlayerLocker {
     fn generate(p: Point2f, seed: u64, difficulty: f32) -> PlayerLocker {
         // difficulty expression
         // difficulty = fire_freq * count * bullet_speed
-        const MINIMAL_ALLOC: f32 = 0.2;
+        // fire_freq = fd(cd * (0.2 - 1)) / cd(1 - 3) / fi(infer)
+        const MIN_THRESHOLD: f32 = 0.2;
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
-        unimplemented!()
+        let l1_alloc = spliter(MIN_THRESHOLD, 3, rng.gen::<u64>());
+        let cd: f32 = rng.gen_range(1., 3.);
+        let fd: f32 = cd * rng.gen_range(0.2, 1.);
+        let fi: f32 = 1. / l1_alloc[0] / fd * cd;
+        let oa: f32 = rng.gen_range(45f32.to_radians(), 180f32.to_radians());
+        let cn: f32 = l1_alloc[1];
+        let bs: f32 = l1_alloc[2];
+        PlayerLocker {
+            p: p,
+            fire_duration: fd,
+            cycle_duration: cd,
+            fire_interval: fi,
+            fire_cd: fi,
+            theta: 0., // not initialized
+            open_angle: oa,
+            count: cn as u32,
+            switch: true,
+            bullet_speed: bs,
+            phase_timer: 0.,
+        }
     }
-    // call update_theta after creating
-    // pub fn new(p: Point2f, fd: f32, cd: f32, fi: f32, oa: f32, cn: u32, sw: bool) -> PlayerLocker {
-    //     PlayerLocker {
-    //         p: p,
-    //         fire_duration: fd,
-    //         cycle_duration: cd,
-    //         fire_interval: fi,
-    //         fire_cd: fi,
-    //         theta: 0., // not initialized
-    //         open_angle: oa,
-    //         count: cn,
-    //         switch: sw,
-    //         phase_timer: 0.,
-    //     }
-    // }
-
 }
 
 impl PlayerLocker {
-    fn update_theta(&mut self, player_p: Point2f, self_p: Point2f) {
+    pub fn update_theta(&mut self, player_p: Point2f, self_p: Point2f) {
         // r points to player
         let r = player_p - self_p;
         self.theta = r.y.atan2(r.x);
