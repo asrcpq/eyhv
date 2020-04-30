@@ -189,7 +189,7 @@ impl Mat2x2f {
         }
     }
 
-    pub fn from_normed_vec2f(direction: Point2f) -> Mat2x2f{
+    pub fn from_normed_vec2f(direction: Point2f) -> Mat2x2f {
         Mat2x2f {
             x1: direction.x,
             x2: -direction.y,

@@ -81,11 +81,7 @@ impl GraphicObject {
     pub fn zoom(&self, k: f32) -> GraphicObject {
         match self {
             GraphicObject::LineSegs(line_segs) => GraphicObject::LineSegs(LineSegs2f::new(
-                line_segs
-                    .vertices
-                    .iter()
-                    .map(|x| *x * k)
-                    .collect(),
+                line_segs.vertices.iter().map(|x| *x * k).collect(),
                 line_segs.color,
             )),
             GraphicObject::Polygon(polygon) => {
@@ -120,7 +116,6 @@ impl GraphicObjects {
                 .collect(),
         }
     }
-
 
     pub fn zoom(&self, k: f32) -> GraphicObjects {
         GraphicObjects {

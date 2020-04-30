@@ -1,6 +1,6 @@
 use crate::algebra::linesegs_distance;
-use crate::enemy_pool::EnemyPool;
 use crate::bullet_pool::BulletPool;
+use crate::enemy_pool::EnemyPool;
 
 pub trait CollisionPipeInterface {
     type Object;

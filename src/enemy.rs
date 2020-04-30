@@ -5,7 +5,7 @@ use std::collections::VecDeque;
 use crate::algebra::{Circle2f, Point2f};
 use crate::bullet::Bullet;
 use crate::cannon::{CannonControllerInterface, CannonGeneratorInterface};
-use crate::cannon::{PlayerLocker, EnemyCannon};
+use crate::cannon::{EnemyCannon, PlayerLocker};
 use crate::enemy;
 use crate::enemy_path;
 use crate::graphic_object::GraphicObjects;
@@ -24,7 +24,8 @@ lazy_static! {
                 "l 0.3 0.5 0.5 1. -0.5 0.5 -0.5 -0.5 0.5 -0.5 0.5 0.5 -0.5 0.5",
                 "l 0.7 0.0 0.2 0.6 -0.5 0.3 -1.5 1. -1.5 -1. -0.5 -0.3",
                 "l 0.7 0.0 0.2 0.6 0.5 0.3 1.5 1. 1.5 -1. 0.5 -0.3",
-                ]).zoom(10.),
+            ])
+            .zoom(10.),
             dummy: GraphicObjects::from_strs(vec!["l 1 1 1 1 -20 -20 -20 20 20 20 20 -20 -20 -20"]),
         }
     };
@@ -54,7 +55,11 @@ impl Enemy {
             p: None,
             last_p: None,
             path: enemy_path::EnemyPath::Straight(enemy_path::StraightDown::new(250., 50.)),
-            cannon: vec![Box::new(PlayerLocker::generate(Point2f::from_floats(0., 0.), 12345, 0.2))],
+            cannon: vec![Box::new(PlayerLocker::generate(
+                Point2f::from_floats(0., 0.),
+                12345,
+                0.2,
+            ))],
             graphic_objects: enemy::ENEMY_GRAPHIC_OBJECTS.small1.clone(),
             hitboxes: vec![Circle2f::from_floats(0., 0., 20.)],
         }
@@ -63,20 +68,16 @@ impl Enemy {
         match self.path.tick(dt) {
             // update p first to prevent displaying (0, 0)
             None => return EnemyTickReturnOption::Removed,
-                 Some(point2f) => {
-                     self.last_p = self.p;
-                     self.p = Some(point2f);
-                 }
+            Some(point2f) => {
+                self.last_p = self.p;
+                self.p = Some(point2f);
+            }
         }
 
         let mut bullet_queue = VecDeque::new();
         // path is executed before update_theta so unwrap p should be safe
         for cannon in self.cannon.iter_mut() {
-            bullet_queue.extend(cannon.tick(
-                self.p.unwrap(),
-                player_p,
-                dt,
-            ));
+            bullet_queue.extend(cannon.tick(self.p.unwrap(), player_p, dt));
         }
         EnemyTickReturnOption::Normal(bullet_queue)
     }

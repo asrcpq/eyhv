@@ -1,11 +1,11 @@
 use std::collections::VecDeque;
 
+use dyn_clone::DynClone;
 use rand::Rng;
 use rand::SeedableRng;
 use rand_pcg;
-use dyn_clone::DynClone;
 
-use crate::algebra::{Point2f, Mat2x2f};
+use crate::algebra::{Mat2x2f, Point2f};
 use crate::bullet::{Bullet, SimpleBullet, BULLET_GRAPHIC_OBJECTS};
 use crate::random_tools::simple_try;
 
@@ -150,8 +150,8 @@ impl CannonControllerInterface for PlayerLocker {
                 dt -= self.fire_cd;
                 for x in 0..self.count {
                     let normed_vec2f = Point2f::from_theta(
-                        self.open_angle / (self.count + 1) as f32 * (x + 1) as f32
-                        + self.theta - self.open_angle / 2.
+                        self.open_angle / (self.count + 1) as f32 * (x + 1) as f32 + self.theta
+                            - self.open_angle / 2.,
                     );
                     bullet_queue.push_back(Bullet::Simple(SimpleBullet::new(
                         self.p + host_p,

@@ -1,10 +1,9 @@
 use std::collections::VecDeque;
 
-use crate::enemy::Enemy;
 use crate::cannon::CannonGeneratorInterface;
+use crate::enemy::Enemy;
 
-enum WaveScheme {
-}
+enum WaveScheme {}
 
 pub struct WaveGenerator {
     dummy_enemy: Enemy,
