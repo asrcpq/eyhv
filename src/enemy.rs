@@ -2,12 +2,12 @@ use lazy_static::lazy_static;
 
 use std::collections::VecDeque;
 
-use crate::algebra::{Point2f, Circle2f};
+use crate::algebra::{Circle2f, Point2f};
 use crate::bullet::Bullet;
+use crate::cannon::{CannonControllerInterface, CannonGeneratorInterface};
+use crate::cannon::{PlayerLocker, SimpleCannon};
 use crate::enemy_path;
 use crate::graphic_object::GraphicObjects;
-use crate::cannon::{SimpleCannon, PlayerLocker};
-use crate::cannon::{CannonControllerInterface, CannonGeneratorInterface};
 
 // This struct is static, created by Session::new() only once
 #[derive(Clone)]
@@ -34,9 +34,9 @@ pub enum Enemy {
 }
 
 impl Enemy {
-    pub fn tick(&mut self, dt: f32) -> EnemyTickReturnOption {
+    pub fn tick(&mut self, dt: f32, player_p: Point2f) -> EnemyTickReturnOption {
         match self {
-            Enemy::Dummy(enemy) => enemy.tick(dt),
+            Enemy::Dummy(enemy) => enemy.tick(dt, player_p),
         }
     }
 
@@ -82,17 +82,13 @@ impl DummyEnemy {
             p: None,
             last_p: None,
             path: enemy_path::EnemyPath::Straight(enemy_path::StraightDown::new(250., 50.)),
-            cannon: PlayerLocker::generate(
-                Point2f::from_floats(0., 0.),
-                12345,
-                10.,
-            ),
+            cannon: PlayerLocker::generate(Point2f::from_floats(0., 0.), 12345, 0.5),
             graphic_objects: ENEMY_GRAPHIC_OBJECTS.dummy.clone(),
             hitboxes: vec![Circle2f::from_floats(0., 0., 20.)],
         }
     }
 
-    fn tick(&mut self, dt: f32) -> EnemyTickReturnOption {
+    fn tick(&mut self, dt: f32, player_p: Point2f) -> EnemyTickReturnOption {
         match self.path.tick(dt) {
             // update p first to prevent displaying (0, 0)
             None => return EnemyTickReturnOption::Removed,
@@ -102,9 +98,9 @@ impl DummyEnemy {
             }
         }
 
-        EnemyTickReturnOption::Normal(
-            self.cannon.fire_tick(self.p.unwrap(), dt)
-        )
+        // path is executed before update_theta so unwrap p should be safe
+        self.cannon.update_theta(player_p, self.p.unwrap());
+        EnemyTickReturnOption::Normal(self.cannon.fire_tick(self.p.unwrap(), dt))
     }
 
     fn get_shifted_graphic_objects(&self) -> GraphicObjects {

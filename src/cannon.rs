@@ -1,13 +1,15 @@
 use std::collections::VecDeque;
 
-use rand::SeedableRng;
 use rand::Rng;
+use rand::SeedableRng;
 use rand_pcg;
 
-use crate::algebra::Point2f;
-use crate::bullet;
+use crate::algebra::{Point2f, Mat2x2f};
+use crate::bullet::{Bullet, SimpleBullet, BULLET_GRAPHIC_OBJECTS};
 use crate::graphic_object::GraphicObjects;
-use crate::random_tools::spliter;
+use crate::random_tools::simple_try;
+
+const TRY_TIMES: u32 = 10;
 
 pub trait CannonControllerInterface {
     // once a cannon is turned off, it immediately resets the state of itself
@@ -15,7 +17,7 @@ pub trait CannonControllerInterface {
     fn switch(&mut self, switch: bool);
     // this is called fire_tick as there might be other tick functions
     // like PlayerLocker's update_theta
-    fn fire_tick(&mut self, host_p: Point2f, dt: f32) -> VecDeque<bullet::Bullet>;
+    fn fire_tick(&mut self, host_p: Point2f, dt: f32) -> VecDeque<Bullet>;
 }
 
 pub trait CannonGeneratorInterface {
@@ -62,28 +64,35 @@ impl CannonGeneratorInterface for PlayerLocker {
         // difficulty expression
         // difficulty = fire_freq * count * bullet_speed
         // fire_freq = fd(cd * (0.2 - 1)) / cd(1 - 3) / fi(infer)
-        const MIN_THRESHOLD: f32 = 0.2;
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
-        let l1_alloc = spliter(MIN_THRESHOLD, 3, rng.gen::<u64>());
         let cd: f32 = rng.gen_range(1., 3.);
-        let fd: f32 = cd * rng.gen_range(0.2, 1.);
-        let fi: f32 = 1. / l1_alloc[0] / fd * cd;
+        // k(fd / cd) * cn * bs_ff^2
+        let (fd, cn, bs_ff) = (|x: Vec<f32>| (cd * x[0], x[1], x[2]))(simple_try(
+            TRY_TIMES,
+            |x| x[0] * x[1] * x[2].powi(2),
+            vec![(0.2, 1.), (1., 10.), (0.5, 2.)], // 0.05-40
+            difficulty * 39.95 + 0.05,
+            rng.gen::<u64>(),
+        ));
+        let bs_ff_k = rng.gen_range(0.8, 1.2);
+        let mut bs = (bs_ff * bs_ff_k).sqrt();
+        let fi = 0.3 * bs / bs_ff;
+        bs *= 500.;
         let oa: f32 = rng.gen_range(45f32.to_radians(), 180f32.to_radians());
-        let cn: f32 = l1_alloc[1];
-        let bs: f32 = l1_alloc[2];
-        PlayerLocker {
+        let p = PlayerLocker {
             p: p,
             fire_duration: fd,
             cycle_duration: cd,
             fire_interval: fi,
             fire_cd: fi,
-            theta: 0., // not initialized
+            theta: 0., // uninitialized
             open_angle: oa,
             count: cn as u32,
             switch: true,
             bullet_speed: bs,
             phase_timer: 0.,
-        }
+        };
+        return p;
     }
 }
 
@@ -110,7 +119,7 @@ impl CannonControllerInterface for PlayerLocker {
         }
     }
 
-    fn fire_tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<bullet::Bullet> {
+    fn fire_tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<Bullet> {
         let mut bullet_queue = VecDeque::new();
         const BULLET_SPEED: f32 = 100.;
         const BULLET_RADIUS: f32 = 3.;
@@ -135,16 +144,24 @@ impl CannonControllerInterface for PlayerLocker {
                 if self.fire_cd > dt {
                     self.fire_cd -= dt;
                     self.phase_timer += dt;
-                    break'cycle bullet_queue;
+                    break 'cycle bullet_queue;
                 }
                 dt -= self.fire_cd;
-                bullet_queue.push_back(bullet::Bullet::Simple(bullet::SimpleBullet::new(
-                    self.p + host_p,
-                    Point2f::from_floats(0., -BULLET_SPEED),
-                    Point2f::new(),
-                    BULLET_RADIUS,
-                    bullet::BULLET_GRAPHIC_OBJECTS.wedge.clone(),
-                )));
+                for x in 0..self.count {
+                    let normed_vec2f = Point2f::from_theta(
+                        self.open_angle / (self.count + 1) as f32 * x as f32
+                        + self.theta - self.open_angle / 2.
+                    );
+                    bullet_queue.push_back(Bullet::Simple(SimpleBullet::new(
+                        self.p + host_p,
+                        normed_vec2f * self.bullet_speed,
+                        Point2f::new(),
+                        BULLET_RADIUS,
+                        BULLET_GRAPHIC_OBJECTS
+                            .wedge
+                            .rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),
+                    )));
+                }
                 self.fire_cd = self.fire_interval;
             }
         }
@@ -194,7 +211,7 @@ impl CannonControllerInterface for SimpleCannon {
         }
     }
 
-    fn fire_tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<bullet::Bullet> {
+    fn fire_tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<Bullet> {
         const BULLET_SPEED: f32 = 2500.;
         const BULLET_RADIUS: f32 = 3.;
         let mut bullet_queue = VecDeque::new();
@@ -208,12 +225,12 @@ impl CannonControllerInterface for SimpleCannon {
             } else {
                 dt -= self.fire_cd;
                 self.fire_cd = self.fire_interval;
-                bullet_queue.push_back(bullet::Bullet::Simple(bullet::SimpleBullet::new(
+                bullet_queue.push_back(Bullet::Simple(SimpleBullet::new(
                     self.p + host_p,
                     self.v,
                     Point2f::new(),
                     BULLET_RADIUS,
-                    bullet::BULLET_GRAPHIC_OBJECTS.rectangle.clone(),
+                    BULLET_GRAPHIC_OBJECTS.rectangle.clone(),
                 )));
             }
         }

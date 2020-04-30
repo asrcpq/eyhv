@@ -9,6 +9,7 @@ use crate::window_rect::WINDOW_RECT;
 pub struct Player {
     // Dynamic
     p: Point2f,
+    last_p: Point2f,
     dp: Point2f,
 
     cannons: Vec<SimpleCannon>,
@@ -23,8 +24,10 @@ pub struct Player {
 impl Player {
     pub fn new() -> Player {
         let window_size = WINDOW_RECT.get_size();
+        let p0 = Point2f::from_floats(window_size.x / 2., window_size.y - 50.);
         Player {
-            p: Point2f::from_floats(window_size.x / 2., window_size.y - 50.),
+            p: p0,
+            last_p: p0,
             dp: Point2f::new(),
             cannons: vec![
                 SimpleCannon::new(
@@ -47,8 +50,16 @@ impl Player {
         }
     }
 
+    pub fn get_p(&self) -> Point2f {
+        self.p
+    }
+
+    pub fn get_last_p(&self) -> Point2f {
+        self.last_p
+    }
+
     // set_dp is executed before frame update
-    pub fn set_dp(&mut self, directions: &[bool; 4]) {
+    fn set_dp(&mut self, directions: &[bool; 4]) {
         let mut dp = Point2f::new();
         for (key_id, updown) in directions.iter().enumerate() {
             if *updown {
@@ -72,6 +83,7 @@ impl Player {
 
     pub fn tick(&mut self, dt: f32, directions: &[bool; 4]) -> VecDeque<Bullet> {
         self.set_dp(directions);
+        self.last_p = self.p;
         self.p += self.dp * dt;
         self.p = WINDOW_RECT.nearest(self.p);
 

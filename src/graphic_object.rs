@@ -95,6 +95,16 @@ impl GraphicObjects {
         }
     }
 
+    pub fn rotate(&self, rotate_mat: Mat2x2f) -> GraphicObjects {
+        GraphicObjects {
+            graphic_objects: self
+                .graphic_objects
+                .iter()
+                .map(|graphic_object| graphic_object.rotate(rotate_mat))
+                .collect(),
+        }
+    }
+
     pub fn extend(&mut self, other: GraphicObjects) {
         self.graphic_objects.extend(other.graphic_objects);
     }
@@ -125,10 +135,6 @@ impl GraphicObjects {
             }
         }
         graphic_objects
-    }
-
-    pub fn get(&self, id: usize) -> Option<&GraphicObject> {
-        self.graphic_objects.get(id)
     }
 
     pub fn into_iter(self) -> GraphicObjectsIntoIter {

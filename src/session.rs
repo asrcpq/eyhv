@@ -125,7 +125,7 @@ impl Session {
         self.enemy_pool.extend(self.wave_generator.tick(dt));
         self.enemy_bullet_pool.tick(dt);
         self.enemy_bullet_pool
-            .extend(self.enemy_pool.tick(dt));
+            .extend(self.enemy_pool.tick(dt, self.player.get_p()));
         collision_enemy(&mut self.enemy_pool, &mut self.player_bullet_pool);
 
         // memleak monitor

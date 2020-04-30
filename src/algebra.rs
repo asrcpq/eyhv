@@ -27,8 +27,34 @@ pub struct Point2f {
 }
 
 impl Point2f {
+    pub fn new() -> Point2f {
+        Point2f { x: 0., y: 0. }
+    }
+
+    pub fn from_floats(x: f32, y: f32) -> Point2f {
+        Point2f { x: x, y: y }
+    }
+
+    pub fn from_polar(r: f32, theta: f32) -> Point2f {
+        Point2f {
+            x: r * theta.cos(),
+            y: r * theta.sin(),
+        }
+    }
+
+    pub fn from_theta(theta: f32) -> Point2f {
+        Point2f {
+            x: theta.cos(),
+            y: theta.sin(),
+        }
+    }
+
     pub fn norm(&self) -> f32 {
         (self.x * self.x + self.y * self.y).sqrt()
+    }
+
+    pub fn normed(&self) -> Point2f {
+        *self / self.norm()
     }
 
     pub fn dotx(&self, other: Point2f) -> f32 {
@@ -162,14 +188,14 @@ impl Mat2x2f {
             y2: cos_theta,
         }
     }
-}
 
-impl Point2f {
-    pub fn new() -> Point2f {
-        Point2f { x: 0., y: 0. }
-    }
-    pub fn from_floats(x: f32, y: f32) -> Point2f {
-        Point2f { x: x, y: y }
+    pub fn from_normed_vec2f(direction: Point2f) -> Mat2x2f{
+        Mat2x2f {
+            x1: direction.x,
+            x2: -direction.y,
+            y1: direction.y,
+            y2: direction.x,
+        }
     }
 }
 

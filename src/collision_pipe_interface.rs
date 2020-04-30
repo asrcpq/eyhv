@@ -1,4 +1,4 @@
-use crate::algebra::{Point2f, Circle2f};
+use crate::algebra::{Circle2f, Point2f};
 
 pub trait CollisionPipeInterface {
     type Object;

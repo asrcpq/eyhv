@@ -14,7 +14,7 @@ pub struct BulletGraphicObjects {
 lazy_static! {
     pub static ref BULLET_GRAPHIC_OBJECTS: BulletGraphicObjects = {
         BulletGraphicObjects {
-            wedge: GraphicObjects::from_strs(vec!["l 1 1 0 1 -3 -5 3 -5 0 5 -3 -5"]),
+            wedge: GraphicObjects::from_strs(vec!["l 1 1 0 1 -10 -5 -10 5 10 0 -10 -5"]),
             rectangle: GraphicObjects::from_strs(vec![
                 "l 1 1 0.5 0.5 -2 -10 2 -10 2 10 -2 10 -2 -10",
             ]),

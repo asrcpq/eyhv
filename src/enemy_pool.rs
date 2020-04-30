@@ -1,9 +1,10 @@
 use std::collections::VecDeque;
 
+use crate::bullet::Bullet;
 use crate::collision_pipe_interface::CollisionPipeInterface;
 use crate::enemy::{Enemy, EnemyTickReturnOption};
 use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
-use crate::bullet::Bullet;
+use crate::algebra::Point2f;
 
 pub struct EnemyPool {
     enemies: VecDeque<Enemy>,
@@ -20,13 +21,13 @@ impl EnemyPool {
         self.enemies.extend(enemy_queue);
     }
 
-    pub fn tick(&mut self, dt: f32) -> VecDeque<Bullet> {
+    pub fn tick(&mut self, dt: f32, player_p: Point2f) -> VecDeque<Bullet> {
         let len = self.enemies.len();
         let mut bullet_queue_return = VecDeque::new();
         for _ in 0..len {
             let mut enemy = self.enemies.pop_front().unwrap();
             // update pos
-            match enemy.tick(dt) {
+            match enemy.tick(dt, player_p) {
                 EnemyTickReturnOption::Normal(bullet_queue) => {
                     bullet_queue_return.extend(bullet_queue);
                     self.enemies.push_back(enemy);
