@@ -1,4 +1,6 @@
 extern crate sdl2;
+extern crate rand;
+extern crate rand_pcg;
 
 mod algebra;
 mod bullet;
@@ -15,6 +17,7 @@ mod session;
 mod time_manager;
 mod wave_generator;
 mod window_rect;
+mod random_tools;
 
 use algebra::{Point2f, Rect2f};
 use session::Session;

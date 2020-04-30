@@ -1,5 +1,9 @@
 use std::collections::VecDeque;
 
+use rand::SeedableRng;
+use rand::Rng;
+use rand_pcg;
+
 use crate::algebra::Point2f;
 use crate::bullet;
 use crate::graphic_object::GraphicObjects;
@@ -11,6 +15,10 @@ pub trait CannonControllerInterface {
     // this is called fire_tick as there might be other tick functions
     // like PlayerLocker's update_theta
     fn fire_tick(&mut self, host_p: Point2f, dt: f32) -> VecDeque<bullet::Bullet>;
+}
+
+pub trait CannonGeneratorInterface {
+    fn generate(p: Point2f, seed: u64, difficulty: f32) -> Self;
 }
 
 pub struct PlayerLocker {
@@ -41,23 +49,33 @@ pub struct PlayerLocker {
     switch: bool, // on/off
 }
 
-impl PlayerLocker {
-    // call update_theta after creating
-    pub fn new(p: Point2f, fd: f32, cd: f32, fi: f32, oa: f32, cn: u32, sw: bool) -> PlayerLocker {
-        PlayerLocker {
-            p: p,
-            fire_duration: fd,
-            cycle_duration: cd,
-            fire_interval: fi,
-            fire_cd: fi,
-            theta: 0., // not initialized
-            open_angle: oa,
-            count: cn,
-            switch: sw,
-            phase_timer: 0.,
-        }
+impl CannonGeneratorInterface for PlayerLocker {
+    fn generate(p: Point2f, seed: u64, difficulty: f32) -> PlayerLocker {
+        // difficulty expression
+        // difficulty = fire_freq * count * bullet_speed
+        const MINIMAL_ALLOC: f32 = 0.2;
+        let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
+        unimplemented!()
     }
+    // call update_theta after creating
+    // pub fn new(p: Point2f, fd: f32, cd: f32, fi: f32, oa: f32, cn: u32, sw: bool) -> PlayerLocker {
+    //     PlayerLocker {
+    //         p: p,
+    //         fire_duration: fd,
+    //         cycle_duration: cd,
+    //         fire_interval: fi,
+    //         fire_cd: fi,
+    //         theta: 0., // not initialized
+    //         open_angle: oa,
+    //         count: cn,
+    //         switch: sw,
+    //         phase_timer: 0.,
+    //     }
+    // }
 
+}
+
+impl PlayerLocker {
     fn update_theta(&mut self, player_p: Point2f, self_p: Point2f) {
         // r points to player
         let r = player_p - self_p;
