@@ -12,12 +12,18 @@ use crate::graphic_object::GraphicObjects;
 // This struct is static, created by Session::new() only once
 #[derive(Clone)]
 pub struct EnemyGraphicObjects {
+    pub small1: GraphicObjects,
     pub dummy: GraphicObjects,
 }
 
 lazy_static! {
     pub static ref ENEMY_GRAPHIC_OBJECTS: EnemyGraphicObjects = {
         EnemyGraphicObjects {
+            small1: GraphicObjects::from_strs(vec![
+                "l 0.3 0.5 0.5 1. -0.5 0.5 -0.5 -0.5 0.5 -0.5 0.5 0.5 -0.5 0.5",
+                "l 0.7 0.0 0.2 0.6 -0.5 0.3 -1.5 1. -1.5 -1. -0.5 -0.3",
+                "l 0.7 0.0 0.2 0.6 0.5 0.3 1.5 1. 1.5 -1. 0.5 -0.3",
+                ]).zoom(10.),
             dummy: GraphicObjects::from_strs(vec!["l 1 1 1 1 -20 -20 -20 20 20 20 20 -20 -20 -20"]),
         }
     };
@@ -82,8 +88,8 @@ impl DummyEnemy {
             p: None,
             last_p: None,
             path: enemy_path::EnemyPath::Straight(enemy_path::StraightDown::new(250., 50.)),
-            cannon: PlayerLocker::generate(Point2f::from_floats(0., 0.), 12345, 0.5),
-            graphic_objects: ENEMY_GRAPHIC_OBJECTS.dummy.clone(),
+            cannon: PlayerLocker::generate(Point2f::from_floats(0., 0.), 12345, 0.2),
+            graphic_objects: ENEMY_GRAPHIC_OBJECTS.small1.clone(),
             hitboxes: vec![Circle2f::from_floats(0., 0., 20.)],
         }
     }

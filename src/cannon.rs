@@ -70,14 +70,14 @@ impl CannonGeneratorInterface for PlayerLocker {
         let (fd, cn, bs_ff) = (|x: Vec<f32>| (cd * x[0], x[1], x[2]))(simple_try(
             TRY_TIMES,
             |x| x[0] * x[1] * x[2].powi(2),
-            vec![(0.2, 1.), (1., 10.), (0.5, 2.)], // 0.05-40
+            vec![(0.2, 1.), (1., 7.), (0.5, 2.)], // 0.05-40
             difficulty * 39.95 + 0.05,
             rng.gen::<u64>(),
         ));
         let bs_ff_k = rng.gen_range(0.8, 1.2);
         let mut bs = (bs_ff * bs_ff_k).sqrt();
         let fi = 0.3 * bs / bs_ff;
-        bs *= 500.;
+        bs *= 400.;
         let oa: f32 = rng.gen_range(45f32.to_radians(), 180f32.to_radians());
         let p = PlayerLocker {
             p: p,
@@ -149,7 +149,7 @@ impl CannonControllerInterface for PlayerLocker {
                 dt -= self.fire_cd;
                 for x in 0..self.count {
                     let normed_vec2f = Point2f::from_theta(
-                        self.open_angle / (self.count + 1) as f32 * x as f32
+                        self.open_angle / (self.count + 1) as f32 * (x + 1) as f32
                         + self.theta - self.open_angle / 2.
                     );
                     bullet_queue.push_back(Bullet::Simple(SimpleBullet::new(

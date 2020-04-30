@@ -77,6 +77,22 @@ impl GraphicObject {
             }
         }
     }
+
+    pub fn zoom(&self, k: f32) -> GraphicObject {
+        match self {
+            GraphicObject::LineSegs(line_segs) => GraphicObject::LineSegs(LineSegs2f::new(
+                line_segs
+                    .vertices
+                    .iter()
+                    .map(|x| *x * k)
+                    .collect(),
+                line_segs.color,
+            )),
+            GraphicObject::Polygon(polygon) => {
+                unimplemented!();
+            }
+        }
+    }
 }
 
 #[derive(Clone)]
@@ -101,6 +117,17 @@ impl GraphicObjects {
                 .graphic_objects
                 .iter()
                 .map(|graphic_object| graphic_object.rotate(rotate_mat))
+                .collect(),
+        }
+    }
+
+
+    pub fn zoom(&self, k: f32) -> GraphicObjects {
+        GraphicObjects {
+            graphic_objects: self
+                .graphic_objects
+                .iter()
+                .map(|graphic_object| graphic_object.zoom(k))
                 .collect(),
         }
     }
