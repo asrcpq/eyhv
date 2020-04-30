@@ -2,7 +2,7 @@ use std::collections::VecDeque;
 
 use crate::algebra::Point2f;
 use crate::bullet::{Bullet, SimpleBullet};
-use crate::cannon::{CannonControllerInterface, SimpleCannon};
+use crate::cannon::SimpleCannon;
 use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
 use crate::window_rect::WINDOW_RECT;
 
@@ -89,7 +89,7 @@ impl Player {
 
         let mut bullet_queue = VecDeque::new();
         for cannon in self.cannons.iter_mut() {
-            bullet_queue.extend(cannon.fire_tick(self.p, dt));
+            bullet_queue.extend(cannon.tick(self.p, dt));
         }
         bullet_queue
     }

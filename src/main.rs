@@ -6,7 +6,7 @@ mod algebra;
 mod bullet;
 mod bullet_pool;
 mod cannon;
-mod collision_pipe_interface;
+mod collision;
 mod enemy;
 mod enemy_path;
 mod enemy_pool;

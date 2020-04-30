@@ -24,8 +24,15 @@
 
 * [x] Enemy cannon
 
-* [ ] Randomize cannon and bullet param
+* [x] Randomize cannon and bullet param(Framework)
 
 * [ ] Wave generator and wave manager
+(add 1 wave type contains of 1 type of enemy with 1 type of cannon)
 
 * [ ] Player collision box
+
+* [ ] Add more contents
+
+* [ ] Game mechanism
+
+* [ ] Visual effects

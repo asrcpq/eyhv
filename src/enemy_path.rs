@@ -1,6 +1,7 @@
 use crate::algebra::Point2f;
 use crate::window_rect::WINDOW_RECT;
 
+#[derive(Clone)]
 pub enum EnemyPath {
     // Straight down with given x
     Straight(StraightDown),
@@ -14,6 +15,7 @@ impl EnemyPath {
     }
 }
 
+#[derive(Clone)]
 pub struct StraightDown {
     timer: f32,
     x: f32,

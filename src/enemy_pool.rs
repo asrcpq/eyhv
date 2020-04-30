@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 
 use crate::bullet::Bullet;
-use crate::collision_pipe_interface::CollisionPipeInterface;
+use crate::collision::CollisionPipeInterface;
 use crate::enemy::{Enemy, EnemyTickReturnOption};
 use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
 use crate::algebra::Point2f;

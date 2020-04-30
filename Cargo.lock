@@ -30,10 +30,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "dyn-clone"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b3ec9c7fb9a2ce708751c98e31ccbae74b6ab194f5c8e30cfb7ed62e38b70866"
+
+[[package]]
 name = "eyhv"
 version = "0.1.0"
 dependencies = [
  "derive_more",
+ "dyn-clone",
  "lazy_static",
  "rand",
  "rand_pcg",

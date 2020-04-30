@@ -3,22 +3,22 @@ use std::collections::VecDeque;
 use rand::Rng;
 use rand::SeedableRng;
 use rand_pcg;
+use dyn_clone::DynClone;
 
 use crate::algebra::{Point2f, Mat2x2f};
 use crate::bullet::{Bullet, SimpleBullet, BULLET_GRAPHIC_OBJECTS};
-use crate::graphic_object::GraphicObjects;
 use crate::random_tools::simple_try;
 
 const TRY_TIMES: u32 = 10;
 
-pub trait CannonControllerInterface {
+pub trait CannonControllerInterface: DynClone {
     // once a cannon is turned off, it immediately resets the state of itself
     // static implementation
     fn switch(&mut self, switch: bool);
-    // this is called fire_tick as there might be other tick functions
-    // like PlayerLocker's update_theta
-    fn fire_tick(&mut self, host_p: Point2f, dt: f32) -> VecDeque<Bullet>;
+    fn tick(&mut self, host_p: Point2f, player_p: Point2f, dt: f32) -> VecDeque<Bullet>;
 }
+
+dyn_clone::clone_trait_object!(CannonControllerInterface);
 
 pub trait CannonGeneratorInterface {
     fn generate(p: Point2f, seed: u64, difficulty: f32) -> Self;
@@ -28,7 +28,7 @@ pub enum EnemyCannon {
     PlayerLocker(PlayerLocker),
 }
 
-#[derive(Debug)]
+#[derive(Clone, Debug)]
 pub struct PlayerLocker {
     // relative to moving object
     p: Point2f,
@@ -97,7 +97,7 @@ impl CannonGeneratorInterface for PlayerLocker {
 }
 
 impl PlayerLocker {
-    pub fn update_theta(&mut self, player_p: Point2f, self_p: Point2f) {
+    fn update_theta(&mut self, player_p: Point2f, self_p: Point2f) {
         // r points to player
         let r = player_p - self_p;
         self.theta = r.y.atan2(r.x);
@@ -119,7 +119,8 @@ impl CannonControllerInterface for PlayerLocker {
         }
     }
 
-    fn fire_tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<Bullet> {
+    fn tick(&mut self, host_p: Point2f, player_p: Point2f, mut dt: f32) -> VecDeque<Bullet> {
+        self.update_theta(player_p, host_p);
         let mut bullet_queue = VecDeque::new();
         const BULLET_SPEED: f32 = 100.;
         const BULLET_RADIUS: f32 = 3.;
@@ -197,8 +198,9 @@ impl SimpleCannon {
     }
 }
 
-impl CannonControllerInterface for SimpleCannon {
-    fn switch(&mut self, switch: bool) {
+//impl CannonControllerInterface for SimpleCannon {
+impl SimpleCannon {
+    pub fn switch(&mut self, switch: bool) {
         if self.switch {
             if !switch {
                 self.switch = false;
@@ -211,7 +213,7 @@ impl CannonControllerInterface for SimpleCannon {
         }
     }
 
-    fn fire_tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<Bullet> {
+    pub fn tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<Bullet> {
         const BULLET_SPEED: f32 = 2500.;
         const BULLET_RADIUS: f32 = 3.;
         let mut bullet_queue = VecDeque::new();

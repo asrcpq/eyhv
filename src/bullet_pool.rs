@@ -1,8 +1,7 @@
 use std::collections::VecDeque;
 
-use crate::algebra::Rect2f;
 use crate::bullet::Bullet;
-use crate::collision_pipe_interface::CollisionPipeInterface;
+use crate::collision::CollisionPipeInterface;
 use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
 use crate::window_rect::WINDOW_RECT;
 

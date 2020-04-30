@@ -1,7 +1,5 @@
 use lazy_static::lazy_static;
 
-use std::collections::VecDeque;
-
 use crate::algebra::{Mat2x2f, Point2f};
 use crate::graphic_object::GraphicObjects;
 
