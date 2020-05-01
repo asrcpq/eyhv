@@ -4,7 +4,7 @@ use crate::algebra::Point2f;
 use crate::bullet::{Bullet, SimpleBullet};
 use crate::cannon::SimpleCannon;
 use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
-use crate::window_rect::WINDOW_RECT;
+use crate::window_rect::{WINDOW_RECT, WINDOW_SIZE};
 
 pub struct Player {
     // Dynamic
@@ -23,8 +23,8 @@ pub struct Player {
 
 impl Player {
     pub fn new() -> Player {
-        let window_size = WINDOW_RECT.get_size();
-        let p0 = Point2f::from_floats(window_size.x / 2., window_size.y - 50.);
+        let window_size = WINDOW_SIZE.clone();
+        let p0 = Point2f::from_floats(window_size.x / 2., window_size.y - 50.) + WINDOW_RECT.lu;
         Player {
             p: p0,
             last_p: p0,

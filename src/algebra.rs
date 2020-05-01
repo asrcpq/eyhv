@@ -66,6 +66,17 @@ impl Point2f {
     }
 }
 
+impl Mul<Point2f> for Point2f {
+    type Output = Point2f;
+
+    fn mul(self, other: Point2f) -> Point2f {
+        Point2f {
+            x: self.x * other.x,
+            y: self.y * other.y,
+        }
+    }
+}
+
 #[derive(
     Copy,
     Clone,

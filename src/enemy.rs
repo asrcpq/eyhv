@@ -14,7 +14,6 @@ use crate::graphic_object::GraphicObjects;
 #[derive(Clone)]
 pub struct EnemyGraphicObjects {
     pub small1: GraphicObjects,
-    pub dummy: GraphicObjects,
 }
 
 lazy_static! {
@@ -26,7 +25,6 @@ lazy_static! {
                 "l 0.7 0.0 0.2 0.6 0.5 0.3 1.5 1. 1.5 -1. 0.5 -0.3",
             ])
             .zoom(10.),
-            dummy: GraphicObjects::from_strs(vec!["l 1 1 1 1 -20 -20 -20 20 20 20 20 -20 -20 -20"]),
         }
     };
 }
@@ -54,7 +52,7 @@ impl Enemy {
         Enemy {
             p: None,
             last_p: None,
-            path: Box::new(enemy_path::StraightDown::new(250., 50.)),
+            path: Box::new(enemy_path::ENEMY_PATH_PROTOTYPES.left_straight_down.clone()),
             cannon: vec![Box::new(PlayerLocker::generate(
                 Point2f::from_floats(0., 0.),
                 12345,

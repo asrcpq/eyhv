@@ -1,40 +1,71 @@
-use dyn_clone::DynClone;
+use lazy_static::lazy_static;
 
 use crate::algebra::Point2f;
-use crate::window_rect::WINDOW_RECT;
-
-pub trait EnemyPath: DynClone {
-    // return None if path ends
-    fn tick(&mut self, dt: f32) -> Option<Point2f>;
-}
-
-dyn_clone::clone_trait_object!(EnemyPath);
+use crate::window_rect::{WINDOW_RECT, WINDOW_SIZE};
 
 #[derive(Clone)]
-pub struct StraightDown {
+pub struct EnemyPath {
+    // vertices and time takes for each edge
+    // (route[-1] time is ignored)
+    route: Vec<(Point2f, f32)>,
+    index: usize,
+
+    // dynamic
     timer: f32,
-    x: f32,
-    vy: f32,
 }
 
-impl StraightDown {
-    pub fn new(x: f32, vy: f32) -> StraightDown {
-        StraightDown {
+pub struct EnemyPathPrototypes {
+    pub left_straight_down: EnemyPath,
+}
+
+lazy_static! {
+    pub static ref ENEMY_PATH_PROTOTYPES: EnemyPathPrototypes = {
+        EnemyPathPrototypes {
+            left_straight_down: EnemyPath::from_str("0.3 0. 10. 0.3 1. 0."),
+        }
+    };
+}
+
+impl EnemyPath {
+    pub fn from_str(line: &str) -> EnemyPath {
+        let mut route = Vec::new();
+        let splited = line
+            .split_whitespace()
+            .map(|x| x.parse::<f32>().expect("float parse fail"))
+            .collect::<Vec<f32>>();
+        let mut iter = splited.iter();
+        while match iter.next() {
+            Some(f1) => {
+                // why copy trait does not work inside lazy_static??
+                route.push((Point2f::from_floats(
+                    *f1,
+                    *iter.next().unwrap(),
+                ) * WINDOW_SIZE.clone() + WINDOW_RECT.lu, *iter.next().unwrap()));
+                true
+            },
+            None => false,
+        } { }
+        EnemyPath {
+            route: route,
+            index: 0,
             timer: 0.,
-            x: x,
-            vy: vy,
         }
     }
-}
 
-impl EnemyPath for StraightDown {
-    fn tick(&mut self, dt: f32) -> Option<Point2f> {
+    pub fn tick(&mut self, dt: f32) -> Option<Point2f> {
         self.timer += dt;
-        let y = self.vy * self.timer;
-        if y > WINDOW_RECT.rd.y {
-            None
-        } else {
-            Some(Point2f::from_floats(self.x, y))
+        loop {
+            let next_weight = self.route[self.index].1 - self.timer;
+            if next_weight > 0. {
+                return Some((self.route[self.index].0 * next_weight +
+                self.route[self.index + 1].0 * self.timer) / self.route[self.index].1);
+            } else {
+                if self.index == self.route.len() - 2 {
+                    return None;
+                }
+                self.timer = -next_weight;
+                self.index += 1;
+            }
         }
     }
 }
