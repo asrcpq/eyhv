@@ -1,5 +1,3 @@
-use lazy_static::lazy_static;
-
 use std::collections::VecDeque;
 
 use crate::algebra::{Circle2f, Point2f};
@@ -10,23 +8,18 @@ use crate::enemy;
 use crate::enemy_path::EnemyPath;
 use crate::graphic_object::GraphicObjects;
 
-// This struct is static, created by Session::new() only once
-#[derive(Clone)]
-pub struct EnemyGraphicObjects {
-    pub small1: GraphicObjects,
-}
+mod enemy_graphic_objects {
+    use crate::graphic_object::GraphicObjects;
+    use lazy_static::lazy_static;
 
-lazy_static! {
-    pub static ref ENEMY_GRAPHIC_OBJECTS: EnemyGraphicObjects = {
-        EnemyGraphicObjects {
-            small1: GraphicObjects::from_strs(vec![
-                "l 0.3 0.5 0.5 1. -0.5 0.5 -0.5 -0.5 0.5 -0.5 0.5 0.5 -0.5 0.5",
-                "l 0.7 0.0 0.2 0.6 -0.5 0.3 -1.5 1. -1.5 -1. -0.5 -0.3",
-                "l 0.7 0.0 0.2 0.6 0.5 0.3 1.5 1. 1.5 -1. 0.5 -0.3",
-            ])
-            .zoom(10.),
-        }
-    };
+    lazy_static! {
+        pub static ref SMALL1: GraphicObjects = GraphicObjects::from_strs(vec![
+            "l 0.3 0.5 0.5 1. -0.5 0.5 -0.5 -0.5 0.5 -0.5 0.5 0.5 -0.5 0.5",
+            "l 0.7 0.0 0.2 0.6 -0.5 0.3 -1.5 1. -1.5 -1. -0.5 -0.3",
+            "l 0.7 0.0 0.2 0.6 0.5 0.3 1.5 1. 1.5 -1. 0.5 -0.3",
+        ])
+        .zoom(10.);
+    }
 }
 
 pub enum EnemyTickReturnOption {
@@ -40,23 +33,20 @@ pub struct Enemy {
     last_p: Option<Point2f>,
     path: EnemyPath,
 
-    cannons: Vec<Box<CannonControllerInterface>>,
+    cannons: Vec<Box<dyn CannonControllerInterface>>,
 
     graphic_objects: GraphicObjects,
     hitboxes: Vec<Circle2f>,
 }
 
 impl Enemy {
-    pub fn new_small(
-        path: EnemyPath,
-        cannons: Vec<Box<CannonControllerInterface>>,
-    ) -> Enemy {
+    pub fn new_small(path: EnemyPath, cannons: Vec<Box<dyn CannonControllerInterface>>) -> Enemy {
         Enemy {
             p: None,
             last_p: None,
             path: path,
             cannons: cannons,
-            graphic_objects: enemy::ENEMY_GRAPHIC_OBJECTS.small1.clone(),
+            graphic_objects: enemy_graphic_objects::SMALL1.clone(),
             hitboxes: vec![Circle2f::from_floats(0., 0., 20.)],
         }
     }

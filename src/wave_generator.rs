@@ -4,11 +4,10 @@ use crate::algebra::Point2f;
 use crate::cannon;
 use crate::cannon::CannonGeneratorInterface;
 use crate::enemy::Enemy;
-use crate::enemy_path::ENEMY_PATH_PROTOTYPES;
+use crate::enemy_path::enemy_paths;
 
 #[derive(Clone)]
-pub struct WaveScheme {
-}
+pub struct WaveScheme {}
 
 pub struct WaveGenerator {
     test_enemy: Enemy,
@@ -20,7 +19,7 @@ impl WaveGenerator {
     pub fn new() -> WaveGenerator {
         WaveGenerator {
             test_enemy: Enemy::new_small(
-                ENEMY_PATH_PROTOTYPES.left_straight_down.clone(),
+                enemy_paths::LEFT_STRAIGHT_DOWN.clone(),
                 vec![Box::new(cannon::PlayerLocker::generate(
                     Point2f::from_floats(0., 0.),
                     12345,

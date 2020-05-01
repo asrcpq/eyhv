@@ -1,23 +1,16 @@
-use lazy_static::lazy_static;
-
 use crate::algebra::{Mat2x2f, Point2f};
 use crate::graphic_object::GraphicObjects;
 
-// This struct is static, created by Session::new() only once
-pub struct BulletGraphicObjects {
-    pub wedge: GraphicObjects,
-    pub rectangle: GraphicObjects,
-}
+pub mod bullet_graphic_objects {
+    use crate::graphic_object::GraphicObjects;
+    use lazy_static::lazy_static;
 
-lazy_static! {
-    pub static ref BULLET_GRAPHIC_OBJECTS: BulletGraphicObjects = {
-        BulletGraphicObjects {
-            wedge: GraphicObjects::from_strs(vec!["l 1 1 0 1 -10 -5 -10 5 10 0 -10 -5"]),
-            rectangle: GraphicObjects::from_strs(vec![
-                "l 1 1 0.5 0.5 -2 -10 2 -10 2 10 -2 10 -2 -10",
-            ]),
-        }
-    };
+    lazy_static! {
+        pub static ref WEDGE: GraphicObjects =
+            GraphicObjects::from_strs(vec!["l 1 1 0 1 -10 -5 -10 5 10 0 -10 -5"]);
+        pub static ref RECTANGLE: GraphicObjects =
+            GraphicObjects::from_strs(vec!["l 1 1 0.5 0.5 -2 -10 2 -10 2 10 -2 10 -2 -10"]);
+    }
 }
 
 pub enum Bullet {

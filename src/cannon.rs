@@ -6,7 +6,7 @@ use rand::SeedableRng;
 use rand_pcg;
 
 use crate::algebra::{Mat2x2f, Point2f};
-use crate::bullet::{Bullet, SimpleBullet, BULLET_GRAPHIC_OBJECTS};
+use crate::bullet::{bullet_graphic_objects, Bullet, SimpleBullet};
 use crate::random_tools::simple_try;
 
 const TRY_TIMES: u32 = 10;
@@ -158,8 +158,7 @@ impl CannonControllerInterface for PlayerLocker {
                         normed_vec2f * self.bullet_speed,
                         Point2f::new(),
                         BULLET_RADIUS,
-                        BULLET_GRAPHIC_OBJECTS
-                            .wedge
+                        bullet_graphic_objects::WEDGE
                             .rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),
                     )));
                 }
@@ -231,7 +230,7 @@ impl SimpleCannon {
                     self.v,
                     Point2f::new(),
                     BULLET_RADIUS,
-                    BULLET_GRAPHIC_OBJECTS.rectangle.clone(),
+                    bullet_graphic_objects::RECTANGLE.clone(),
                 )));
             }
         }
