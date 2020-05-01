@@ -7,7 +7,7 @@ use crate::bullet::Bullet;
 use crate::cannon::{CannonControllerInterface, CannonGeneratorInterface};
 use crate::cannon::{EnemyCannon, PlayerLocker};
 use crate::enemy;
-use crate::enemy_path;
+use crate::enemy_path::EnemyPath;
 use crate::graphic_object::GraphicObjects;
 
 // This struct is static, created by Session::new() only once
@@ -38,7 +38,7 @@ pub enum EnemyTickReturnOption {
 pub struct Enemy {
     p: Option<Point2f>,
     last_p: Option<Point2f>,
-    path: Box<enemy_path::EnemyPath>,
+    path: EnemyPath,
 
     cannons: Vec<Box<CannonControllerInterface>>,
 
@@ -54,12 +54,8 @@ impl Enemy {
         Enemy {
             p: None,
             last_p: None,
-            path: Box::new(enemy_path::ENEMY_PATH_PROTOTYPES.left_straight_down.clone()),
-            cannons: vec![Box::new(PlayerLocker::generate(
-                Point2f::from_floats(0., 0.),
-                12345,
-                0.2,
-            ))],
+            path: path,
+            cannons: cannons,
             graphic_objects: enemy::ENEMY_GRAPHIC_OBJECTS.small1.clone(),
             hitboxes: vec![Circle2f::from_floats(0., 0., 20.)],
         }

@@ -1,11 +1,13 @@
 use std::collections::VecDeque;
 
+use crate::algebra::Point2f;
+use crate::cannon;
 use crate::cannon::CannonGeneratorInterface;
 use crate::enemy::Enemy;
+use crate::enemy_path::ENEMY_PATH_PROTOTYPES;
 
 #[derive(Clone)]
 pub struct WaveScheme {
-    Enemy:
 }
 
 pub struct WaveGenerator {
@@ -17,7 +19,14 @@ pub struct WaveGenerator {
 impl WaveGenerator {
     pub fn new() -> WaveGenerator {
         WaveGenerator {
-            test_enemy: Enemy::new_small(),
+            test_enemy: Enemy::new_small(
+                ENEMY_PATH_PROTOTYPES.left_straight_down.clone(),
+                vec![Box::new(cannon::PlayerLocker::generate(
+                    Point2f::from_floats(0., 0.),
+                    12345,
+                    0.2,
+                ))],
+            ),
             wave_cd: 1.,
             wave_interval: 7.,
         }
