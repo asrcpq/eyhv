@@ -214,7 +214,6 @@ impl SimpleCannon {
     }
 
     pub fn tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<Bullet> {
-        const BULLET_SPEED: f32 = 2500.;
         const BULLET_RADIUS: f32 = 3.;
         let mut bullet_queue = VecDeque::new();
         if !self.switch {

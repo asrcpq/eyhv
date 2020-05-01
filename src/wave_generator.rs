@@ -3,10 +3,13 @@ use std::collections::VecDeque;
 use crate::cannon::CannonGeneratorInterface;
 use crate::enemy::Enemy;
 
-enum WaveScheme {}
+#[derive(Clone)]
+pub struct WaveScheme {
+    Enemy:
+}
 
 pub struct WaveGenerator {
-    dummy_enemy: Enemy,
+    test_enemy: Enemy,
     wave_cd: f32,
     wave_interval: f32,
 }
@@ -14,7 +17,7 @@ pub struct WaveGenerator {
 impl WaveGenerator {
     pub fn new() -> WaveGenerator {
         WaveGenerator {
-            dummy_enemy: Enemy::new_dummy(),
+            test_enemy: Enemy::new_small(),
             wave_cd: 1.,
             wave_interval: 7.,
         }
@@ -29,7 +32,7 @@ impl WaveGenerator {
                 dt = 0.;
             } else {
                 self.wave_cd = self.wave_interval;
-                enemy_queue.push_back(self.dummy_enemy.clone());
+                enemy_queue.push_back(self.test_enemy.clone());
             }
         }
         enemy_queue

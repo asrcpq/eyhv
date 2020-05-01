@@ -32,7 +32,7 @@ impl EnemyPool {
                     bullet_queue_return.extend(bullet_queue);
                     self.enemies.push_back(enemy);
                 }
-                EnemyTickReturnOption::Destroyed | EnemyTickReturnOption::Removed => {}
+                EnemyTickReturnOption::Removed => {}
             }
         }
 

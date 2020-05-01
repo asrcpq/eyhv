@@ -31,7 +31,6 @@ lazy_static! {
 
 pub enum EnemyTickReturnOption {
     Normal(VecDeque<Bullet>),
-    Destroyed,
     Removed,
 }
 
@@ -41,19 +40,22 @@ pub struct Enemy {
     last_p: Option<Point2f>,
     path: Box<enemy_path::EnemyPath>,
 
-    cannon: Vec<Box<CannonControllerInterface>>,
+    cannons: Vec<Box<CannonControllerInterface>>,
 
     graphic_objects: GraphicObjects,
     hitboxes: Vec<Circle2f>,
 }
 
 impl Enemy {
-    pub fn new_dummy() -> Enemy {
+    pub fn new_small(
+        path: EnemyPath,
+        cannons: Vec<Box<CannonControllerInterface>>,
+    ) -> Enemy {
         Enemy {
             p: None,
             last_p: None,
             path: Box::new(enemy_path::ENEMY_PATH_PROTOTYPES.left_straight_down.clone()),
-            cannon: vec![Box::new(PlayerLocker::generate(
+            cannons: vec![Box::new(PlayerLocker::generate(
                 Point2f::from_floats(0., 0.),
                 12345,
                 0.2,
@@ -62,6 +64,7 @@ impl Enemy {
             hitboxes: vec![Circle2f::from_floats(0., 0., 20.)],
         }
     }
+
     pub fn tick(&mut self, dt: f32, player_p: Point2f) -> EnemyTickReturnOption {
         match self.path.tick(dt) {
             // update p first to prevent displaying (0, 0)
@@ -74,7 +77,7 @@ impl Enemy {
 
         let mut bullet_queue = VecDeque::new();
         // path is executed before update_theta so unwrap p should be safe
-        for cannon in self.cannon.iter_mut() {
+        for cannon in self.cannons.iter_mut() {
             bullet_queue.extend(cannon.tick(self.p.unwrap(), player_p, dt));
         }
         EnemyTickReturnOption::Normal(bullet_queue)
