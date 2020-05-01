@@ -41,7 +41,7 @@ pub enum EnemyTickReturnOption {
 pub struct Enemy {
     p: Option<Point2f>,
     last_p: Option<Point2f>,
-    path: enemy_path::EnemyPath,
+    path: Box<enemy_path::EnemyPath>,
 
     cannon: Vec<Box<CannonControllerInterface>>,
 
@@ -54,7 +54,7 @@ impl Enemy {
         Enemy {
             p: None,
             last_p: None,
-            path: enemy_path::EnemyPath::Straight(enemy_path::StraightDown::new(250., 50.)),
+            path: Box::new(enemy_path::StraightDown::new(250., 50.)),
             cannon: vec![Box::new(PlayerLocker::generate(
                 Point2f::from_floats(0., 0.),
                 12345,

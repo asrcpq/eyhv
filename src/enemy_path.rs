@@ -1,19 +1,14 @@
+use dyn_clone::DynClone;
+
 use crate::algebra::Point2f;
 use crate::window_rect::WINDOW_RECT;
 
-#[derive(Clone)]
-pub enum EnemyPath {
-    // Straight down with given x
-    Straight(StraightDown),
+pub trait EnemyPath: DynClone {
+    // return None if path ends
+    fn tick(&mut self, dt: f32) -> Option<Point2f>;
 }
 
-impl EnemyPath {
-    pub fn tick(&mut self, dt: f32) -> Option<Point2f> {
-        match self {
-            EnemyPath::Straight(enemy_path) => enemy_path.tick(dt),
-        }
-    }
-}
+dyn_clone::clone_trait_object!(EnemyPath);
 
 #[derive(Clone)]
 pub struct StraightDown {
@@ -30,9 +25,10 @@ impl StraightDown {
             vy: vy,
         }
     }
+}
 
-    // return None if path ends
-    pub fn tick(&mut self, dt: f32) -> Option<Point2f> {
+impl EnemyPath for StraightDown {
+    fn tick(&mut self, dt: f32) -> Option<Point2f> {
         self.timer += dt;
         let y = self.vy * self.timer;
         if y > WINDOW_RECT.rd.y {
