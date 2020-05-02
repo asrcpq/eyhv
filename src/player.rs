@@ -46,7 +46,7 @@ impl Player {
             graphic_objects: GraphicObjects::from_strs(vec![
                 "l 0.3 1.0 1.0 1.0 -10 8 0 -10 10 8 3 4 -3 4 -10 8",
             ]),
-            speed: 600.0,
+            speed: 500.0,
         }
     }
 

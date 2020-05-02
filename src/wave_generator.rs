@@ -29,14 +29,24 @@ mod wave_scheme_prototype {
     }
 
     lazy_static! {
-        static ref LEFT_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
+        static ref LEFT_DOWN_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(enemy_prototype::SMALL.clone(), vec![
                 (enemy_paths::LEFT_STRAIGHT_DOWN.clone(), vec![0.5, 1., 1.5, 2., 2.5, 3.]),
             ])]
         };
-        static ref RIGHT_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
+        static ref RIGHT_DOWN_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(enemy_prototype::SMALL.clone(), vec![
                 (enemy_paths::RIGHT_STRAIGHT_DOWN.clone(), vec![0.5, 1., 1.5, 2., 2.5, 3.]),
+            ])]
+        };
+        static ref LEFT_RIGHT_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
+            enemies: vec![(enemy_prototype::SMALL.clone(), vec![
+                (enemy_paths::LEFT_RIGHT.clone(), vec![0.5, 1., 1.5, 2., 2.5, 3.]),
+            ])]
+        };
+        static ref RIGHT_LEFT_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
+            enemies: vec![(enemy_prototype::SMALL.clone(), vec![
+                (enemy_paths::RIGHT_LEFT.clone(), vec![0.5, 1., 1.5, 2., 2.5, 3.]),
             ])]
         };
     }
@@ -87,11 +97,13 @@ mod wave_scheme_prototype {
     }
 
     pub fn random_mapper(seed: u64, difficulty: f32) -> CompiledWave {
-        const SCHEME_SIZE: u32 = 2;
+        const SCHEME_SIZE: u32 = 4;
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
         match rng.gen_range(0, SCHEME_SIZE) {
-            0 => LEFT_CHAIN.compile(rng.gen::<u64>(), difficulty),
-            1 => RIGHT_CHAIN.compile(rng.gen::<u64>(), difficulty),
+            0 => LEFT_DOWN_CHAIN.compile(rng.gen::<u64>(), difficulty),
+            1 => RIGHT_DOWN_CHAIN.compile(rng.gen::<u64>(), difficulty),
+            2 => LEFT_RIGHT_CHAIN.compile(rng.gen::<u64>(), difficulty),
+            3 => RIGHT_LEFT_CHAIN.compile(rng.gen::<u64>(), difficulty),
             _ => unreachable!()
         }
     }

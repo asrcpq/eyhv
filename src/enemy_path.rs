@@ -6,8 +6,10 @@ pub mod enemy_paths {
     use lazy_static::lazy_static;
 
     lazy_static! {
-        pub static ref LEFT_STRAIGHT_DOWN: EnemyPath = EnemyPath::from_str("0.3 0. 10. 0.3 1. 0.");
-        pub static ref RIGHT_STRAIGHT_DOWN: EnemyPath = EnemyPath::from_str("0.7 0. 10. 0.7 1. 0.");
+        pub static ref LEFT_STRAIGHT_DOWN: EnemyPath = EnemyPath::from_str("0.3 0 10. 0.3 1 0");
+        pub static ref RIGHT_STRAIGHT_DOWN: EnemyPath = EnemyPath::from_str("0.7 0 10. 0.7 1 0");
+        pub static ref LEFT_RIGHT: EnemyPath = EnemyPath::from_str("0 0.1 6 1 0.1 0");
+        pub static ref RIGHT_LEFT: EnemyPath = EnemyPath::from_str("1 0.1 6 0 0.1 0");
     }
 }
 

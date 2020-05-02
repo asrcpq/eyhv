@@ -43,7 +43,9 @@ Still in its early development stage
 
 	* [x] New Cannon: Rotor with new bullet: RotateBullet
 
-	* [ ] New WaveScheme and Enemy
+	* [ ] New GraphicObject and modify GraphicObjects
+
+	* [ ] New WaveScheme, Enemy, EnemyPath
 
 * [x] simple\_try random generator optimization with monotonicity
 
