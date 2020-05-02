@@ -6,7 +6,7 @@ use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
 use crate::window_rect::WINDOW_RECT;
 
 pub struct BulletPool {
-    bullets: VecDeque<Bullet>,
+    bullets: VecDeque<Box<dyn Bullet>>,
 }
 
 impl BulletPool {
@@ -16,7 +16,7 @@ impl BulletPool {
         }
     }
 
-    pub fn extend(&mut self, bullet_queue: VecDeque<Bullet>) {
+    pub fn extend(&mut self, bullet_queue: VecDeque<Box<dyn Bullet>>) {
         self.bullets.extend(bullet_queue);
     }
 
@@ -39,12 +39,12 @@ impl BulletPool {
     }
 
     // only for collision
-    pub fn pop(&mut self) -> Option<Bullet> {
+    pub fn pop(&mut self) -> Option<Box<dyn Bullet>> {
         self.bullets.pop_front()
     }
 
     // only for collision
-    pub fn push(&mut self, bullet: Bullet) {
+    pub fn push(&mut self, bullet: Box<dyn Bullet>) {
         self.bullets.push_back(bullet)
     }
 
@@ -58,12 +58,12 @@ impl BulletPool {
 }
 
 impl CollisionPipeInterface for BulletPool {
-    type Object = Bullet;
+    type Object = Box<dyn Bullet>;
 
-    fn push(&mut self, enemy: Bullet) {
+    fn push(&mut self, enemy: Box<dyn Bullet>) {
         self.bullets.push_back(enemy);
     }
-    fn pop(&mut self) -> Option<Bullet> {
+    fn pop(&mut self) -> Option<Box<dyn Bullet>> {
         self.bullets.pop_front()
     }
     fn len(&self) -> usize {

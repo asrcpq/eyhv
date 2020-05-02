@@ -21,7 +21,7 @@ impl EnemyPool {
         self.enemies.extend(enemy_queue);
     }
 
-    pub fn tick(&mut self, dt: f32, player_p: Point2f) -> VecDeque<Bullet> {
+    pub fn tick(&mut self, dt: f32, player_p: Point2f) -> VecDeque<Box<dyn Bullet>> {
         let len = self.enemies.len();
         let mut bullet_queue_return = VecDeque::new();
         for _ in 0..len {

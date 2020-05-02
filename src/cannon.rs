@@ -15,7 +15,7 @@ pub trait CannonControllerInterface: DynClone {
     // once a cannon is turned off, it immediately resets the state of itself
     // static implementation
     fn switch(&mut self, switch: bool);
-    fn tick(&mut self, host_p: Point2f, player_p: Point2f, dt: f32) -> VecDeque<Bullet>;
+    fn tick(&mut self, host_p: Point2f, player_p: Point2f, dt: f32) -> VecDeque<Box<dyn Bullet>>;
 
     fn set_p(&mut self, p: Point2f);
 }
@@ -126,7 +126,7 @@ impl CannonControllerInterface for PlayerLocker {
         }
     }
 
-    fn tick(&mut self, host_p: Point2f, player_p: Point2f, mut dt: f32) -> VecDeque<Bullet> {
+    fn tick(&mut self, host_p: Point2f, player_p: Point2f, mut dt: f32) -> VecDeque<Box<dyn Bullet>> {
         self.update_theta(player_p, host_p);
         let mut bullet_queue = VecDeque::new();
         const BULLET_RADIUS: f32 = 3.;
@@ -159,7 +159,7 @@ impl CannonControllerInterface for PlayerLocker {
                         self.open_angle / (self.count + 1) as f32 * (x + 1) as f32 + self.theta
                             - self.open_angle / 2.,
                     );
-                    bullet_queue.push_back(Bullet::Simple(SimpleBullet::new(
+                    bullet_queue.push_back(Box::new(SimpleBullet::new(
                         self.p + host_p,
                         normed_vec2f * self.bullet_speed,
                         Point2f::new(),
@@ -221,7 +221,7 @@ impl SimpleCannon {
         }
     }
 
-    pub fn tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<Bullet> {
+    pub fn tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<Box<dyn Bullet>> {
         const BULLET_RADIUS: f32 = 3.;
         let mut bullet_queue = VecDeque::new();
         if !self.switch {
@@ -234,7 +234,7 @@ impl SimpleCannon {
             } else {
                 dt -= self.fire_cd;
                 self.fire_cd = self.fire_interval;
-                bullet_queue.push_back(Bullet::Simple(SimpleBullet::new(
+                bullet_queue.push_back(Box::new(SimpleBullet::new(
                     self.p + host_p,
                     self.v,
                     Point2f::new(),
@@ -302,7 +302,7 @@ impl CannonControllerInterface for Rotor {
         }
     }
 
-    fn tick(&mut self, host_p: Point2f, player_p: Point2f, mut dt: f32) -> VecDeque<Bullet> {
+    fn tick(&mut self, host_p: Point2f, player_p: Point2f, mut dt: f32) -> VecDeque<Box<dyn Bullet>> {
         let mut bullet_queue = VecDeque::new();
         const BULLET_RADIUS: f32 = 3.;
         loop {

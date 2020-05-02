@@ -1,3 +1,5 @@
+use dyn_clone::DynClone;
+
 use crate::algebra::{Mat2x2f, Point2f};
 use crate::graphic_object::GraphicObjects;
 
@@ -13,58 +15,17 @@ pub mod bullet_graphic_objects {
     }
 }
 
-pub enum Bullet {
-    Simple(SimpleBullet),
-    Rotate(RotateBullet),
+pub trait Bullet: DynClone {
+    fn tick(&mut self, dt: f32);
+    fn get_shifted_graphic_objects(&self) -> GraphicObjects;
+    fn get_p(&self) -> Option<Point2f>;
+    fn get_last_p(&self) -> Option<Point2f>;
+    fn get_r(&self) -> f32;
 }
 
-impl Bullet {
-    pub fn tick(&mut self, dt: f32) {
-        match self {
-            Bullet::Simple(simple_bullet) => {
-                simple_bullet.tick(dt);
-            }
-            Bullet::Rotate(rotate_bullet) => {
-                unimplemented!();
-            }
-        }
-    }
+dyn_clone::clone_trait_object!(Bullet);
 
-    pub fn get_shifted_graphic_objects(&self) -> GraphicObjects {
-        match self {
-            Bullet::Simple(simple_bullet) => simple_bullet.get_shifted_graphic_objects(),
-            Bullet::Rotate(rotate_bullet) => {
-                unimplemented!();
-            }
-        }
-    }
-
-    pub fn get_p(&self) -> Option<Point2f> {
-        match self {
-            Bullet::Simple(simple_bullet) => simple_bullet.get_p(),
-            Bullet::Rotate(rotate_bullet) => unimplemented!(),
-        }
-    }
-
-    pub fn get_last_p(&self) -> Option<Point2f> {
-        match self {
-            Bullet::Simple(simple_bullet) => simple_bullet.get_last_p(),
-            Bullet::Rotate(rotate_bullet) => {
-                unimplemented!();
-            }
-        }
-    }
-
-    pub fn get_r(&self) -> f32 {
-        match self {
-            Bullet::Simple(simple_bullet) => simple_bullet.get_r(),
-            Bullet::Rotate(rotate_bullet) => {
-                unimplemented!();
-            }
-        }
-    }
-}
-
+#[derive(Clone)]
 pub struct SimpleBullet {
     p: Point2f,
     last_p: Option<Point2f>,
@@ -91,7 +52,9 @@ impl SimpleBullet {
             graphic_objects: graphic_objects,
         }
     }
+}
 
+impl Bullet for SimpleBullet {
     fn get_p(&self) -> Option<Point2f> {
         Some(self.p)
     }

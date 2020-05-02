@@ -23,7 +23,7 @@ mod enemy_graphic_objects {
 }
 
 pub enum EnemyTickReturnOption {
-    Normal(VecDeque<Bullet>),
+    Normal(VecDeque<Box<dyn Bullet>>),
     Removed,
 }
 
