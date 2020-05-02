@@ -32,9 +32,13 @@ mod wave_scheme_prototype {
     }
 
     lazy_static! {
-        static ref LEFT_RIGHT_CHAINS: WaveSchemePrototype = WaveSchemePrototype {
+        static ref LEFT_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(enemy_prototype::SMALL.clone(), vec![
                 (enemy_paths::LEFT_STRAIGHT_DOWN.clone(), vec![0.5, 1., 1.5, 2., 2.5, 3.]),
+            ])]
+        };
+        static ref RIGHT_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
+            enemies: vec![(enemy_prototype::SMALL.clone(), vec![
                 (enemy_paths::RIGHT_STRAIGHT_DOWN.clone(), vec![0.5, 1., 1.5, 2., 2.5, 3.]),
             ])]
         };
@@ -86,12 +90,13 @@ mod wave_scheme_prototype {
     }
 
     pub fn random_mapper(seed: u64, difficulty: f32) -> CompiledWave {
-        const scheme_size: u32 = 1;
+        const scheme_size: u32 = 2;
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
         match rng.gen_range(0, scheme_size) {
-            0 => &LEFT_RIGHT_CHAINS,
-            _ => unreachable!(),
-        }.compile(rng.gen::<u64>(), difficulty)
+            0 => LEFT_CHAIN.compile(rng.gen::<u64>(), difficulty),
+            1 => RIGHT_CHAIN.compile(rng.gen::<u64>(), difficulty),
+            _ => unreachable!()
+        }
     }
 }
 
@@ -162,7 +167,7 @@ impl WaveGenerator {
                 });
                 dt -= self.wave_cd;
                 self.wave_cd = self.wave_interval;
-                self.current_wave = Some(wave_scheme_prototype::random_mapper(self.rng.gen::<u64>(), 0.2));
+                self.current_wave = Some(wave_scheme_prototype::random_mapper(self.rng.gen::<u64>(), 0.01));
             }
         }
         enemy_queue

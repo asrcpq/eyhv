@@ -4,30 +4,51 @@ use rand_pcg;
 
 // feed n groups
 pub fn simple_try<F>(
-    try_times: u32,
+    mut try_times: u32,
     evaluate: F,
-    range: Vec<(f32, f32)>,
-    expect_difficulty: f32,
+    mut range: Vec<(f32, f32)>,
+    mut expect_difficulty: f32,
     seed: u64,
 ) -> Vec<f32>
 where
     F: Fn(&Vec<f32>) -> f32,
 {
+    // resize difficulty
+    expect_difficulty = (|min, max| expect_difficulty * (max - min) + min)(
+        evaluate(&range.iter().map(|(x, y)| *x).collect()),
+        evaluate(&range.iter().map(|(x, y)| *y).collect()),
+    );
+
+    let len = range.len();
     let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
-    let mut best_match = None;
-    let mut best_match_score = f32::INFINITY;
-    for _ in 0..try_times {
+    loop {
         let generated = range
             .iter()
-            .map(|(begin, end)| rng.gen_range(begin, end))
+            .map(|(x, y)| if x > y {
+                (y, x)
+            } else {
+                (x, y)
+            }).map(|(begin, end)| rng.gen_range(begin, end))
             .collect();
-        let generated_score = (evaluate(&generated) - expect_difficulty).abs();
-        if generated_score < best_match_score {
-            best_match_score = generated_score;
-            best_match = Some(generated);
+        try_times -= 1;
+        if try_times <= 0 {
+            break generated;
+        }
+        let generated_error = evaluate(&generated) - expect_difficulty;
+        if generated_error > 0. {
+            range = range
+                .iter()
+                .zip(generated.iter())
+                .map(|((x, y), z)| (*x, *z))
+                .collect();
+        } else {
+            range = range
+                .iter()
+                .zip(generated.iter())
+                .map(|((x, y), z)| (*z, *y))
+                .collect();
         }
     }
-    best_match.unwrap()
 }
 
 // randomly split 1.0 into $count parts with each part > min_threshold

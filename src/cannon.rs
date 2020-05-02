@@ -79,7 +79,7 @@ impl CannonGeneratorInterface for PlayerLocker {
             TRY_TIMES,
             |x| x[0] * x[1] * x[2].powi(2),
             vec![(0.2, 1.), (1., 7.), (0.5, 2.)], // 0.05-40
-            difficulty * 39.95 + 0.05,
+            difficulty,
             rng.gen::<u64>(),
         ));
         let bs_ff_k = rng.gen_range(0.8, 1.2);
@@ -276,8 +276,8 @@ impl CannonGeneratorInterface for Rotor {
         let (bs, fi) = (|x: Vec<f32>| (x[0], x[1]))(simple_try(
             TRY_TIMES,
             |x| x[0] / x[1],
-            vec![(200., 400.), (0.01, 0.2)], // 1000-40000
-            difficulty * 39000. + 1000.,
+            vec![(200., 400.), (0.2, 0.01)], // 1000-40000
+            difficulty,
             rng.gen::<u64>(),
         ));
         let omega: f32 = rng.gen_range(1., 6.);

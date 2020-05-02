@@ -13,7 +13,7 @@ pub mod bullet_graphic_objects {
         pub static ref RECTANGLE: GraphicObjects =
             GraphicObjects::from_strs(vec!["l 1 1 0.5 0.5 -2 -10 2 -10 2 10 -2 10 -2 -10"]);
         pub static ref DIAMOND: GraphicObjects =
-            GraphicObjects::from_strs(vec!["l 0.5 0.5 1 1 -8 0 0 6 8 0 0 -6 -8 0"]);
+            GraphicObjects::from_strs(vec!["l 0.7 0.5 1 1 -8 0 0 6 8 0 0 -6 -8 0"]);
     }
 }
 

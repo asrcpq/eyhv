@@ -45,7 +45,7 @@ Still in its early development stage
 
 	* [ ] New WaveScheme and Enemy
 
-* [ ] simple\_try random generator optimization with monotonicity
+* [x] simple\_try random generator optimization with monotonicity
 
 * [ ] Game mechanism
 
@@ -53,10 +53,14 @@ Still in its early development stage
 
 ### Coding
 
-* [ ] Generalize tick() by using signal like methods
+* [ ] Generalize tick() by using timer interface
 
 * [ ] Fine-grained inter-module visibility
 
 * [ ] Using reference instead of cloning everything everywhere(necessary?)
 
-* [ ] Improve interface of simple\_try(using macro?)
+### Performance
+
+* [ ] Asynchronous wave generator
+
+* [ ] Parallelize
