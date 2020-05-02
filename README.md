@@ -1,4 +1,16 @@
+Still in its early development stage
+
 ## Features
+
+---
+
+* Minimalism design
+
+* Randomly generated and reproducible enemies
+
+## TODO
+
+### Implementation
 
 ---
 
@@ -24,27 +36,31 @@
 
 * [x] Enemy cannon
 
-* [x] Randomize cannon and bullet param(Framework)
+* [x] Reproducible randomize cannon and bullet param(Framework)
 
 * [x] Wave generator and wave manager
 (add 1 wave type contains of 1 type of enemy with 1 type of cannon)
 
-* [ ] Player collision box
+* [x] Player collision box
 
-* [ ] Add more contents
+* Add more contents
 
-* [ ] Monotomous simple\_try random generator
+	* [ ] New Cannon: Rotor with new bullet: RotateBullet
+
+* [ ] simple\_try random generator optimization with monotonicity
 
 * [ ] Game mechanism
 
 * [ ] Visual effects
 
----
+### Coding
 
-## Coding quality
+---
 
 * [ ] Generalize tick() by using signal like methods
 
-* [ ] fine-grained inter-module visibility
+* [ ] Fine-grained inter-module visibility
 
 * [ ] Using reference instead of cloning everything everywhere(necessary?)
+
+* [ ] Improve interface of simple\_try(using macro?)

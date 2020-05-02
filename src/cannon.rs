@@ -35,7 +35,7 @@ pub fn random_mapper(seed: u64, difficulty: f32) -> Box<CannonControllerInterfac
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub struct PlayerLocker {
     // relative to moving object
     p: Point2f,
@@ -69,7 +69,7 @@ pub struct PlayerLocker {
 impl CannonGeneratorInterface for PlayerLocker {
     fn generate(seed: u64, difficulty: f32) -> PlayerLocker {
         // difficulty expression
-        // difficulty = fire_freq * count * bullet_speed
+        // difficulty = fire_duration * count * (bullet_speed / fire_interval)
         // fire_freq = fd(cd * (0.2 - 1)) / cd(1 - 3) / fi(infer)
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
         let cd: f32 = rng.gen_range(1., 3.);
@@ -129,7 +129,6 @@ impl CannonControllerInterface for PlayerLocker {
     fn tick(&mut self, host_p: Point2f, player_p: Point2f, mut dt: f32) -> VecDeque<Bullet> {
         self.update_theta(player_p, host_p);
         let mut bullet_queue = VecDeque::new();
-        const BULLET_SPEED: f32 = 100.;
         const BULLET_RADIUS: f32 = 3.;
         'cycle: loop {
             if self.phase_timer > self.fire_duration {
@@ -244,5 +243,80 @@ impl SimpleCannon {
                 )));
             }
         }
+    }
+}
+
+#[derive(Clone)]
+pub struct Rotor {
+    // relative to moving object
+    p: Point2f,
+
+    // bullet shooted during fire phase
+    fire_interval: f32,
+
+    // timer between intervals
+    fire_cd: f32,
+
+    // rotating angle and speed
+    theta: f32,
+    omega: f32,
+
+    bullet_speed: f32,
+
+    // status
+    switch: bool, // on/off
+}
+
+impl CannonGeneratorInterface for Rotor {
+    fn generate(seed: u64, difficulty: f32) -> Rotor {
+        let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
+        // difficulty = fire_freq * bullet_speed
+        let mut bs: f32 = (difficulty * rng.gen_range(0.8, 1.2)).sqrt();
+        let fi: f32 = 0.2 * bs / difficulty;
+        bs *= 250.;
+        let omega: f32 = rng.gen_range(1., 6.);
+        let theta: f32 = rng.gen_range(0., 2. * std::f32::consts::PI);
+        Rotor {
+            p: Point2f::new(),
+            fire_interval: fi,
+            fire_cd: fi,
+            theta: theta,
+            omega: omega,
+            bullet_speed: bs,
+            switch: true,
+        }
+    }
+}
+
+impl CannonControllerInterface for Rotor {
+    fn switch(&mut self, switch: bool) {
+        if self.switch {
+            if !switch {
+                self.switch = false;
+                self.fire_cd = self.fire_interval;
+            }
+        } else {
+            if switch {
+                self.switch = true;
+            }
+        }
+    }
+
+    fn tick(&mut self, host_p: Point2f, player_p: Point2f, mut dt: f32) -> VecDeque<Bullet> {
+        let mut bullet_queue = VecDeque::new();
+        const BULLET_RADIUS: f32 = 3.;
+        loop {
+            if self.fire_cd > dt {
+                self.fire_cd -= dt;
+                break bullet_queue;
+            }
+            dt -= self.fire_cd;
+            //bullet_queue.push_back()
+            self.fire_cd = self.fire_interval;
+        }
+    }
+
+    fn set_p(&mut self, p: Point2f) {
+        self.p = p;
     }
 }
