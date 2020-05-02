@@ -166,29 +166,6 @@ impl GraphicObjects {
     }
 }
 
-#[cfg(test)]
-mod test {
-    use super::Point2f;
-    use super::{GraphicObject, GraphicObjects};
-
-    #[test]
-    fn graphic_objects_from_strs() {
-        let graphic_objects =
-            GraphicObjects::from_strs(vec!["l 0.3 1.0 1.0 1.0 -2 -2 -2 2 2 2 2 -2"]);
-        match graphic_objects.get(0) {
-            None => panic!("test failed"),
-            Some(graphic_object) => match graphic_object {
-                GraphicObject::Polygon(_) => panic!("test failed"),
-                GraphicObject::LineSegs(polygon) => {
-                    assert_eq!(polygon.vertices[0], Point2f::from_floats(-2., -2.));
-                    assert!(polygon.vertices.get(4).is_none());
-                }
-            },
-        }
-        assert!(graphic_objects.get(1).is_none());
-    }
-}
-
 pub struct GraphicObjectsIntoIter {
     graphic_objects: GraphicObjects,
 }
