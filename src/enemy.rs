@@ -3,8 +3,6 @@ use std::collections::VecDeque;
 use crate::algebra::{Circle2f, Point2f};
 use crate::bullet::Bullet;
 use crate::cannon::CannonControllerInterface;
-use crate::cannon::PlayerLocker;
-use crate::enemy;
 use crate::enemy_path::EnemyPath;
 use crate::graphic_object::GraphicObjects;
 

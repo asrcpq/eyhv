@@ -19,7 +19,6 @@ mod time_manager;
 mod wave_generator;
 mod window_rect;
 
-use algebra::{Point2f, Rect2f};
 use session::Session;
 use window_rect::WINDOW_RECT;
 
@@ -27,7 +26,6 @@ use sdl2::event::Event;
 use sdl2::gfx::primitives::DrawRenderer;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
-use sdl2::rect::Point;
 use std::time::Duration;
 use std::time::SystemTime;
 

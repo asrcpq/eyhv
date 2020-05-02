@@ -217,19 +217,8 @@ pub struct Rect2f {
 }
 
 impl Rect2f {
-    pub fn new() -> Rect2f {
-        Rect2f {
-            lu: Point2f::new(),
-            rd: Point2f::new(),
-        }
-    }
-
     pub fn get_size(&self) -> Point2f {
         Point2f::from_floats(self.rd.x - self.lu.x, self.rd.y - self.lu.y)
-    }
-
-    pub fn from_point2fs(lu: Point2f, rd: Point2f) -> Rect2f {
-        Rect2f { lu: lu, rd: rd }
     }
 
     pub fn from_floats(x1: f32, y1: f32, x2: f32, y2: f32) -> Rect2f {

@@ -26,10 +26,10 @@ trait CannonGeneratorInterface {
     fn generate(seed: u64, difficulty: f32) -> Self;
 }
 
-pub fn random_mapper(seed: u64, difficulty: f32) -> Box<CannonControllerInterface> {
+pub fn random_mapper(seed: u64, difficulty: f32) -> Box<dyn CannonControllerInterface> {
     let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
-    const cannon_types: u32 = 2;
-    match rng.gen_range(0, cannon_types) {
+    const CANNON_TYPES: u32 = 2;
+    match rng.gen_range(0, CANNON_TYPES) {
         //0 => Box::new(PlayerLocker::generate(rng.gen::<u64>(), difficulty)),
         0 | 1 => Box::new(Rotor::generate(rng.gen::<u64>(), difficulty)),
         _ => unreachable!(),
@@ -272,7 +272,6 @@ impl CannonGeneratorInterface for Rotor {
     fn generate(seed: u64, difficulty: f32) -> Rotor {
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
         // difficulty = bullet_speed / fire_interval
-        let mut bs: f32 = (difficulty * rng.gen_range(0.8, 1.2)).sqrt();
         let (bs, fi) = (|x: Vec<f32>| (x[0], x[1]))(simple_try(
             TRY_TIMES,
             |x| x[0] / x[1],
@@ -309,7 +308,7 @@ impl CannonControllerInterface for Rotor {
         }
     }
 
-    fn tick(&mut self, host_p: Point2f, player_p: Point2f, mut dt: f32) -> VecDeque<Box<dyn Bullet>> {
+    fn tick(&mut self, host_p: Point2f, _: Point2f, mut dt: f32) -> VecDeque<Box<dyn Bullet>> {
         let mut bullet_queue = VecDeque::new();
         self.theta += self.omega * dt;
         const BULLET_RADIUS: f32 = 3.;

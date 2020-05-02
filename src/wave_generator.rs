@@ -1,9 +1,6 @@
 use std::collections::VecDeque;
 
-use crate::algebra::Point2f;
-use crate::cannon;
 use crate::enemy::Enemy;
-use crate::enemy_path::enemy_paths;
 
 use rand::Rng;
 use rand::SeedableRng;
@@ -90,9 +87,9 @@ mod wave_scheme_prototype {
     }
 
     pub fn random_mapper(seed: u64, difficulty: f32) -> CompiledWave {
-        const scheme_size: u32 = 2;
+        const SCHEME_SIZE: u32 = 2;
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
-        match rng.gen_range(0, scheme_size) {
+        match rng.gen_range(0, SCHEME_SIZE) {
             0 => LEFT_CHAIN.compile(rng.gen::<u64>(), difficulty),
             1 => RIGHT_CHAIN.compile(rng.gen::<u64>(), difficulty),
             _ => unreachable!()
@@ -133,7 +130,6 @@ pub struct WaveGenerator {
     wave_interval: f32,
     rng: rand_pcg::Pcg64Mcg,
     current_wave: Option<CompiledWave>,
-    timer: f32,
 }
 
 impl WaveGenerator {
@@ -143,7 +139,6 @@ impl WaveGenerator {
             wave_interval: 4.,
             rng: rand_pcg::Pcg64Mcg::seed_from_u64(seed),
             current_wave: None,
-            timer: 0.,
         }
     }
 

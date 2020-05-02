@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 
 use crate::algebra::Point2f;
-use crate::bullet::{Bullet, SimpleBullet};
+use crate::bullet::Bullet;
 use crate::cannon::SimpleCannon;
 use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
 use crate::window_rect::{WINDOW_RECT, WINDOW_SIZE};

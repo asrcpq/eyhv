@@ -1,6 +1,5 @@
-use crate::algebra::Rect2f;
 use crate::bullet_pool::BulletPool;
-use crate::collision::{collision_enemy, collision_player, CollisionPipeInterface};
+use crate::collision::{collision_enemy, collision_player};
 use crate::enemy_pool::EnemyPool;
 use crate::graphic_object::{GraphicObject, GraphicObjectsIntoIter};
 use crate::key_state::KeyState;

@@ -53,7 +53,7 @@ pub fn collision_enemy(enemy_pool: &mut EnemyPool, player_bullet_pool: &mut Bull
 }
 
 pub fn collision_player(player_p: Point2f, player_last_p: Point2f, enemy_bullet_pool: &mut BulletPool) {
-    const player_hitbox_r: f32 = 5.;
+    const PLAYER_HITBOX_R: f32 = 5.;
     let bullet_len = enemy_bullet_pool.len();
     'bullet_loop: for _ in 0..bullet_len {
         let bullet = enemy_bullet_pool.pop().unwrap();
@@ -66,7 +66,7 @@ pub fn collision_player(player_p: Point2f, player_last_p: Point2f, enemy_bullet_
                     bullet_last_p,
                 );
                 //println!("{} {:?} {:?}", dist, bullet_p, bullet_last_p);
-                if dist < player_hitbox_r + bullet.get_r() {
+                if dist < PLAYER_HITBOX_R + bullet.get_r() {
                     println!("BOOM!");
                     break 'bullet_loop;
                 }
