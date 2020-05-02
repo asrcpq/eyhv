@@ -33,6 +33,8 @@
 
 * [ ] Add more contents
 
+* [ ] Monotomous simple\_try random generator
+
 * [ ] Game mechanism
 
 * [ ] Visual effects

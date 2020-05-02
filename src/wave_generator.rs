@@ -112,7 +112,7 @@ impl CompiledWave {
             None => false,
             Some(front) => front.0 < self.timer,
         } {
-            let (t, enemy) = self.enemies.pop_front().unwrap();
+            let (_, enemy) = self.enemies.pop_front().unwrap();
             result.push_back(enemy);
         }
         result

@@ -1,6 +1,6 @@
 use crate::algebra::Rect2f;
 use crate::bullet_pool::BulletPool;
-use crate::collision::{collision_enemy, CollisionPipeInterface};
+use crate::collision::{collision_enemy, collision_player, CollisionPipeInterface};
 use crate::enemy_pool::EnemyPool;
 use crate::graphic_object::{GraphicObject, GraphicObjectsIntoIter};
 use crate::key_state::KeyState;
@@ -85,6 +85,7 @@ impl Session {
         self.enemy_bullet_pool
             .extend(self.enemy_pool.tick(dt, self.player.get_p()));
         collision_enemy(&mut self.enemy_pool, &mut self.player_bullet_pool);
+        collision_player(self.player.get_p(), self.player.get_last_p(), &mut self.enemy_bullet_pool);
 
         // memleak monitor
         // println!(
