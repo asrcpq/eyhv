@@ -16,16 +16,23 @@ pub trait CannonControllerInterface: DynClone {
     // static implementation
     fn switch(&mut self, switch: bool);
     fn tick(&mut self, host_p: Point2f, player_p: Point2f, dt: f32) -> VecDeque<Bullet>;
+
+    fn set_p(&mut self, p: Point2f);
 }
 
 dyn_clone::clone_trait_object!(CannonControllerInterface);
 
-pub trait CannonGeneratorInterface {
-    fn generate(p: Point2f, seed: u64, difficulty: f32) -> Self;
+trait CannonGeneratorInterface {
+    fn generate(seed: u64, difficulty: f32) -> Self;
 }
 
-pub enum EnemyCannon {
-    PlayerLocker(PlayerLocker),
+pub fn random_mapper(seed: u64, difficulty: f32) -> Box<CannonControllerInterface> {
+    let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
+    const cannon_types: u32 = 1;
+    match rng.gen_range(0, cannon_types) {
+        0 => Box::new(PlayerLocker::generate(rng.gen::<u64>(), difficulty)),
+        _ => unreachable!(),
+    }
 }
 
 #[derive(Clone, Debug)]
@@ -60,7 +67,7 @@ pub struct PlayerLocker {
 }
 
 impl CannonGeneratorInterface for PlayerLocker {
-    fn generate(p: Point2f, seed: u64, difficulty: f32) -> PlayerLocker {
+    fn generate(seed: u64, difficulty: f32) -> PlayerLocker {
         // difficulty expression
         // difficulty = fire_freq * count * bullet_speed
         // fire_freq = fd(cd * (0.2 - 1)) / cd(1 - 3) / fi(infer)
@@ -80,7 +87,7 @@ impl CannonGeneratorInterface for PlayerLocker {
         bs *= 400.;
         let oa: f32 = rng.gen_range(45f32.to_radians(), 180f32.to_radians());
         let p = PlayerLocker {
-            p: p,
+            p: Point2f::new(),
             fire_duration: fd,
             cycle_duration: cd,
             fire_interval: fi,
@@ -166,6 +173,10 @@ impl CannonControllerInterface for PlayerLocker {
             }
         }
     }
+
+    fn set_p(&mut self, p: Point2f) {
+        self.p = p;
+    }
 }
 
 // SimpleCannon fires bullets with the same and constant speed
@@ -197,7 +208,6 @@ impl SimpleCannon {
     }
 }
 
-//impl CannonControllerInterface for SimpleCannon {
 impl SimpleCannon {
     pub fn switch(&mut self, switch: bool) {
         if self.switch {

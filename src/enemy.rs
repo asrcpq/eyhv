@@ -2,8 +2,8 @@ use std::collections::VecDeque;
 
 use crate::algebra::{Circle2f, Point2f};
 use crate::bullet::Bullet;
-use crate::cannon::{CannonControllerInterface, CannonGeneratorInterface};
-use crate::cannon::{EnemyCannon, PlayerLocker};
+use crate::cannon::CannonControllerInterface;
+use crate::cannon::PlayerLocker;
 use crate::enemy;
 use crate::enemy_path::EnemyPath;
 use crate::graphic_object::GraphicObjects;
@@ -32,22 +32,47 @@ pub struct Enemy {
     p: Option<Point2f>,
     last_p: Option<Point2f>,
     path: EnemyPath,
-
     cannons: Vec<Box<dyn CannonControllerInterface>>,
-
     graphic_objects: GraphicObjects,
     hitboxes: Vec<Circle2f>,
 }
 
+pub mod enemy_prototype {
+    use lazy_static::lazy_static;
+    use super::enemy_graphic_objects;
+    use crate::algebra::{Point2f, Circle2f};
+    use crate::graphic_object::GraphicObjects;
+
+    #[derive(Clone)]
+    pub struct EnemyPrototype {
+        pub cannon_pits: Vec<Vec<Point2f>>,
+        pub hitboxes: Vec<Circle2f>,
+        pub graphic_objects_options: Vec<GraphicObjects>,
+    }
+
+    lazy_static! {
+        pub static ref SMALL: EnemyPrototype = EnemyPrototype {
+            cannon_pits: vec![vec![Point2f::new()]],
+            hitboxes: vec![Circle2f::from_floats(0., 0., 20.)],
+            graphic_objects_options: vec![enemy_graphic_objects::SMALL1.clone()],
+        };
+    }
+}
+
 impl Enemy {
-    pub fn new_small(path: EnemyPath, cannons: Vec<Box<dyn CannonControllerInterface>>) -> Enemy {
+    pub fn new(
+        path: EnemyPath,
+        cannons: Vec<Box<dyn CannonControllerInterface>>,
+        graphic_objects: GraphicObjects,
+        hitboxes: Vec<Circle2f>,
+    ) -> Enemy {
         Enemy {
             p: None,
             last_p: None,
             path: path,
             cannons: cannons,
-            graphic_objects: enemy_graphic_objects::SMALL1.clone(),
-            hitboxes: vec![Circle2f::from_floats(0., 0., 20.)],
+            graphic_objects: graphic_objects,
+            hitboxes: hitboxes,
         }
     }
 

@@ -1,4 +1,4 @@
-## TODO
+## Features
 
 ---
 
@@ -26,7 +26,7 @@
 
 * [x] Randomize cannon and bullet param(Framework)
 
-* [ ] Wave generator and wave manager
+* [x] Wave generator and wave manager
 (add 1 wave type contains of 1 type of enemy with 1 type of cannon)
 
 * [ ] Player collision box
@@ -36,3 +36,13 @@
 * [ ] Game mechanism
 
 * [ ] Visual effects
+
+---
+
+## Coding quality
+
+* [ ] Generalize tick() by using signal like methods
+
+* [ ] fine-grained inter-module visibility
+
+* [ ] Using reference instead of cloning everything everywhere(necessary?)
