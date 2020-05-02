@@ -55,16 +55,6 @@ mod test {
     use super::simple_try;
 
     #[test]
-    #[should_panic]
-    fn test_spliter_overflow() {
-        const MIN_THRESHOLD: f32 = 0.2;
-        const COUNT: u32 = 6;
-        const SEED: u64 = 12345;
-        let result = spliter(MIN_THRESHOLD, COUNT, SEED);
-        println!("{:?}", result);
-    }
-
-    #[test]
     fn test_simple_try() {
         let result = simple_try(10, |x| x[0] + x[1], vec![(0., 1.), (0., 1.)], 1.5, 12345);
         println!("{:?}", result);

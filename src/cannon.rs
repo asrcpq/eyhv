@@ -30,8 +30,8 @@ pub fn random_mapper(seed: u64, difficulty: f32) -> Box<dyn CannonControllerInte
     let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
     const CANNON_TYPES: u32 = 2;
     match rng.gen_range(0, CANNON_TYPES) {
-        //0 => Box::new(PlayerLocker::generate(rng.gen::<u64>(), difficulty)),
-        0 | 1 => Box::new(Rotor::generate(rng.gen::<u64>(), difficulty)),
+        0 => Box::new(PlayerLocker::generate(rng.gen::<u64>(), difficulty)),
+        1 => Box::new(Rotor::generate(rng.gen::<u64>(), difficulty)),
         _ => unreachable!(),
     }
 }

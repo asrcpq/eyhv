@@ -162,7 +162,7 @@ impl WaveGenerator {
                 });
                 dt -= self.wave_cd;
                 self.wave_cd = self.wave_interval;
-                self.current_wave = Some(wave_scheme_prototype::random_mapper(self.rng.gen::<u64>(), 0.01));
+                self.current_wave = Some(wave_scheme_prototype::random_mapper(self.rng.gen::<u64>(), 0.1));
             }
         }
         enemy_queue
