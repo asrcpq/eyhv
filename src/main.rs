@@ -29,7 +29,7 @@ use sdl2::pixels::Color;
 use std::time::Duration;
 use std::time::SystemTime;
 
-use graphic_object::LineSegs2f;
+use graphic_object::{LineSegs2f, Polygon2f};
 
 fn find_sdl_gl_driver() -> Option<u32> {
     for (index, item) in sdl2::render::drivers().enumerate() {
@@ -142,6 +142,28 @@ pub fn main() {
                         true
                     }
                 } {}
+            } else if let Some(polygon) = graphic_object.as_any().downcast_ref::<Polygon2f>() {
+                let color = Color::RGBA(
+                    (polygon.color[0] * 255.) as u8,
+                    (polygon.color[1] * 255.) as u8,
+                    (polygon.color[2] * 255.) as u8,
+                    (polygon.color[3] * 255.) as u8,
+                );
+                canvas.filled_polygon(
+                    polygon
+                        .vertices
+                        .iter()
+                        .map(|x| x.x as i16)
+                        .collect::<Vec<i16>>()
+                        .as_slice(),
+                    polygon
+                        .vertices
+                        .iter()
+                        .map(|x| x.y as i16)
+                        .collect::<Vec<i16>>()
+                        .as_slice(),
+                    color,
+                ).unwrap();
             }
         }
 

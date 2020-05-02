@@ -14,6 +14,7 @@ impl LineSegs2f {
             color: color,
         }
     }
+
     pub fn from_floats(floats: Vec<f32>) -> LineSegs2f {
         let mut vertices: Vec<Point2f> = Vec::new();
         let mut iter = floats.iter();
@@ -34,12 +35,6 @@ impl LineSegs2f {
         } {}
         LineSegs2f::new(vertices, color)
     }
-}
-
-#[derive(Clone, Debug)]
-pub struct Polygon2f {
-    pub vertices: Vec<Point2f>,
-    pub color: [f32; 4],
 }
 
 pub trait GraphicObject: DynClone + Sync + Any {
@@ -87,6 +82,81 @@ impl GraphicObject for LineSegs2f {
                 .collect(),
             color: self.color,
         })
+    }
+}
+
+#[derive(Clone, Debug)]
+pub struct Polygon2f {
+    pub vertices: Vec<Point2f>,
+    pub color: [f32; 4],
+}
+
+impl GraphicObject for Polygon2f {
+    fn as_any(&self) -> &dyn Any {
+        self
+    }
+
+    fn shift(&self, dp: Point2f) -> Box<dyn GraphicObject> {
+        Box::new(Polygon2f {
+            vertices: self
+                .vertices
+                .iter()
+                .map(|x| *x + dp)
+                .collect(),
+            color: self.color,
+        })
+    }
+
+    fn rotate(&self, rotate_mat: Mat2x2f) -> Box<dyn GraphicObject> {
+        Box::new(Polygon2f {
+            vertices: self
+                .vertices
+                .iter()
+                .map(|x| rotate_mat * *x)
+                .collect(),
+            color: self.color,
+        })
+    }
+
+    fn zoom(&self, k: f32) -> Box<dyn GraphicObject> {
+        Box::new(Polygon2f {
+            vertices: self
+                .vertices
+                .iter()
+                .map(|x| *x * k)
+                .collect(),
+            color: self.color,
+        })
+    }
+}
+
+impl Polygon2f {
+    pub fn new(vertices: Vec<Point2f>, color: [f32; 4]) -> Polygon2f {
+        Polygon2f {
+            vertices: vertices,
+            color: color,
+        }
+    }
+
+    pub fn from_floats(floats: Vec<f32>) -> Polygon2f {
+        let mut vertices: Vec<Point2f> = Vec::new();
+        let mut iter = floats.iter();
+        let r = iter.next().unwrap();
+        let g = iter.next().unwrap();
+        let b = iter.next().unwrap();
+        let a = iter.next().unwrap();
+        let color: [f32; 4] = [*r, *g, *b, *a];
+        while match iter.next() {
+            Some(v1) => match iter.next() {
+                Some(v2) => {
+                    vertices.push(Point2f::from_floats(*v1, *v2));
+                    true
+                }
+                None => panic!("odd parse"),
+            },
+            None => false,
+        } {}
+        Polygon2f::new(vertices, color)
     }
 }
 
@@ -151,7 +221,14 @@ impl GraphicObjects {
                             .map(|x| x.parse::<f32>().expect("float parse fail"))
                             .collect(),
                     ))),
-                "p" => unimplemented!(),
+                "p" => graphic_objects
+                    .graphic_objects
+                    .push(Box::new(Polygon2f::from_floats(
+                        splited[1..]
+                            .iter()
+                            .map(|x| x.parse::<f32>().expect("float parse fail"))
+                            .collect(),
+                    ))),
                 _ => panic!("Format error"),
             }
         }
