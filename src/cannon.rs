@@ -6,7 +6,7 @@ use rand::SeedableRng;
 use rand_pcg;
 
 use crate::algebra::{Mat2x2f, Point2f};
-use crate::bullet::{bullet_graphic_objects, Bullet, SimpleBullet};
+use crate::bullet::{bullet_graphic_objects, Bullet, SimpleBullet, RotateBullet};
 use crate::random_tools::simple_try;
 
 const TRY_TIMES: u32 = 10;
@@ -28,9 +28,10 @@ trait CannonGeneratorInterface {
 
 pub fn random_mapper(seed: u64, difficulty: f32) -> Box<CannonControllerInterface> {
     let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
-    const cannon_types: u32 = 1;
+    const cannon_types: u32 = 2;
     match rng.gen_range(0, cannon_types) {
-        0 => Box::new(PlayerLocker::generate(rng.gen::<u64>(), difficulty)),
+        //0 => Box::new(PlayerLocker::generate(rng.gen::<u64>(), difficulty)),
+        0 | 1 => Box::new(Rotor::generate(rng.gen::<u64>(), difficulty)),
         _ => unreachable!(),
     }
 }
@@ -84,7 +85,7 @@ impl CannonGeneratorInterface for PlayerLocker {
         let bs_ff_k = rng.gen_range(0.8, 1.2);
         let mut bs = (bs_ff * bs_ff_k).sqrt();
         let fi = 0.3 * bs / bs_ff;
-        bs *= 400.;
+        bs *= 300.;
         let oa: f32 = rng.gen_range(45f32.to_radians(), 180f32.to_radians());
         let p = PlayerLocker {
             p: Point2f::new(),
@@ -270,12 +271,18 @@ pub struct Rotor {
 impl CannonGeneratorInterface for Rotor {
     fn generate(seed: u64, difficulty: f32) -> Rotor {
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
-        // difficulty = fire_freq * bullet_speed
+        // difficulty = bullet_speed / fire_interval
         let mut bs: f32 = (difficulty * rng.gen_range(0.8, 1.2)).sqrt();
-        let fi: f32 = 0.2 * bs / difficulty;
-        bs *= 250.;
+        let (bs, fi) = (|x: Vec<f32>| (x[0], x[1]))(simple_try(
+            TRY_TIMES,
+            |x| x[0] / x[1],
+            vec![(200., 400.), (0.01, 0.2)], // 1000-40000
+            difficulty * 39000. + 1000.,
+            rng.gen::<u64>(),
+        ));
         let omega: f32 = rng.gen_range(1., 6.);
-        let theta: f32 = rng.gen_range(0., 2. * std::f32::consts::PI);
+        // let theta: f32 = rng.gen_range(0., 2. * std::f32::consts::PI);
+        let theta: f32 = std::f32::consts::PI;
         Rotor {
             p: Point2f::new(),
             fire_interval: fi,
@@ -304,14 +311,23 @@ impl CannonControllerInterface for Rotor {
 
     fn tick(&mut self, host_p: Point2f, player_p: Point2f, mut dt: f32) -> VecDeque<Box<dyn Bullet>> {
         let mut bullet_queue = VecDeque::new();
+        self.theta += self.omega * dt;
         const BULLET_RADIUS: f32 = 3.;
+        let rotate_matrix: Mat2x2f = Mat2x2f::from_theta(0.1);
         loop {
             if self.fire_cd > dt {
                 self.fire_cd -= dt;
                 break bullet_queue;
             }
             dt -= self.fire_cd;
-            //bullet_queue.push_back()
+            bullet_queue.push_back(Box::new(RotateBullet::new(
+                self.p + host_p,
+                Point2f::from_polar(self.bullet_speed, self.theta),
+                Point2f::new(),
+                BULLET_RADIUS,
+                rotate_matrix,
+                bullet_graphic_objects::DIAMOND.clone(),
+            )));
             self.fire_cd = self.fire_interval;
         }
     }

@@ -60,7 +60,7 @@ impl Session {
             player_bullet_pool: BulletPool::new(),
             enemy_pool: EnemyPool::new(),
             enemy_bullet_pool: BulletPool::new(),
-            wave_generator: WaveGenerator::new(),
+            wave_generator: WaveGenerator::new(12345),
             key_state: KeyState::new(),
             time_manager: TimeManager::new(),
         }

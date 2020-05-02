@@ -2,8 +2,6 @@ Still in its early development stage
 
 ## Features
 
----
-
 * Minimalism design
 
 * Randomly generated and reproducible enemies
@@ -11,8 +9,6 @@ Still in its early development stage
 ## TODO
 
 ### Implementation
-
----
 
 * [x] Moving
 
@@ -43,9 +39,11 @@ Still in its early development stage
 
 * [x] Player collision box
 
-* Add more contents
+* [ ] Add more contents
 
-	* [ ] New Cannon: Rotor with new bullet: RotateBullet
+	* [x] New Cannon: Rotor with new bullet: RotateBullet
+
+	* [ ] New WaveScheme and Enemy
 
 * [ ] simple\_try random generator optimization with monotonicity
 
@@ -54,8 +52,6 @@ Still in its early development stage
 * [ ] Visual effects
 
 ### Coding
-
----
 
 * [ ] Generalize tick() by using signal like methods
 

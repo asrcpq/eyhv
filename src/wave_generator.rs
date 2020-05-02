@@ -5,6 +5,10 @@ use crate::cannon;
 use crate::enemy::Enemy;
 use crate::enemy_path::enemy_paths;
 
+use rand::Rng;
+use rand::SeedableRng;
+use rand_pcg;
+
 mod wave_scheme_prototype {
     use std::collections::VecDeque;
 
@@ -122,17 +126,17 @@ impl CompiledWave {
 pub struct WaveGenerator {
     wave_cd: f32,
     wave_interval: f32,
-
+    rng: rand_pcg::Pcg64Mcg,
     current_wave: Option<CompiledWave>,
     timer: f32,
 }
 
 impl WaveGenerator {
-    pub fn new() -> WaveGenerator {
+    pub fn new(seed: u64) -> WaveGenerator {
         WaveGenerator {
             wave_cd: 1.,
             wave_interval: 4.,
-
+            rng: rand_pcg::Pcg64Mcg::seed_from_u64(seed),
             current_wave: None,
             timer: 0.,
         }
@@ -158,7 +162,7 @@ impl WaveGenerator {
                 });
                 dt -= self.wave_cd;
                 self.wave_cd = self.wave_interval;
-                self.current_wave = Some(wave_scheme_prototype::random_mapper(12345, 0.5));
+                self.current_wave = Some(wave_scheme_prototype::random_mapper(self.rng.gen::<u64>(), 0.2));
             }
         }
         enemy_queue
