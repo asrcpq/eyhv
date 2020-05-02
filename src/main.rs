@@ -29,7 +29,7 @@ use sdl2::pixels::Color;
 use std::time::Duration;
 use std::time::SystemTime;
 
-use graphic_object::GraphicObject;
+use graphic_object::LineSegs2f;
 
 fn find_sdl_gl_driver() -> Option<u32> {
     for (index, item) in sdl2::render::drivers().enumerate() {
@@ -117,34 +117,31 @@ pub fn main() {
 
         // draw after tick
         for graphic_object in session.graphic_object_iter() {
-            match graphic_object {
-                GraphicObject::Polygon(_) => unimplemented!(),
-                GraphicObject::LineSegs(line_segs) => {
-                    let color = Color::RGBA(
-                        (line_segs.color[0] * 255.) as u8,
-                        (line_segs.color[1] * 255.) as u8,
-                        (line_segs.color[2] * 255.) as u8,
-                        (line_segs.color[3] * 255.) as u8,
-                    );
-                    let mut iter = line_segs.vertices.iter();
-                    let mut last_vertex = iter.next().unwrap();
-                    while match iter.next() {
-                        None => false,
-                        Some(vertex) => {
-                            canvas
-                                .aa_line(
-                                    last_vertex.x as i16,
-                                    last_vertex.y as i16,
-                                    vertex.x as i16,
-                                    vertex.y as i16,
-                                    color,
-                                )
-                                .unwrap();
-                            last_vertex = vertex;
-                            true
-                        }
-                    } {}
-                }
+            if let Some(line_segs) = graphic_object.as_any().downcast_ref::<LineSegs2f>() {
+                let color = Color::RGBA(
+                    (line_segs.color[0] * 255.) as u8,
+                    (line_segs.color[1] * 255.) as u8,
+                    (line_segs.color[2] * 255.) as u8,
+                    (line_segs.color[3] * 255.) as u8,
+                );
+                let mut iter = line_segs.vertices.iter();
+                let mut last_vertex = iter.next().unwrap();
+                while match iter.next() {
+                    None => false,
+                    Some(vertex) => {
+                        canvas
+                            .aa_line(
+                                last_vertex.x as i16,
+                                last_vertex.y as i16,
+                                vertex.x as i16,
+                                vertex.y as i16,
+                                color,
+                            )
+                            .unwrap();
+                        last_vertex = vertex;
+                        true
+                    }
+                } {}
             }
         }
 

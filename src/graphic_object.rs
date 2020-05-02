@@ -1,4 +1,6 @@
+use std::any::Any;
 use crate::algebra::{Mat2x2f, Point2f};
+use dyn_clone::DynClone;
 
 #[derive(Clone, Debug)]
 pub struct LineSegs2f {
@@ -40,60 +42,57 @@ pub struct Polygon2f {
     pub color: [f32; 4],
 }
 
-#[derive(Clone, Debug)]
-pub enum GraphicObject {
-    LineSegs(LineSegs2f),
-    Polygon(Polygon2f),
+pub trait GraphicObject: DynClone + Sync + Any {
+    fn as_any(&self) -> &dyn Any;
+    fn shift(&self, dp: Point2f) -> Box<dyn GraphicObject>;
+    fn rotate(&self, rotate_mat: Mat2x2f) -> Box<dyn GraphicObject>;
+    fn zoom(&self, k: f32) -> Box<dyn GraphicObject>;
 }
 
-impl GraphicObject {
-    pub fn shift(&self, dp: Point2f) -> GraphicObject {
-        match self {
-            GraphicObject::LineSegs(line_segs) => {
-                let mut result: LineSegs2f = line_segs.clone();
-                for vertex in &mut result.vertices {
-                    *vertex += dp;
-                }
-                GraphicObject::LineSegs(result)
-            }
-            GraphicObject::Polygon(polygon) => {
-                unimplemented!();
-            }
-        }
+dyn_clone::clone_trait_object!(GraphicObject);
+
+impl GraphicObject for LineSegs2f {
+    fn as_any(&self) -> &dyn Any {
+        self
     }
 
-    pub fn rotate(&self, rotate_mat: Mat2x2f) -> GraphicObject {
-        match self {
-            GraphicObject::LineSegs(line_segs) => GraphicObject::LineSegs(LineSegs2f::new(
-                line_segs
-                    .vertices
-                    .iter()
-                    .map(|x| rotate_mat * x.clone())
-                    .collect(),
-                line_segs.color,
-            )),
-            GraphicObject::Polygon(polygon) => {
-                unimplemented!();
-            }
-        }
+    fn shift(&self, dp: Point2f) -> Box<dyn GraphicObject> {
+        Box::new(LineSegs2f {
+            vertices: self
+                .vertices
+                .iter()
+                .map(|x| *x + dp)
+                .collect(),
+            color: self.color,
+        })
     }
 
-    pub fn zoom(&self, k: f32) -> GraphicObject {
-        match self {
-            GraphicObject::LineSegs(line_segs) => GraphicObject::LineSegs(LineSegs2f::new(
-                line_segs.vertices.iter().map(|x| *x * k).collect(),
-                line_segs.color,
-            )),
-            GraphicObject::Polygon(polygon) => {
-                unimplemented!();
-            }
-        }
+    fn rotate(&self, rotate_mat: Mat2x2f) -> Box<dyn GraphicObject> {
+        Box::new(LineSegs2f {
+            vertices: self
+                .vertices
+                .iter()
+                .map(|x| rotate_mat * *x)
+                .collect(),
+            color: self.color,
+        })
+    }
+
+    fn zoom(&self, k: f32) -> Box<dyn GraphicObject> {
+        Box::new(LineSegs2f {
+            vertices: self
+                .vertices
+                .iter()
+                .map(|x| *x * k)
+                .collect(),
+            color: self.color,
+        })
     }
 }
 
 #[derive(Clone)]
 pub struct GraphicObjects {
-    graphic_objects: Vec<GraphicObject>,
+    graphic_objects: Vec<Box<dyn GraphicObject>>,
 }
 
 impl GraphicObjects {
@@ -146,7 +145,7 @@ impl GraphicObjects {
             match splited[0] {
                 "l" => graphic_objects
                     .graphic_objects
-                    .push(GraphicObject::LineSegs(LineSegs2f::from_floats(
+                    .push(Box::new(LineSegs2f::from_floats(
                         splited[1..]
                             .iter()
                             .map(|x| x.parse::<f32>().expect("float parse fail"))
@@ -171,9 +170,9 @@ pub struct GraphicObjectsIntoIter {
 }
 
 impl Iterator for GraphicObjectsIntoIter {
-    type Item = GraphicObject;
+    type Item = Box<dyn GraphicObject>;
 
-    fn next(&mut self) -> Option<GraphicObject> {
+    fn next(&mut self) -> Option<Box<dyn GraphicObject>> {
         self.graphic_objects.graphic_objects.pop()
     }
 }

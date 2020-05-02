@@ -15,9 +15,9 @@ pub struct SessionGraphicObjectsIter {
 }
 
 impl Iterator for SessionGraphicObjectsIter {
-    type Item = GraphicObject;
+    type Item = Box<dyn GraphicObject>;
 
-    fn next(&mut self) -> Option<GraphicObject> {
+    fn next(&mut self) -> Option<Box<dyn GraphicObject>> {
         match self.player_iter.next() {
             None => {}
             option => return option,
