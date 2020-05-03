@@ -24,6 +24,7 @@ pub fn collision_enemy(enemy_pool: &mut EnemyPool, player_bullet_pool: &mut Bull
                 let bullet_len = player_bullet_pool.len();
                 'bullet_loop: for _ in 0..bullet_len {
                     let bullet = player_bullet_pool.pop().unwrap();
+                    let mut keep_bullet = true;
                     if let Some(bullet_p) = bullet.get_p() {
                         if let Some(bullet_last_p) = bullet.get_last_p() {
                             // we introduct collision flag here
@@ -38,6 +39,7 @@ pub fn collision_enemy(enemy_pool: &mut EnemyPool, player_bullet_pool: &mut Bull
                                 );
                                 //println!("{} {:?} {:?}", dist, bullet_p, bullet_last_p);
                                 if dist < hitbox.r + bullet.get_r() {
+                                    keep_bullet = false;
                                     println!("BANG!");
                                     collision_flag = true;
                                     break 'hitbox_loop;
@@ -50,7 +52,9 @@ pub fn collision_enemy(enemy_pool: &mut EnemyPool, player_bullet_pool: &mut Bull
                             }
                         }
                     }
-                    player_bullet_pool.push(bullet);
+                    if keep_bullet {
+                        player_bullet_pool.push(bullet);
+                    }
                 }
             }
         }

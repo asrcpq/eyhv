@@ -69,7 +69,7 @@ pub mod enemy_prototype {
     lazy_static! {
         pub static ref SMALL: EnemyPrototype = EnemyPrototype {
             speed: 1.,
-            life: 10.,
+            life: 6.,
             cannon_pits: vec![vec![Point2f::new()]],
             hitboxes: vec![Circle2f::from_floats(0., 0., 20.)],
             graphic_objects_options: vec![
