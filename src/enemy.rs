@@ -45,6 +45,7 @@ pub struct Enemy {
     last_p: Option<Point2f>,
     path: EnemyPath,
     speed: f32,
+    life: f32,
     cannons: Vec<Box<dyn CannonControllerInterface>>,
     graphic_objects: GraphicObjects,
     hitboxes: Vec<Circle2f>,
@@ -59,6 +60,7 @@ pub mod enemy_prototype {
     #[derive(Clone)]
     pub struct EnemyPrototype {
         pub speed: f32,
+        pub life: f32,
         pub cannon_pits: Vec<Vec<Point2f>>,
         pub hitboxes: Vec<Circle2f>,
         pub graphic_objects_options: Vec<GraphicObjects>,
@@ -67,6 +69,7 @@ pub mod enemy_prototype {
     lazy_static! {
         pub static ref SMALL: EnemyPrototype = EnemyPrototype {
             speed: 1.,
+            life: 10.,
             cannon_pits: vec![vec![Point2f::new()]],
             hitboxes: vec![Circle2f::from_floats(0., 0., 20.)],
             graphic_objects_options: vec![
@@ -76,6 +79,7 @@ pub mod enemy_prototype {
         };
         pub static ref MEDIUM: EnemyPrototype = EnemyPrototype {
             speed: 0.5,
+            life: 40.,
             cannon_pits: vec![vec![
                 Point2f::from_floats(-30., 0.),
                 Point2f::from_floats(30., 0.),
@@ -95,6 +99,7 @@ impl Enemy {
     pub fn new(
         path: EnemyPath,
         speed: f32,
+        life: f32,
         cannons: Vec<Box<dyn CannonControllerInterface>>,
         graphic_objects: GraphicObjects,
         hitboxes: Vec<Circle2f>,
@@ -103,6 +108,7 @@ impl Enemy {
             p: None,
             last_p: None,
             path,
+            life,
             speed,
             cannons,
             graphic_objects,
@@ -142,5 +148,11 @@ impl Enemy {
 
     pub fn get_hitboxes(&self) -> &Vec<Circle2f> {
         &self.hitboxes
+    }
+
+    // return survive status
+    pub fn damage(&mut self, damage: f32) -> bool {
+        self.life -= damage;
+        self.life > 0.
     }
 }

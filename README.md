@@ -4,7 +4,7 @@ Still in its early development stage
 
 * High speed and high fault tolerance(of player performance)
 
-* Minimalism design(game mechanism and design style)
+* Minimalist design(game mechanism and design style)
 
 * Randomly generated and reproducible(by u64 seed) enemies
 
@@ -47,7 +47,7 @@ Still in its early development stage
 
 * [x] simple\_try random generator optimization with monotonicity
 
-* [ ] Enemy HP
+* [x] Enemy HP
 
 * [ ] Add more resources
 

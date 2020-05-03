@@ -116,6 +116,7 @@ mod wave_scheme_prototype {
                     let enemy_construct = Enemy::new(
                         path.clone(),
                         enemy_prototype.speed,
+                        enemy_prototype.life,
                         cannons.clone(),
                         graphic_objects.clone(),
                         enemy_prototype.hitboxes.clone(),

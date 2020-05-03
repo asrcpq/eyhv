@@ -17,7 +17,7 @@ pub fn collision_enemy(enemy_pool: &mut EnemyPool, player_bullet_pool: &mut Bull
     // enemy_pool < 10^2
     let enemy_len = enemy_pool.len();
     for _ in 0..enemy_len {
-        let enemy = enemy_pool.pop().unwrap();
+        let mut enemy = enemy_pool.pop().unwrap();
         let mut keep_enemy: bool = true;
         if let Some(enemy_last_p) = enemy.get_last_p() {
             if let Some(enemy_p) = enemy.get_p() {
@@ -26,7 +26,10 @@ pub fn collision_enemy(enemy_pool: &mut EnemyPool, player_bullet_pool: &mut Bull
                     let bullet = player_bullet_pool.pop().unwrap();
                     if let Some(bullet_p) = bullet.get_p() {
                         if let Some(bullet_last_p) = bullet.get_last_p() {
-                            for hitbox in enemy.get_hitboxes().iter() {
+                            // we introduct collision flag here
+                            // to prevent multiple collisions in many hitboxes in one bullet
+                            let mut collision_flag: bool = false;
+                            'hitbox_loop: for hitbox in enemy.get_hitboxes().iter() {
                                 let dist = linesegs_distance(
                                     enemy_p + hitbox.center,
                                     enemy_last_p + hitbox.center,
@@ -35,10 +38,15 @@ pub fn collision_enemy(enemy_pool: &mut EnemyPool, player_bullet_pool: &mut Bull
                                 );
                                 //println!("{} {:?} {:?}", dist, bullet_p, bullet_last_p);
                                 if dist < hitbox.r + bullet.get_r() {
-                                    keep_enemy = false;
                                     println!("BANG!");
-                                    break 'bullet_loop;
+                                    collision_flag = true;
+                                    break 'hitbox_loop;
                                 }
+                            }
+                            // if not collision, enemy will not take damage
+                            if collision_flag && !enemy.damage(1.) {
+                                keep_enemy = false;
+                                break 'bullet_loop;
                             }
                         }
                     }
