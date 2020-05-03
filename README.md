@@ -90,6 +90,8 @@ Still in its early development stage
 
 ### Performance
 
+* [ ] SDL2 has poor performance, switch to raw OpenGL backend interface
+
 * [ ] Asynchronous wave generator
 
 * [ ] Parallelize

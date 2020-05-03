@@ -77,7 +77,6 @@ pub fn collision_player(
         let dist = linesegs_distance(player_p, player_last_p, bullet_p, bullet_last_p);
         //println!("{} {:?} {:?}", dist, bullet_p, bullet_last_p);
         if dist < PLAYER_HITBOX_R + bullet.get_r() {
-            println!("BOOM!");
             break 'bullet_loop;
         }
         enemy_bullet_pool.push(bullet);
