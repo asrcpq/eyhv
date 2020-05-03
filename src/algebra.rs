@@ -32,7 +32,7 @@ impl Point2f {
     }
 
     pub fn from_floats(x: f32, y: f32) -> Point2f {
-        Point2f { x: x, y: y }
+        Point2f { x, y }
     }
 
     pub fn from_polar(r: f32, theta: f32) -> Point2f {
@@ -49,19 +49,19 @@ impl Point2f {
         }
     }
 
-    pub fn norm(&self) -> f32 {
+    pub fn norm(self) -> f32 {
         (self.x * self.x + self.y * self.y).sqrt()
     }
 
-    pub fn normed(&self) -> Point2f {
-        *self / self.norm()
+    pub fn normed(self) -> Point2f {
+        self / self.norm()
     }
 
-    pub fn dotx(&self, other: Point2f) -> f32 {
+    pub fn dotx(self, other: Point2f) -> f32 {
         self.x * other.x + self.y * other.y
     }
 
-    pub fn crossx(&self, other: Point2f) -> f32 {
+    pub fn crossx(self, other: Point2f) -> f32 {
         self.x * other.y - self.y * other.x
     }
 }
@@ -101,7 +101,7 @@ impl Circle2f {
     pub fn from_floats(x: f32, y: f32, r: f32) -> Circle2f {
         Circle2f {
             center: Point2f::from_floats(x, y),
-            r: r,
+            r,
         }
     }
 }
@@ -147,9 +147,9 @@ pub fn linesegs_distance(a: Point2f, b: Point2f, c: Point2f, d: Point2f) -> f32 
             possible_value.push((bc_norm * bc_norm - tmp * tmp).sqrt())
         }
 
-        return possible_value
+        possible_value
             .iter()
-            .fold(f32::INFINITY, |min, x| min.min(*x));
+            .fold(f32::INFINITY, |min, x| min.min(*x))
     }
 }
 

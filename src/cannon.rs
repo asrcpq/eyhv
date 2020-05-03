@@ -3,10 +3,9 @@ use std::collections::VecDeque;
 use dyn_clone::DynClone;
 use rand::Rng;
 use rand::SeedableRng;
-use rand_pcg;
 
 use crate::algebra::{Mat2x2f, Point2f};
-use crate::bullet::{bullet_graphic_objects, Bullet, SimpleBullet, RotateBullet};
+use crate::bullet::{bullet_graphic_objects, Bullet, RotateBullet, SimpleBullet};
 use crate::random_tools::simple_try;
 
 const TRY_TIMES: u32 = 10;
@@ -73,34 +72,35 @@ impl CannonGeneratorInterface for PlayerLocker {
         // difficulty = fire_duration * count * (bullet_speed / fire_interval)
         // fire_freq = fd(cd * (0.2 - 1)) / cd(1 - 3) / fi(infer)
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
-        let cd: f32 = rng.gen_range(1., 3.);
+        let cycle_duration: f32 = rng.gen_range(1., 3.);
         // k(fd / cd) * cn * bs_ff^2
-        let (fd, cn, bs_ff) = (|x: Vec<f32>| (cd * x[0], x[1], x[2]))(simple_try(
+        let generated = simple_try(
             TRY_TIMES,
             |x| x[0] * x[1] * x[2].powi(2),
             vec![(0.2, 1.), (1., 7.), (0.5, 2.)], // 0.05-40
             difficulty,
             rng.gen::<u64>(),
-        ));
+        );
+        let (fire_duration, count, bs_ff) =
+            (cycle_duration * generated[0], generated[1], generated[2]);
         let bs_ff_k = rng.gen_range(0.8, 1.2);
-        let mut bs = (bs_ff * bs_ff_k).sqrt();
-        let fi = 0.3 * bs / bs_ff;
-        bs *= 300.;
-        let oa: f32 = rng.gen_range(45f32.to_radians(), 180f32.to_radians());
-        let p = PlayerLocker {
+        let mut bullet_speed = (bs_ff * bs_ff_k).sqrt();
+        let fire_interval = 0.3 * bullet_speed / bs_ff;
+        bullet_speed *= 300.;
+        let open_angle: f32 = rng.gen_range(45f32.to_radians(), 180f32.to_radians());
+        PlayerLocker {
             p: Point2f::new(),
-            fire_duration: fd,
-            cycle_duration: cd,
-            fire_interval: fi,
-            fire_cd: fi,
+            fire_duration,
+            cycle_duration,
+            fire_interval,
+            fire_cd: fire_interval,
             theta: 0., // uninitialized
-            open_angle: oa,
-            count: cn as u32,
+            open_angle,
+            count: count as u32,
             switch: true,
-            bullet_speed: bs,
+            bullet_speed,
             phase_timer: 0.,
-        };
-        return p;
+        }
     }
 }
 
@@ -114,20 +114,21 @@ impl PlayerLocker {
 
 impl CannonControllerInterface for PlayerLocker {
     fn switch(&mut self, switch: bool) {
-        if self.switch {
-            if !switch {
-                self.switch = false;
-                self.phase_timer = 0.;
-                self.fire_cd = self.fire_interval;
-            }
-        } else {
-            if switch {
-                self.switch = true;
-            }
+        if self.switch && !switch {
+            self.switch = false;
+            self.phase_timer = 0.;
+            self.fire_cd = self.fire_interval;
+        } else if switch {
+            self.switch = true;
         }
     }
 
-    fn tick(&mut self, host_p: Point2f, player_p: Point2f, mut dt: f32) -> VecDeque<Box<dyn Bullet>> {
+    fn tick(
+        &mut self,
+        host_p: Point2f,
+        player_p: Point2f,
+        mut dt: f32,
+    ) -> VecDeque<Box<dyn Bullet>> {
         self.update_theta(player_p, host_p);
         let mut bullet_queue = VecDeque::new();
         const BULLET_RADIUS: f32 = 3.;
@@ -198,11 +199,11 @@ pub struct SimpleCannon {
 impl SimpleCannon {
     pub fn new(p: Point2f, v: Point2f, fi: f32, sw: bool) -> SimpleCannon {
         SimpleCannon {
-            p: p,
+            p,
             fire_interval: fi,
             // player should not benefit from a rapid fire controller
             fire_cd: fi,
-            v: v,
+            v,
             switch: sw,
         }
     }
@@ -210,15 +211,11 @@ impl SimpleCannon {
 
 impl SimpleCannon {
     pub fn switch(&mut self, switch: bool) {
-        if self.switch {
-            if !switch {
-                self.switch = false;
-                self.fire_cd = self.fire_interval;
-            }
-        } else {
-            if switch {
-                self.switch = true;
-            }
+        if self.switch && !switch {
+            self.switch = false;
+            self.fire_cd = self.fire_interval;
+        } else if switch {
+            self.switch = true;
         }
     }
 
@@ -272,23 +269,24 @@ impl CannonGeneratorInterface for Rotor {
     fn generate(seed: u64, difficulty: f32) -> Rotor {
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
         // difficulty = bullet_speed / fire_interval
-        let (bs, fi) = (|x: Vec<f32>| (x[0], x[1]))(simple_try(
+        let generated = simple_try(
             TRY_TIMES,
             |x| x[0] / x[1],
             vec![(200., 400.), (0.2, 0.01)], // 1000-40000
             difficulty,
             rng.gen::<u64>(),
-        ));
+        );
+        let (bullet_speed, fire_interval) = (generated[0], generated[1]);
         let omega: f32 = rng.gen_range(1., 6.);
         // let theta: f32 = rng.gen_range(0., 2. * std::f32::consts::PI);
         let theta: f32 = std::f32::consts::PI;
         Rotor {
             p: Point2f::new(),
-            fire_interval: fi,
-            fire_cd: fi,
-            theta: theta,
-            omega: omega,
-            bullet_speed: bs,
+            fire_interval,
+            fire_cd: fire_interval,
+            theta,
+            omega,
+            bullet_speed,
             switch: true,
         }
     }
@@ -296,15 +294,11 @@ impl CannonGeneratorInterface for Rotor {
 
 impl CannonControllerInterface for Rotor {
     fn switch(&mut self, switch: bool) {
-        if self.switch {
-            if !switch {
-                self.switch = false;
-                self.fire_cd = self.fire_interval;
-            }
-        } else {
-            if switch {
-                self.switch = true;
-            }
+        if self.switch && !switch {
+            self.switch = false;
+            self.fire_cd = self.fire_interval;
+        } else if switch {
+            self.switch = true;
         }
     }
 

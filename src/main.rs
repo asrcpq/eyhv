@@ -149,21 +149,23 @@ pub fn main() {
                     (polygon.color[2] * 255.) as u8,
                     (polygon.color[3] * 255.) as u8,
                 );
-                canvas.filled_polygon(
-                    polygon
-                        .vertices
-                        .iter()
-                        .map(|x| x.x as i16)
-                        .collect::<Vec<i16>>()
-                        .as_slice(),
-                    polygon
-                        .vertices
-                        .iter()
-                        .map(|x| x.y as i16)
-                        .collect::<Vec<i16>>()
-                        .as_slice(),
-                    color,
-                ).unwrap();
+                canvas
+                    .filled_polygon(
+                        polygon
+                            .vertices
+                            .iter()
+                            .map(|x| x.x as i16)
+                            .collect::<Vec<i16>>()
+                            .as_slice(),
+                        polygon
+                            .vertices
+                            .iter()
+                            .map(|x| x.y as i16)
+                            .collect::<Vec<i16>>()
+                            .as_slice(),
+                        color,
+                    )
+                    .unwrap();
             }
         }
 

@@ -13,10 +13,10 @@ mod enemy_graphic_objects {
     lazy_static! {
         pub static ref SMALL1: GraphicObjects = GraphicObjects::from_strs(vec![
             "l 0.3 0.5 0.5 1. -0.5 0.5 -0.5 -0.5 0.5 -0.5 0.5 0.5 -0.5 0.5",
-            "l 0.7 0.0 0.2 0.8 -0.5 0.3 -1.5 1. -1.5 -1. -0.5 -0.3",
-            "p 1 1 1 0.1 -0.5 0.3 -1.5 1 -1.5 -1 -0.5 -0.3",
-            "l 0.7 0.0 0.2 0.8 0.5 0.3 1.5 1. 1.5 -1. 0.5 -0.3",
-            "p 1 1 1 0.1 0.5 0.3 1.5 1 1.5 -1 0.5 -0.3",
+            "l 1 1 0.2 0.8 -0.5 0.3 -1.5 1. -1.5 -1. -0.5 -0.3",
+            "p 1 1 1 0.2 -0.5 0.3 -1.5 1 -1.5 -1 -0.5 -0.3",
+            "l 1 1 0.2 0.8 0.5 0.3 1.5 1. 1.5 -1. 0.5 -0.3",
+            "p 1 1 1 0.2 0.5 0.3 1.5 1 1.5 -1 0.5 -0.3",
         ])
         .zoom(10.);
     }
@@ -38,10 +38,10 @@ pub struct Enemy {
 }
 
 pub mod enemy_prototype {
-    use lazy_static::lazy_static;
     use super::enemy_graphic_objects;
-    use crate::algebra::{Point2f, Circle2f};
+    use crate::algebra::{Circle2f, Point2f};
     use crate::graphic_object::GraphicObjects;
+    use lazy_static::lazy_static;
 
     #[derive(Clone)]
     pub struct EnemyPrototype {
@@ -69,10 +69,10 @@ impl Enemy {
         Enemy {
             p: None,
             last_p: None,
-            path: path,
-            cannons: cannons,
-            graphic_objects: graphic_objects,
-            hitboxes: hitboxes,
+            path,
+            cannons,
+            graphic_objects,
+            hitboxes,
         }
     }
 

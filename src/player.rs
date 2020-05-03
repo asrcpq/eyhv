@@ -23,7 +23,7 @@ pub struct Player {
 
 impl Player {
     pub fn new() -> Player {
-        let window_size = WINDOW_SIZE.clone();
+        let window_size = *WINDOW_SIZE;
         let p0 = Point2f::from_floats(window_size.x / 2., window_size.y - 50.) + WINDOW_RECT.lu;
         Player {
             p: p0,
@@ -59,7 +59,7 @@ impl Player {
     }
 
     // set_dp is executed before frame update
-    fn set_dp(&mut self, directions: &[bool; 4]) {
+    fn set_dp(&mut self, directions: [bool; 4]) {
         let mut dp = Point2f::new();
         for (key_id, updown) in directions.iter().enumerate() {
             if *updown {
@@ -81,7 +81,7 @@ impl Player {
         self.dp = dp;
     }
 
-    pub fn tick(&mut self, dt: f32, directions: &[bool; 4]) -> VecDeque<Box<dyn Bullet>> {
+    pub fn tick(&mut self, dt: f32, directions: [bool; 4]) -> VecDeque<Box<dyn Bullet>> {
         self.set_dp(directions);
         self.last_p = self.p;
         self.p += self.dp * dt;

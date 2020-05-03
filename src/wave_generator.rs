@@ -4,50 +4,68 @@ use crate::enemy::Enemy;
 
 use rand::Rng;
 use rand::SeedableRng;
-use rand_pcg;
 
 mod wave_scheme_prototype {
     use std::collections::VecDeque;
 
-    use crate::enemy::Enemy;
-    use crate::enemy::enemy_prototype;
-    use crate::enemy_path::{EnemyPath, enemy_paths};
-    use crate::cannon;
-    use crate::cannon::{CannonControllerInterface};
-    use crate::graphic_object::GraphicObjects;
     use super::CompiledWave;
-    
+    use crate::cannon;
+    use crate::cannon::CannonControllerInterface;
+    use crate::enemy::enemy_prototype;
+    use crate::enemy::Enemy;
+    use crate::enemy_path::{enemy_paths, EnemyPath};
+    use crate::graphic_object::GraphicObjects;
+
     use lazy_static::lazy_static;
+    use rand::seq::SliceRandom;
     use rand::Rng;
     use rand::SeedableRng;
-    use rand::seq::SliceRandom;
-    use rand_pcg;
 
+    type GroupMemberSpatiotemporalInfo = Vec<(EnemyPath, Vec<f32>)>;
     #[derive(Clone)]
     pub struct WaveSchemePrototype {
-        pub enemies: Vec<(enemy_prototype::EnemyPrototype, Vec<(EnemyPath, Vec<f32>)>)>,
+        pub enemies: Vec<(
+            enemy_prototype::EnemyPrototype,
+            GroupMemberSpatiotemporalInfo,
+        )>,
     }
 
     lazy_static! {
         static ref LEFT_DOWN_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
-            enemies: vec![(enemy_prototype::SMALL.clone(), vec![
-                (enemy_paths::LEFT_STRAIGHT_DOWN.clone(), vec![0.5, 1., 1.5, 2., 2.5, 3.]),
-            ])]
+            enemies: vec![(
+                enemy_prototype::SMALL.clone(),
+                vec![(
+                    enemy_paths::LEFT_STRAIGHT_DOWN.clone(),
+                    vec![0.5, 1., 1.5, 2., 2.5, 3.]
+                ),]
+            )]
         };
         static ref RIGHT_DOWN_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
-            enemies: vec![(enemy_prototype::SMALL.clone(), vec![
-                (enemy_paths::RIGHT_STRAIGHT_DOWN.clone(), vec![0.5, 1., 1.5, 2., 2.5, 3.]),
-            ])]
+            enemies: vec![(
+                enemy_prototype::SMALL.clone(),
+                vec![(
+                    enemy_paths::RIGHT_STRAIGHT_DOWN.clone(),
+                    vec![0.5, 1., 1.5, 2., 2.5, 3.]
+                ),]
+            )]
         };
         static ref LEFT_RIGHT_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
-            enemies: vec![(enemy_prototype::SMALL.clone(), vec![
-                (enemy_paths::LEFT_RIGHT.clone(), vec![0.5, 1., 1.5, 2., 2.5, 3.]),
-            ])]
+            enemies: vec![(
+                enemy_prototype::SMALL.clone(),
+                vec![(
+                    enemy_paths::LEFT_RIGHT.clone(),
+                    vec![0.5, 1., 1.5, 2., 2.5, 3.]
+                ),]
+            )]
         };
         static ref RIGHT_LEFT_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
-            enemies: vec![(enemy_prototype::SMALL.clone(), vec![
-                (enemy_paths::RIGHT_LEFT.clone(), vec![0.5, 1., 1.5, 2., 2.5, 3.]),
-            ])]
+            enemies: vec![(
+                enemy_prototype::SMALL.clone(),
+                vec![(
+                    enemy_paths::RIGHT_LEFT.clone(),
+                    vec![0.5, 1., 1.5, 2., 2.5, 3.]
+                ),]
+            )]
         };
     }
 
@@ -63,15 +81,15 @@ mod wave_scheme_prototype {
                 let mut cannons: Vec<Box<dyn CannonControllerInterface>> = Vec::new();
 
                 // they use the same GraphicObjects
-                let graphic_objects: GraphicObjects = 
-                    enemy_prototype.graphic_objects_options.choose(&mut rng).unwrap().clone();
+                let graphic_objects: GraphicObjects = enemy_prototype
+                    .graphic_objects_options
+                    .choose(&mut rng)
+                    .unwrap()
+                    .clone();
 
                 for cannon_p_group in enemy_prototype.cannon_pits.iter() {
                     // each cycle represents a cannon group in an enemy group
-                    let cannon_template = cannon::random_mapper(
-                        rng.gen::<u64>(),
-                        difficulty,
-                    );
+                    let cannon_template = cannon::random_mapper(rng.gen::<u64>(), difficulty);
                     for each_cannon_p in cannon_p_group {
                         let mut each_p_cannon = cannon_template.clone();
                         each_p_cannon.set_p(*each_cannon_p);
@@ -104,7 +122,7 @@ mod wave_scheme_prototype {
             1 => RIGHT_DOWN_CHAIN.compile(rng.gen::<u64>(), difficulty),
             2 => LEFT_RIGHT_CHAIN.compile(rng.gen::<u64>(), difficulty),
             3 => RIGHT_LEFT_CHAIN.compile(rng.gen::<u64>(), difficulty),
-            _ => unreachable!()
+            _ => unreachable!(),
         }
     }
 }
@@ -117,10 +135,7 @@ pub struct CompiledWave {
 
 impl CompiledWave {
     pub fn new(enemies: VecDeque<(f32, Enemy)>) -> CompiledWave {
-        CompiledWave {
-            enemies: enemies,
-            timer: 0.,
-        }
+        CompiledWave { enemies, timer: 0. }
     }
 
     pub fn tick(&mut self, dt: f32) -> VecDeque<Enemy> {
@@ -174,10 +189,12 @@ impl WaveGenerator {
                 });
                 dt -= self.wave_cd;
                 self.wave_cd = self.wave_interval;
-                self.current_wave = Some(wave_scheme_prototype::random_mapper(self.rng.gen::<u64>(), 0.1));
+                self.current_wave = Some(wave_scheme_prototype::random_mapper(
+                    self.rng.gen::<u64>(),
+                    0.1,
+                ));
             }
         }
         enemy_queue
     }
-
 }

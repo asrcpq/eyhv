@@ -49,7 +49,7 @@ impl BulletPool {
     }
 
     pub fn graphic_objects_iter(&self) -> GraphicObjectsIntoIter {
-        let mut graphic_objects = GraphicObjects::new();
+        let mut graphic_objects: GraphicObjects = Default::default();
         for bullet in self.bullets.iter() {
             graphic_objects.extend(bullet.get_shifted_graphic_objects());
         }

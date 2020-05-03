@@ -1,6 +1,6 @@
-use std::any::Any;
 use crate::algebra::{Mat2x2f, Point2f};
 use dyn_clone::DynClone;
+use std::any::Any;
 
 #[derive(Clone, Debug)]
 pub struct LineSegs2f {
@@ -9,10 +9,7 @@ pub struct LineSegs2f {
 }
 impl LineSegs2f {
     pub fn new(vertices: Vec<Point2f>, color: [f32; 4]) -> LineSegs2f {
-        LineSegs2f {
-            vertices: vertices,
-            color: color,
-        }
+        LineSegs2f { vertices, color }
     }
 
     pub fn from_floats(floats: Vec<f32>) -> LineSegs2f {
@@ -53,33 +50,21 @@ impl GraphicObject for LineSegs2f {
 
     fn shift(&self, dp: Point2f) -> Box<dyn GraphicObject> {
         Box::new(LineSegs2f {
-            vertices: self
-                .vertices
-                .iter()
-                .map(|x| *x + dp)
-                .collect(),
+            vertices: self.vertices.iter().map(|x| *x + dp).collect(),
             color: self.color,
         })
     }
 
     fn rotate(&self, rotate_mat: Mat2x2f) -> Box<dyn GraphicObject> {
         Box::new(LineSegs2f {
-            vertices: self
-                .vertices
-                .iter()
-                .map(|x| rotate_mat * *x)
-                .collect(),
+            vertices: self.vertices.iter().map(|x| rotate_mat * *x).collect(),
             color: self.color,
         })
     }
 
     fn zoom(&self, k: f32) -> Box<dyn GraphicObject> {
         Box::new(LineSegs2f {
-            vertices: self
-                .vertices
-                .iter()
-                .map(|x| *x * k)
-                .collect(),
+            vertices: self.vertices.iter().map(|x| *x * k).collect(),
             color: self.color,
         })
     }
@@ -98,33 +83,21 @@ impl GraphicObject for Polygon2f {
 
     fn shift(&self, dp: Point2f) -> Box<dyn GraphicObject> {
         Box::new(Polygon2f {
-            vertices: self
-                .vertices
-                .iter()
-                .map(|x| *x + dp)
-                .collect(),
+            vertices: self.vertices.iter().map(|x| *x + dp).collect(),
             color: self.color,
         })
     }
 
     fn rotate(&self, rotate_mat: Mat2x2f) -> Box<dyn GraphicObject> {
         Box::new(Polygon2f {
-            vertices: self
-                .vertices
-                .iter()
-                .map(|x| rotate_mat * *x)
-                .collect(),
+            vertices: self.vertices.iter().map(|x| rotate_mat * *x).collect(),
             color: self.color,
         })
     }
 
     fn zoom(&self, k: f32) -> Box<dyn GraphicObject> {
         Box::new(Polygon2f {
-            vertices: self
-                .vertices
-                .iter()
-                .map(|x| *x * k)
-                .collect(),
+            vertices: self.vertices.iter().map(|x| *x * k).collect(),
             color: self.color,
         })
     }
@@ -132,10 +105,7 @@ impl GraphicObject for Polygon2f {
 
 impl Polygon2f {
     pub fn new(vertices: Vec<Point2f>, color: [f32; 4]) -> Polygon2f {
-        Polygon2f {
-            vertices: vertices,
-            color: color,
-        }
+        Polygon2f { vertices, color }
     }
 
     pub fn from_floats(floats: Vec<f32>) -> Polygon2f {
@@ -160,7 +130,7 @@ impl Polygon2f {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct GraphicObjects {
     graphic_objects: Vec<Box<dyn GraphicObject>>,
 }
@@ -198,12 +168,6 @@ impl GraphicObjects {
 
     pub fn extend(&mut self, other: GraphicObjects) {
         self.graphic_objects.extend(other.graphic_objects);
-    }
-
-    pub fn new() -> GraphicObjects {
-        GraphicObjects {
-            graphic_objects: Vec::new(),
-        }
     }
 
     pub fn from_strs(strings: Vec<&str>) -> GraphicObjects {

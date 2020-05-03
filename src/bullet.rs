@@ -46,12 +46,12 @@ impl SimpleBullet {
         graphic_objects: GraphicObjects,
     ) -> SimpleBullet {
         SimpleBullet {
-            p: p,
+            p,
             last_p: None,
-            v: v,
-            a: a,
-            r: r,
-            graphic_objects: graphic_objects,
+            v,
+            a,
+            r,
+            graphic_objects,
         }
     }
 }
@@ -103,14 +103,14 @@ impl RotateBullet {
         graphic_objects: GraphicObjects,
     ) -> RotateBullet {
         RotateBullet {
-            p: p,
+            p,
             last_p: None,
-            v: v,
-            a: a,
-            r: r,
+            v,
+            a,
+            r,
             theta: 0.,
-            rotate_matrix: rotate_matrix,
-            graphic_objects: graphic_objects,
+            rotate_matrix,
+            graphic_objects,
         }
     }
 }

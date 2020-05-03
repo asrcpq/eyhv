@@ -36,7 +36,7 @@ impl EnemyPath {
             Some(f1) => {
                 // why copy trait does not work inside lazy_static??
                 route.push((
-                    Point2f::from_floats(*f1, *iter.next().unwrap()) * WINDOW_SIZE.clone()
+                    Point2f::from_floats(*f1, *iter.next().unwrap()) * *WINDOW_SIZE
                         + WINDOW_RECT.lu,
                     *iter.next().unwrap(),
                 ));
@@ -45,7 +45,7 @@ impl EnemyPath {
             None => false,
         } {}
         EnemyPath {
-            route: route,
+            route,
             index: 0,
             timer: 0.,
         }

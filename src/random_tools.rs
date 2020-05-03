@@ -1,6 +1,5 @@
 use rand::Rng;
 use rand::SeedableRng;
-use rand_pcg;
 
 // feed n groups
 pub fn simple_try<F>(
@@ -13,24 +12,19 @@ pub fn simple_try<F>(
 where
     F: Fn(&Vec<f32>) -> f32,
 {
-    // resize difficulty
-    expect_difficulty = (|min, max| expect_difficulty * (max - min) + min)(
-        evaluate(&range.iter().map(|(x, _)| *x).collect()),
-        evaluate(&range.iter().map(|(_, y)| *y).collect()),
-    );
+    let min = evaluate(&range.iter().map(|(x, _)| *x).collect());
+    let max = evaluate(&range.iter().map(|(_, y)| *y).collect());
+    expect_difficulty = expect_difficulty * (max - min) + min;
 
     let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
     loop {
         let generated = range
             .iter()
-            .map(|(x, y)| if x > y {
-                (y, x)
-            } else {
-                (x, y)
-            }).map(|(begin, end)| rng.gen_range(begin, end))
+            .map(|(x, y)| if x > y { (y, x) } else { (x, y) })
+            .map(|(begin, end)| rng.gen_range(begin, end))
             .collect();
         try_times -= 1;
-        if try_times <= 0 {
+        if try_times == 0 {
             break generated;
         }
         let generated_error = evaluate(&generated) - expect_difficulty;

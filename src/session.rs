@@ -78,13 +78,17 @@ impl Session {
         dt *= self.time_manager.update_and_get_dt_scaler(dt);
         self.player_bullet_pool.tick(dt);
         self.player_bullet_pool
-            .extend(self.player.tick(dt, &self.key_state.directions));
+            .extend(self.player.tick(dt, self.key_state.directions));
         self.enemy_pool.extend(self.wave_generator.tick(dt));
         self.enemy_bullet_pool.tick(dt);
         self.enemy_bullet_pool
             .extend(self.enemy_pool.tick(dt, self.player.get_p()));
         collision_enemy(&mut self.enemy_pool, &mut self.player_bullet_pool);
-        collision_player(self.player.get_p(), self.player.get_last_p(), &mut self.enemy_bullet_pool);
+        collision_player(
+            self.player.get_p(),
+            self.player.get_last_p(),
+            &mut self.enemy_bullet_pool,
+        );
 
         // memleak monitor
         // println!(

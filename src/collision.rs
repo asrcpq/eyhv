@@ -1,4 +1,4 @@
-use crate::algebra::{Point2f, linesegs_distance};
+use crate::algebra::{linesegs_distance, Point2f};
 use crate::bullet_pool::BulletPool;
 use crate::enemy_pool::EnemyPool;
 
@@ -52,19 +52,18 @@ pub fn collision_enemy(enemy_pool: &mut EnemyPool, player_bullet_pool: &mut Bull
     }
 }
 
-pub fn collision_player(player_p: Point2f, player_last_p: Point2f, enemy_bullet_pool: &mut BulletPool) {
+pub fn collision_player(
+    player_p: Point2f,
+    player_last_p: Point2f,
+    enemy_bullet_pool: &mut BulletPool,
+) {
     const PLAYER_HITBOX_R: f32 = 5.;
     let bullet_len = enemy_bullet_pool.len();
     'bullet_loop: for _ in 0..bullet_len {
         let bullet = enemy_bullet_pool.pop().unwrap();
         if let Some(bullet_p) = bullet.get_p() {
             if let Some(bullet_last_p) = bullet.get_last_p() {
-                let dist = linesegs_distance(
-                    player_p,
-                    player_last_p,
-                    bullet_p,
-                    bullet_last_p,
-                );
+                let dist = linesegs_distance(player_p, player_last_p, bullet_p, bullet_last_p);
                 //println!("{} {:?} {:?}", dist, bullet_p, bullet_last_p);
                 if dist < PLAYER_HITBOX_R + bullet.get_r() {
                     println!("BOOM!");

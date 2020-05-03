@@ -40,7 +40,7 @@ impl EnemyPool {
     }
 
     pub fn graphic_objects_iter(&self) -> GraphicObjectsIntoIter {
-        let mut graphic_objects = GraphicObjects::new();
+        let mut graphic_objects: GraphicObjects = Default::default();
         for enemy in self.enemies.iter() {
             graphic_objects.extend(enemy.get_shifted_graphic_objects());
         }
