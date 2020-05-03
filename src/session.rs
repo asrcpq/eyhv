@@ -48,6 +48,7 @@ pub struct Session {
 
     // control
     key_state: KeyState,
+    pause: bool,
 
     time_manager: TimeManager,
 }
@@ -61,6 +62,7 @@ impl Session {
             enemy_bullet_pool: BulletPool::new(),
             wave_generator: WaveGenerator::new(12345),
             key_state: KeyState::new(),
+            pause: false,
             time_manager: TimeManager::new(),
         }
     }
@@ -75,6 +77,9 @@ impl Session {
     }
 
     pub fn tick(&mut self, mut dt: f32) {
+        if self.pause {
+            return;
+        }
         dt *= self.time_manager.update_and_get_dt_scaler(dt);
         self.player_bullet_pool.tick(dt);
         self.player_bullet_pool
@@ -99,11 +104,17 @@ impl Session {
         // );
     }
 
+    fn toggle_pause(&mut self) {
+        self.pause = !self.pause;
+    }
+
     pub fn proc_key(&mut self, key_id: i8, updown: bool) {
         if key_id == 4 {
             self.time_manager.set_state(updown);
         } else if key_id == 5 {
             self.player.switch_cannons(updown);
+        } else if key_id == 6 {
+            self.toggle_pause();
         } else {
             self.key_state.proc_key(key_id, updown);
         }

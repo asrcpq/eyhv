@@ -59,7 +59,7 @@ Still in its early development stage
 
 	* [x] New Cannon: shotgun
 
-* [ ] Pause
+* [x] Pause
 
 * [ ] Game mechanism
 
