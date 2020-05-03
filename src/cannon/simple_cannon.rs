@@ -60,7 +60,7 @@ impl SimpleCannon {
                     self.v,
                     Point2f::new(),
                     BULLET_RADIUS,
-                    bullet_graphic_objects::RECTANGLE.clone(),
+                    bullet_graphic_objects::RECTANGLE_PLAYER.clone(),
                 )));
             }
         }
