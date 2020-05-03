@@ -23,6 +23,14 @@ mod enemy_graphic_objects {
             "l 0.3 0.5 0.5 1 0 -1 0.5 -0.5 2 -1 0 1 -2 -1 -0.5 -0.5 0 -1",
         ])
         .zoom(10.);
+        pub static ref MEDIUM1: GraphicObjects = GraphicObjects::from_strs(vec![
+            "l 1 0.7 0.9 1 0.6 -0.4 0.6 0.1 0.2 0.8 -0.2 0.8 -0.6 0.1 -0.6 -0.4 0.6 -0.4",
+            "l 1 1 1 0.5 0.6 -0.1 1 -0.1 1 -1 3 -1 3 1 1 1 1 0.1 0.6 0.1",
+            "l 1 1 1 0.5 -0.6 -0.1 -1 -0.1 -1 -1 -3 -1 -3 1 -1 1 -1 0.1 -0.6 0.1",
+            "p 0.7 1 0.7 0.6 3 -1 3.5 -1 3.5 1 3 1",
+            "p 0.7 1 0.7 0.6 -3 -1 -3.5 -1 -3.5 1 -3 1",
+        ])
+        .zoom(10.);
     }
 }
 
@@ -36,6 +44,7 @@ pub struct Enemy {
     p: Option<Point2f>,
     last_p: Option<Point2f>,
     path: EnemyPath,
+    speed: f32,
     cannons: Vec<Box<dyn CannonControllerInterface>>,
     graphic_objects: GraphicObjects,
     hitboxes: Vec<Circle2f>,
@@ -49,6 +58,7 @@ pub mod enemy_prototype {
 
     #[derive(Clone)]
     pub struct EnemyPrototype {
+        pub speed: f32,
         pub cannon_pits: Vec<Vec<Point2f>>,
         pub hitboxes: Vec<Circle2f>,
         pub graphic_objects_options: Vec<GraphicObjects>,
@@ -56,11 +66,26 @@ pub mod enemy_prototype {
 
     lazy_static! {
         pub static ref SMALL: EnemyPrototype = EnemyPrototype {
+            speed: 1.,
             cannon_pits: vec![vec![Point2f::new()]],
             hitboxes: vec![Circle2f::from_floats(0., 0., 20.)],
             graphic_objects_options: vec![
-                enemy_graphic_objects::SMALL2.clone(),
                 enemy_graphic_objects::SMALL1.clone(),
+                enemy_graphic_objects::SMALL2.clone(),
+            ],
+        };
+        pub static ref MEDIUM: EnemyPrototype = EnemyPrototype {
+            speed: 0.5,
+            cannon_pits: vec![vec![
+                Point2f::from_floats(-30., 0.),
+                Point2f::from_floats(30., 0.),
+            ]],
+            hitboxes: vec![
+                Circle2f::from_floats(18., 0., 20.),
+                Circle2f::from_floats(-18., 0., 20.),
+            ],
+            graphic_objects_options: vec![
+                enemy_graphic_objects::MEDIUM1.clone(),
             ],
         };
     }
@@ -69,6 +94,7 @@ pub mod enemy_prototype {
 impl Enemy {
     pub fn new(
         path: EnemyPath,
+        speed: f32,
         cannons: Vec<Box<dyn CannonControllerInterface>>,
         graphic_objects: GraphicObjects,
         hitboxes: Vec<Circle2f>,
@@ -77,6 +103,7 @@ impl Enemy {
             p: None,
             last_p: None,
             path,
+            speed,
             cannons,
             graphic_objects,
             hitboxes,
@@ -84,7 +111,7 @@ impl Enemy {
     }
 
     pub fn tick(&mut self, dt: f32, player_p: Point2f) -> EnemyTickReturnOption {
-        match self.path.tick(dt) {
+        match self.path.tick(dt * self.speed) {
             // update p first to prevent displaying (0, 0)
             None => return EnemyTickReturnOption::Removed,
             Some(point2f) => {

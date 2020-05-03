@@ -4,7 +4,7 @@ Still in its early development stage
 
 * High speed and high fault tolerance(of player performance)
 
-* Minimalism design
+* Minimalism design(game mechanism and design style)
 
 * Randomly generated and reproducible(by u64 seed) enemies
 
@@ -55,7 +55,7 @@ Still in its early development stage
 
 	* [x] New GraphicObject and modify GraphicObjects
 
-	* [ ] New WaveScheme, Enemy, EnemyPath
+	* [x] New EnemyPrototype: Medium
 
 	* [ ] New Cannon: shotgun
 

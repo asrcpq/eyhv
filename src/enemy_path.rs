@@ -7,6 +7,7 @@ pub mod enemy_paths {
 
     lazy_static! {
         pub static ref LEFT_STRAIGHT_DOWN: EnemyPath = EnemyPath::from_str("0.3 0 10. 0.3 1 0");
+        pub static ref MID_STRAIGHT_DOWN: EnemyPath = EnemyPath::from_str("0.5 0 10. 0.5 1 0");
         pub static ref RIGHT_STRAIGHT_DOWN: EnemyPath = EnemyPath::from_str("0.7 0 10. 0.7 1 0");
         pub static ref LEFT_RIGHT: EnemyPath = EnemyPath::from_str("0 0.1 6 1 0.1 0");
         pub static ref RIGHT_LEFT: EnemyPath = EnemyPath::from_str("1 0.1 6 0 0.1 0");
@@ -51,8 +52,8 @@ impl EnemyPath {
         }
     }
 
-    pub fn tick(&mut self, dt: f32) -> Option<Point2f> {
-        self.timer += dt;
+    pub fn tick(&mut self, dt_scaled: f32) -> Option<Point2f> {
+        self.timer += dt_scaled;
         loop {
             let next_weight = self.route[self.index].1 - self.timer;
             if next_weight > 0. {

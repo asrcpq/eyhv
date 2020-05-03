@@ -36,7 +36,7 @@ mod wave_scheme_prototype {
                 enemy_prototype::SMALL.clone(),
                 vec![(
                     enemy_paths::LEFT_STRAIGHT_DOWN.clone(),
-                    vec![0.5, 1., 1.5, 2., 2.5, 3.]
+                    vec![0.5, 1., 1.5, 2., 2.5, 3.],
                 ),]
             )]
         };
@@ -45,7 +45,7 @@ mod wave_scheme_prototype {
                 enemy_prototype::SMALL.clone(),
                 vec![(
                     enemy_paths::RIGHT_STRAIGHT_DOWN.clone(),
-                    vec![0.5, 1., 1.5, 2., 2.5, 3.]
+                    vec![0.5, 1., 1.5, 2., 2.5, 3.],
                 ),]
             )]
         };
@@ -63,8 +63,23 @@ mod wave_scheme_prototype {
                 enemy_prototype::SMALL.clone(),
                 vec![(
                     enemy_paths::RIGHT_LEFT.clone(),
-                    vec![0.5, 1., 1.5, 2., 2.5, 3.]
+                    vec![0.5, 1., 1.5, 2., 2.5, 3.],
                 ),]
+            )]
+        };
+        static ref LEFT_MID_RIGHT_MEDIUM: WaveSchemePrototype = WaveSchemePrototype {
+            enemies: vec![(
+                enemy_prototype::MEDIUM.clone(),
+                vec![(
+                    enemy_paths::LEFT_STRAIGHT_DOWN.clone(),
+                    vec![0.5],
+                ),(
+                    enemy_paths::MID_STRAIGHT_DOWN.clone(),
+                    vec![1.5],
+                ),(
+                    enemy_paths::RIGHT_STRAIGHT_DOWN.clone(),
+                    vec![2.5],
+                )]
             )]
         };
     }
@@ -100,6 +115,7 @@ mod wave_scheme_prototype {
                 for (path, dts) in group_vec.iter() {
                     let enemy_construct = Enemy::new(
                         path.clone(),
+                        enemy_prototype.speed,
                         cannons.clone(),
                         graphic_objects.clone(),
                         enemy_prototype.hitboxes.clone(),
@@ -115,13 +131,14 @@ mod wave_scheme_prototype {
     }
 
     pub fn random_mapper(seed: u64, difficulty: f32) -> CompiledWave {
-        const SCHEME_SIZE: u32 = 4;
+        const SCHEME_SIZE: u32 = 5;
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
         match rng.gen_range(0, SCHEME_SIZE) {
             0 => LEFT_DOWN_CHAIN.compile(rng.gen::<u64>(), difficulty),
             1 => RIGHT_DOWN_CHAIN.compile(rng.gen::<u64>(), difficulty),
             2 => LEFT_RIGHT_CHAIN.compile(rng.gen::<u64>(), difficulty),
             3 => RIGHT_LEFT_CHAIN.compile(rng.gen::<u64>(), difficulty),
+            4 => LEFT_MID_RIGHT_MEDIUM.compile(rng.gen::<u64>(), difficulty),
             _ => unreachable!(),
         }
     }

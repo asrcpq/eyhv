@@ -26,9 +26,13 @@ where
     loop {
         let generated: Vec<f32> = mut_range
             .iter()
-            .map(|(x, y)| if x > y { (y, x) } else { (x, y) })
-            .map(|(begin, end)| rng.gen_range(begin, end))
-            .collect();
+            .map(|(x, y)| if x > y {
+                rng.gen_range(y, x)
+            } else if x < y {
+                rng.gen_range(x, y)
+            } else {
+                *x // x == y happens occasionally
+            }).collect();
         try_times -= 1;
         if try_times == 0 {
             break generated
