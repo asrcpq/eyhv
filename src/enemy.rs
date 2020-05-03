@@ -12,11 +12,15 @@ mod enemy_graphic_objects {
 
     lazy_static! {
         pub static ref SMALL1: GraphicObjects = GraphicObjects::from_strs(vec![
-            "l 0.3 0.5 0.5 1. -0.5 0.5 -0.5 -0.5 0.5 -0.5 0.5 0.5 -0.5 0.5",
+            "l 0.3 0.5 0.5 1 -0.5 0.5 -0.5 -0.5 0.5 -0.5 0.5 0.5 -0.5 0.5",
             "l 1 1 0.2 0.8 -0.5 0.3 -1.5 1. -1.5 -1. -0.5 -0.3",
             "p 1 1 1 0.2 -0.5 0.3 -1.5 1 -1.5 -1 -0.5 -0.3",
             "l 1 1 0.2 0.8 0.5 0.3 1.5 1. 1.5 -1. 0.5 -0.3",
             "p 1 1 1 0.2 0.5 0.3 1.5 1 1.5 -1 0.5 -0.3",
+        ])
+        .zoom(10.);
+        pub static ref SMALL2: GraphicObjects = GraphicObjects::from_strs(vec![
+            "l 0.3 0.5 0.5 1 0 -1 0.5 -0.5 2 -1 0 1 -2 -1 -0.5 -0.5 0 -1",
         ])
         .zoom(10.);
     }
@@ -54,7 +58,10 @@ pub mod enemy_prototype {
         pub static ref SMALL: EnemyPrototype = EnemyPrototype {
             cannon_pits: vec![vec![Point2f::new()]],
             hitboxes: vec![Circle2f::from_floats(0., 0., 20.)],
-            graphic_objects_options: vec![enemy_graphic_objects::SMALL1.clone()],
+            graphic_objects_options: vec![
+                enemy_graphic_objects::SMALL2.clone(),
+                enemy_graphic_objects::SMALL1.clone(),
+            ],
         };
     }
 }

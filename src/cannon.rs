@@ -78,6 +78,7 @@ impl CannonGeneratorInterface for PlayerLocker {
             TRY_TIMES,
             |x| x[0] * x[1] * x[2].powi(2),
             vec![(0.2, 1.), (1., 7.), (0.5, 2.)], // 0.05-40
+            0.5,
             difficulty,
             rng.gen::<u64>(),
         );
@@ -87,7 +88,7 @@ impl CannonGeneratorInterface for PlayerLocker {
         let mut bullet_speed = (bs_ff * bs_ff_k).sqrt();
         let fire_interval = 0.3 * bullet_speed / bs_ff;
         bullet_speed *= 300.;
-        let open_angle: f32 = rng.gen_range(45f32.to_radians(), 180f32.to_radians());
+        let open_angle: f32 = rng.gen_range(-2f32, 1.2f32).exp();
         PlayerLocker {
             p: Point2f::new(),
             fire_duration,
@@ -273,6 +274,7 @@ impl CannonGeneratorInterface for Rotor {
             TRY_TIMES,
             |x| x[0] / x[1],
             vec![(200., 400.), (0.2, 0.01)], // 1000-40000
+            0.5,
             difficulty,
             rng.gen::<u64>(),
         );

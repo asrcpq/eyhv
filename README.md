@@ -2,15 +2,15 @@ Still in its early development stage
 
 ## Key features
 
-* High speed and high fault tolerance
+* High speed and high fault tolerance(of player performance)
 
 * Minimalism design
 
 * Randomly generated and reproducible(by u64 seed) enemies
 
-* Time in game always synchronized: player will suffer instead of benefit from low FPS
+* Time in game always synchronized: player will suffer, not benefit from low FPS
 
-* Everything is drawed, no resource file, GUI frontend is replaceable
+* Everything drawed, no resource file, replaceable GUI frontend
 
 ## TODO
 
@@ -45,7 +45,11 @@ Still in its early development stage
 
 * [x] Player collision box
 
-* [ ] Add more contents
+* [x] simple\_try random generator optimization with monotonicity
+
+* [ ] Enemy HP
+
+* [ ] Add more resources
 
 	* [x] New Cannon: Rotor with new bullet: RotateBullet
 
@@ -53,13 +57,15 @@ Still in its early development stage
 
 	* [ ] New WaveScheme, Enemy, EnemyPath
 
-* [ ] Enemy HP
-
-* [x] simple\_try random generator optimization with monotonicity
+	* [ ] New Cannon: shotgun
 
 * [ ] Game mechanism
 
 * [ ] Visual effects
+
+	* [ ] Draw collision box in slowdown mode
+
+	* [ ] Field background
 
 ### Coding
 
