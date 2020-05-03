@@ -40,7 +40,6 @@ pub fn collision_enemy(enemy_pool: &mut EnemyPool, player_bullet_pool: &mut Bull
                                 //println!("{} {:?} {:?}", dist, bullet_p, bullet_last_p);
                                 if dist < hitbox.r + bullet.get_r() {
                                     keep_bullet = false;
-                                    println!("BANG!");
                                     collision_flag = true;
                                     break 'hitbox_loop;
                                 }

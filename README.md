@@ -49,7 +49,7 @@ Still in its early development stage
 
 * [x] Enemy HP
 
-* [ ] Add more resources
+* Add more resources
 
 	* [x] New Cannon: Rotor with new bullet: RotateBullet
 
@@ -57,7 +57,9 @@ Still in its early development stage
 
 	* [x] New EnemyPrototype: Medium
 
-	* [ ] New Cannon: shotgun
+	* [x] New Cannon: shotgun
+
+* [ ] Pause
 
 * [ ] Game mechanism
 

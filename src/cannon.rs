@@ -27,10 +27,11 @@ trait CannonGeneratorInterface {
 
 pub fn random_mapper(seed: u64, difficulty: f32) -> Box<dyn CannonControllerInterface> {
     let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
-    const CANNON_TYPES: u32 = 2;
+    const CANNON_TYPES: u32 = 3;
     match rng.gen_range(0, CANNON_TYPES) {
         0 => Box::new(PlayerLocker::generate(rng.gen::<u64>(), difficulty)),
         1 => Box::new(Rotor::generate(rng.gen::<u64>(), difficulty)),
+        2 => Box::new(Shotgun::generate(rng.gen::<u64>(), difficulty)),
         _ => unreachable!(),
     }
 }
@@ -39,10 +40,6 @@ pub fn random_mapper(seed: u64, difficulty: f32) -> Box<dyn CannonControllerInte
 pub struct PlayerLocker {
     // relative to moving object
     p: Point2f,
-
-    // Durations, phase = fire + cd
-    fire_duration: f32,
-    cycle_duration: f32,
 
     // phase_timer takes value from 0-cycle_duration, and reset
     phase_timer: f32,
@@ -72,18 +69,16 @@ impl CannonGeneratorInterface for PlayerLocker {
         // difficulty = fire_duration * count * (bullet_speed / fire_interval)
         // fire_freq = fd(cd * (0.2 - 1)) / cd(1 - 3) / fi(infer)
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
-        let cycle_duration: f32 = rng.gen_range(1., 3.);
-        // k(fd / cd) * cn * bs_ff^2
+        // cn * bs_ff^2
         let generated = simple_try(
             TRY_TIMES,
-            |x| x[0] * x[1] * x[2].powi(2),
-            vec![(0.2, 1.), (1., 7.), (0.5, 2.)], // 0.05-40
+            |x| x[0] * x[1].powi(2),
+            vec![(1., 7.), (0.5, 2.)],
             0.5,
             difficulty,
             rng.gen::<u64>(),
         );
-        let (fire_duration, count, bs_ff) =
-            (cycle_duration * generated[0], generated[1], generated[2]);
+        let (count, bs_ff) = (generated[0], generated[1]);
         let bs_ff_k = rng.gen_range(0.8, 1.2);
         let mut bullet_speed = (bs_ff * bs_ff_k).sqrt();
         let fire_interval = 0.3 * bullet_speed / bs_ff;
@@ -91,8 +86,6 @@ impl CannonGeneratorInterface for PlayerLocker {
         let open_angle: f32 = rng.gen_range(-2f32, 1.2f32).exp();
         PlayerLocker {
             p: Point2f::new(),
-            fire_duration,
-            cycle_duration,
             fire_interval,
             fire_cd: fire_interval,
             theta: 0., // uninitialized
@@ -133,46 +126,28 @@ impl CannonControllerInterface for PlayerLocker {
         self.update_theta(player_p, host_p);
         let mut bullet_queue = VecDeque::new();
         const BULLET_RADIUS: f32 = 3.;
-        'cycle: loop {
-            if self.phase_timer > self.fire_duration {
-                // note that fire_cd should be re-initialized somewhere
-                // (when entering cd phase(here) or when entering fire phase)
-                // if phase_timer < self.fire_duration and fire_cd > dt
-                // the phase_timer is shifted leaving fire_cd a dangling value
-                // if phase_timer has gone out of fire phase
-
-                if self.phase_timer + dt < self.cycle_duration {
-                    self.phase_timer += dt;
-                    break bullet_queue;
-                } else {
-                    dt -= self.cycle_duration - self.phase_timer;
-                    self.phase_timer = 0.;
-                    self.fire_cd = self.fire_interval;
-                }
+        loop {
+            if self.fire_cd > dt {
+                self.fire_cd -= dt;
+                self.phase_timer += dt;
+                break bullet_queue;
             }
-            while self.phase_timer < self.fire_duration {
-                if self.fire_cd > dt {
-                    self.fire_cd -= dt;
-                    self.phase_timer += dt;
-                    break 'cycle bullet_queue;
-                }
-                dt -= self.fire_cd;
-                for x in 0..self.count {
-                    let normed_vec2f = Point2f::from_theta(
-                        self.open_angle / (self.count + 1) as f32 * (x + 1) as f32 + self.theta
-                            - self.open_angle / 2.,
-                    );
-                    bullet_queue.push_back(Box::new(SimpleBullet::new(
-                        self.p + host_p,
-                        normed_vec2f * self.bullet_speed,
-                        Point2f::new(),
-                        BULLET_RADIUS,
-                        bullet_graphic_objects::WEDGE
-                            .rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),
-                    )));
-                }
-                self.fire_cd = self.fire_interval;
+            dt -= self.fire_cd;
+            for x in 0..self.count {
+                let normed_vec2f = Point2f::from_theta(
+                    self.open_angle / (self.count + 1) as f32 * (x + 1) as f32 + self.theta
+                        - self.open_angle / 2.,
+                );
+                bullet_queue.push_back(Box::new(SimpleBullet::new(
+                    self.p + host_p,
+                    normed_vec2f * self.bullet_speed,
+                    Point2f::new(),
+                    BULLET_RADIUS,
+                    bullet_graphic_objects::WEDGE
+                        .rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),
+                )));
             }
+            self.fire_cd = self.fire_interval;
         }
     }
 
@@ -281,7 +256,7 @@ impl CannonGeneratorInterface for Rotor {
         let (bullet_speed, fire_interval) = (generated[0], generated[1]);
         let omega: f32 = rng.gen_range(1., 6.);
         // let theta: f32 = rng.gen_range(0., 2. * std::f32::consts::PI);
-        let theta: f32 = std::f32::consts::PI;
+        let theta: f32 = 0.;
         Rotor {
             p: Point2f::new(),
             fire_interval,
@@ -323,6 +298,128 @@ impl CannonControllerInterface for Rotor {
                 rotate_matrix,
                 bullet_graphic_objects::DIAMOND.clone(),
             )));
+            self.fire_cd = self.fire_interval;
+        }
+    }
+
+    fn set_p(&mut self, p: Point2f) {
+        self.p = p;
+    }
+}
+
+#[derive(Clone)]
+pub struct Shotgun {
+    // relative to moving object
+    p: Point2f,
+
+    // phase_timer takes value from 0-cycle_duration, and reset
+    phase_timer: f32,
+
+    // bullet shooted during fire phase
+    fire_interval: f32,
+
+    // timer between intervals
+    fire_cd: f32,
+
+    // direction, opening angle and bullet number
+    // bullets are uniformly distributed on opening angle
+    // and are shooted together
+    theta: f32,
+    open_angle: f32,
+    count: u32,
+    rng: rand_pcg::Pcg64Mcg,
+
+    bullet_speed: f32,
+
+    // status
+    switch: bool, // on/off
+}
+
+impl CannonGeneratorInterface for Shotgun {
+    fn generate(seed: u64, difficulty: f32) -> Shotgun {
+        // difficulty expression
+        // difficulty = fire_duration * count * (bullet_speed / fire_interval)
+        // fire_freq = fd(cd * (0.2 - 1)) / cd(1 - 3) / fi(infer)
+        let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
+        // cn * bs_ff^2
+        let generated = simple_try(
+            TRY_TIMES,
+            |x| x[0] * x[1].powi(2),
+            vec![(1., 7.), (0.5, 2.)],
+            0.5,
+            difficulty,
+            rng.gen::<u64>(),
+        );
+        let (count, bs_ff) = (generated[0], generated[1]);
+        let bs_ff_k = rng.gen_range(0.8, 1.2);
+        let mut bullet_speed = (bs_ff * bs_ff_k).sqrt();
+        let fire_interval = 0.3 * bullet_speed / bs_ff;
+        bullet_speed *= 300.;
+        let open_angle: f32 = rng.gen_range(-1f32, 1.2f32).exp();
+        Shotgun {
+            p: Point2f::new(),
+            fire_interval,
+            fire_cd: fire_interval,
+            theta: 0., // uninitialized
+            open_angle,
+            count: count as u32,
+            rng: rand_pcg::Pcg64Mcg::seed_from_u64(rng.gen::<u64>()),
+            switch: true,
+            bullet_speed,
+            phase_timer: 0.,
+        }
+    }
+}
+
+impl Shotgun {
+    fn update_theta(&mut self, player_p: Point2f, self_p: Point2f) {
+        // r points to player
+        let r = player_p - self_p;
+        self.theta = r.y.atan2(r.x);
+    }
+}
+
+impl CannonControllerInterface for Shotgun {
+    fn switch(&mut self, switch: bool) {
+        if self.switch && !switch {
+            self.switch = false;
+            self.phase_timer = 0.;
+            self.fire_cd = self.fire_interval;
+        } else if switch {
+            self.switch = true;
+        }
+    }
+
+    fn tick(
+        &mut self,
+        host_p: Point2f,
+        player_p: Point2f,
+        mut dt: f32,
+    ) -> VecDeque<Box<dyn Bullet>> {
+        self.update_theta(player_p, host_p);
+        let mut bullet_queue = VecDeque::new();
+        const BULLET_RADIUS: f32 = 3.;
+        loop {
+            if self.fire_cd > dt {
+                self.fire_cd -= dt;
+                self.phase_timer += dt;
+                break bullet_queue;
+            }
+            dt -= self.fire_cd;
+            for _ in 0..self.count {
+                let normed_vec2f = Point2f::from_theta(self.rng.gen_range(
+                    self.theta - self.open_angle / 2.,
+                    self.theta + self.open_angle / 2.,
+                ));
+                bullet_queue.push_back(Box::new(SimpleBullet::new(
+                    self.p + host_p,
+                    normed_vec2f * self.bullet_speed,
+                    Point2f::new(),
+                    BULLET_RADIUS,
+                    bullet_graphic_objects::OCTAGON
+                        .rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),
+                )));
+            }
             self.fire_cd = self.fire_interval;
         }
     }
