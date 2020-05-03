@@ -3,13 +3,13 @@ use std::collections::VecDeque;
 mod player_locker;
 mod rotor;
 mod shotgun;
-mod lasersim;
+mod laser_locker;
 pub mod simple_cannon;
 
 use player_locker::PlayerLocker;
 use rotor::Rotor;
 use shotgun::Shotgun;
-use lasersim::Lasersim;
+use laser_locker::LaserLocker;
 pub use simple_cannon::SimpleCannon;
 
 use dyn_clone::DynClone;
@@ -41,7 +41,7 @@ pub fn random_mapper(seed: u64, difficulty: f32) -> Box<dyn CannonControllerInte
         0 => Box::new(PlayerLocker::generate(rng.gen::<u64>(), difficulty)),
         1 => Box::new(Rotor::generate(rng.gen::<u64>(), difficulty)),
         2 => Box::new(Shotgun::generate(rng.gen::<u64>(), difficulty)),
-        3 => Box::new(Lasersim::generate(rng.gen::<u64>(), difficulty)),
+        3 => Box::new(LaserLocker::generate(rng.gen::<u64>(), difficulty)),
         _ => unreachable!(),
     }
 }

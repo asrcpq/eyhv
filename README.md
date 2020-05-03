@@ -59,9 +59,15 @@ Still in its early development stage
 
 	* [x] New Cannon: Shotgun
 
-	* [ ] New Cannon: Laserlocker
+	* [x] New Cannon: LaserLocker
+
+	* [ ] New Cannon: LaserRotor
+
+	* [ ] New Cannon: Sweeper
 
 * [x] Pause
+
+* [ ] WavePool
 
 * [ ] Game mechanism
 

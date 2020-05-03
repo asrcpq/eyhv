@@ -11,7 +11,7 @@ use crate::cannon::{CannonGeneratorInterface, CannonControllerInterface};
 const TRY_TIMES: u32 = 10;
 
 #[derive(Clone)]
-pub struct Lasersim {
+pub struct LaserLocker {
     // relative to moving object
     p: Point2f,
 
@@ -39,8 +39,8 @@ pub struct Lasersim {
     switch: bool, // on/off
 }
 
-impl CannonGeneratorInterface for Lasersim {
-    fn generate(seed: u64, difficulty: f32) -> Lasersim {
+impl CannonGeneratorInterface for LaserLocker {
+    fn generate(seed: u64, difficulty: f32) -> LaserLocker {
         // difficulty expression
         // difficulty = fire_duration * (bullet_speed / fire_interval)
         // fire_freq = fd(cd * (0.2 - 1)) / cd(1 - 3) / fi(infer)
@@ -58,7 +58,7 @@ impl CannonGeneratorInterface for Lasersim {
         let mut bullet_speed = bs_ff.sqrt();
         let fire_interval = 0.05 * bullet_speed / bs_ff;
         bullet_speed *= 600.;
-        let p = Lasersim {
+        let p = LaserLocker {
             p: Point2f::new(),
             fire_duration,
             cycle_duration,
@@ -73,7 +73,7 @@ impl CannonGeneratorInterface for Lasersim {
     }
 }
 
-impl Lasersim {
+impl LaserLocker {
     fn update_theta(&mut self, player_p: Point2f, self_p: Point2f) {
         // r points to player
         let r = player_p - self_p;
@@ -81,7 +81,7 @@ impl Lasersim {
     }
 }
 
-impl CannonControllerInterface for Lasersim {
+impl CannonControllerInterface for LaserLocker {
     fn switch(&mut self, switch: bool) {
         if self.switch {
             if !switch {
