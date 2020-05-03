@@ -75,7 +75,7 @@ impl CannonGeneratorInterface for PlayerLocker {
 impl PlayerLocker {
     fn update_theta(&mut self, player_p: Point2f, self_p: Point2f) {
         // r points to player
-        let r = player_p - self_p;
+        let r = player_p - self_p - self.p;
         self.theta = r.y.atan2(r.x);
     }
 }
@@ -116,6 +116,7 @@ impl CannonControllerInterface for PlayerLocker {
                     self.p + host_p,
                     normed_vec2f * self.bullet_speed,
                     Point2f::new(),
+                    dt,
                     BULLET_RADIUS,
                     bullet_graphic_objects::WEDGE
                         .rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),

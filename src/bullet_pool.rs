@@ -24,15 +24,13 @@ impl BulletPool {
         let len = self.bullets.len();
         for _ in 0..len {
             let mut bullet = self.bullets.pop_front().unwrap();
-            // update pos
-            bullet.tick(dt);
-
-            // check pos
-            if let Some(p) = bullet.get_p() {
-                if !WINDOW_RECT.contain(p) {
-                    continue;
-                }
+            // check pos before update
+            // so the bullet which just moves out of screen
+            // will be catched in collision test
+            if !WINDOW_RECT.contain(bullet.get_p()) {
+                continue;
             }
+            bullet.tick(dt);
 
             self.bullets.push_back(bullet);
         }

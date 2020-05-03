@@ -66,6 +66,10 @@ Still in its early development stage
 
 * [x] WavePool
 
+* [x] Fix lag decrease hit possibility
+
+* [ ] Fix overlapping of waves
+
 * [ ] Game mechanism
 
 * [ ] Visual effects

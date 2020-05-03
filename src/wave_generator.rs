@@ -35,7 +35,7 @@ mod wave_scheme_prototype {
             enemies: vec![(
                 enemy_prototype::SMALL.clone(),
                 vec![(
-                    enemy_paths::LEFT_STRAIGHT_DOWN.clone(),
+                    enemy_paths::LEFT_DOWN_OUT.clone(),
                     vec![0.5, 1., 1.5, 2., 2.5, 3.],
                 ),]
             )]
@@ -44,7 +44,7 @@ mod wave_scheme_prototype {
             enemies: vec![(
                 enemy_prototype::SMALL.clone(),
                 vec![(
-                    enemy_paths::RIGHT_STRAIGHT_DOWN.clone(),
+                    enemy_paths::RIGHT_DOWN_OUT.clone(),
                     vec![0.5, 1., 1.5, 2., 2.5, 3.],
                 ),]
             )]

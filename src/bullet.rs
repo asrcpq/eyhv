@@ -26,8 +26,8 @@ pub mod bullet_graphic_objects {
 pub trait Bullet: DynClone {
     fn tick(&mut self, dt: f32);
     fn get_shifted_graphic_objects(&self) -> GraphicObjects;
-    fn get_p(&self) -> Option<Point2f>;
-    fn get_last_p(&self) -> Option<Point2f>;
+    fn get_p(&self) -> Point2f;
+    fn get_last_p(&self) -> Point2f;
     fn get_r(&self) -> f32;
 }
 
@@ -36,7 +36,7 @@ dyn_clone::clone_trait_object!(Bullet);
 #[derive(Clone)]
 pub struct SimpleBullet {
     p: Point2f,
-    last_p: Option<Point2f>,
+    last_p: Point2f,
     v: Point2f,
     a: Point2f,
     r: f32, // radius
@@ -48,12 +48,13 @@ impl SimpleBullet {
         p: Point2f,
         v: Point2f,
         a: Point2f,
+        dt: f32,
         r: f32,
         graphic_objects: GraphicObjects,
     ) -> SimpleBullet {
         SimpleBullet {
-            p,
-            last_p: None,
+            p: p + v * dt,
+            last_p: p,
             v,
             a,
             r,
@@ -63,11 +64,11 @@ impl SimpleBullet {
 }
 
 impl Bullet for SimpleBullet {
-    fn get_p(&self) -> Option<Point2f> {
-        Some(self.p)
+    fn get_p(&self) -> Point2f {
+        self.p
     }
 
-    fn get_last_p(&self) -> Option<Point2f> {
+    fn get_last_p(&self) -> Point2f {
         self.last_p
     }
 
@@ -80,7 +81,7 @@ impl Bullet for SimpleBullet {
     }
 
     fn tick(&mut self, dt: f32) {
-        self.last_p = Some(self.p);
+        self.last_p = self.p;
         self.p += self.v * dt;
         self.v += self.a * dt;
     }
@@ -89,7 +90,7 @@ impl Bullet for SimpleBullet {
 #[derive(Clone)]
 pub struct RotateBullet {
     p: Point2f,
-    last_p: Option<Point2f>,
+    last_p: Point2f,
     v: Point2f,
     a: Point2f,
     r: f32,
@@ -104,13 +105,14 @@ impl RotateBullet {
         p: Point2f,
         v: Point2f,
         a: Point2f,
+        dt: f32,
         r: f32,
         rotate_matrix: Mat2x2f,
         graphic_objects: GraphicObjects,
     ) -> RotateBullet {
         RotateBullet {
-            p,
-            last_p: None,
+            p: p + v * dt,
+            last_p: p,
             v,
             a,
             r,
@@ -122,11 +124,11 @@ impl RotateBullet {
 }
 
 impl Bullet for RotateBullet {
-    fn get_p(&self) -> Option<Point2f> {
-        Some(self.p)
+    fn get_p(&self) -> Point2f {
+        self.p
     }
 
-    fn get_last_p(&self) -> Option<Point2f> {
+    fn get_last_p(&self) -> Point2f {
         self.last_p
     }
 
@@ -139,7 +141,7 @@ impl Bullet for RotateBullet {
     }
 
     fn tick(&mut self, dt: f32) {
-        self.last_p = Some(self.p);
+        self.last_p = self.p;
         self.p += self.v * dt;
         self.v += self.a * dt;
         // rotate angle is not reproducible

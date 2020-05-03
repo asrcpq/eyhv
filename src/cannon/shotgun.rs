@@ -119,6 +119,7 @@ impl CannonControllerInterface for Shotgun {
                     self.p + host_p,
                     bullet_speed,
                     Point2f::new(),
+                    dt,
                     BULLET_RADIUS,
                     bullet_graphic_objects::OCTAGON
                         .rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),

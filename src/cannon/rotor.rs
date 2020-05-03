@@ -84,6 +84,7 @@ impl CannonControllerInterface for Rotor {
                 self.p + host_p,
                 Point2f::from_polar(self.bullet_speed, self.theta),
                 Point2f::new(),
+                dt,
                 BULLET_RADIUS,
                 rotate_matrix,
                 bullet_graphic_objects::DIAMOND.clone(),

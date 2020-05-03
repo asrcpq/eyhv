@@ -50,7 +50,7 @@ impl CannonGeneratorInterface for LaserLocker {
         let (fire_duration, bs_ff) = (|x: Vec<f32>| (cycle_duration * x[0], x[1]))(simple_try(
             TRY_TIMES,
             |x| x[0] * x[1].powi(2),
-            vec![(0.05, 0.2), (0.5, 2.)], // 0.05-40
+            vec![(0.05, 0.13), (0.5, 2.)], // 0.05-40
             difficulty,
             0.5,
             rng.gen::<u64>(),
@@ -76,7 +76,7 @@ impl CannonGeneratorInterface for LaserLocker {
 impl LaserLocker {
     fn update_theta(&mut self, player_p: Point2f, self_p: Point2f) {
         // r points to player
-        let r = player_p - self_p;
+        let r = player_p - self_p - self.p;
         self.theta = r.y.atan2(r.x);
     }
 }
@@ -129,6 +129,7 @@ impl CannonControllerInterface for LaserLocker {
                     self.p + host_p,
                     normed_vec2f * self.bullet_speed,
                     Point2f::new(),
+                    dt,
                     BULLET_RADIUS,
                     bullet_graphic_objects::LASER_BAR
                         .rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),

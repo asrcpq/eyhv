@@ -25,32 +25,32 @@ pub fn collision_enemy(enemy_pool: &mut EnemyPool, player_bullet_pool: &mut Bull
                 'bullet_loop: for _ in 0..bullet_len {
                     let bullet = player_bullet_pool.pop().unwrap();
                     let mut keep_bullet = true;
-                    if let Some(bullet_p) = bullet.get_p() {
-                        if let Some(bullet_last_p) = bullet.get_last_p() {
-                            // we introduct collision flag here
-                            // to prevent multiple collisions in many hitboxes in one bullet
-                            let mut collision_flag: bool = false;
-                            'hitbox_loop: for hitbox in enemy.get_hitboxes().iter() {
-                                let dist = linesegs_distance(
-                                    enemy_p + hitbox.center,
-                                    enemy_last_p + hitbox.center,
-                                    bullet_p,
-                                    bullet_last_p,
-                                );
-                                //println!("{} {:?} {:?}", dist, bullet_p, bullet_last_p);
-                                if dist < hitbox.r + bullet.get_r() {
-                                    keep_bullet = false;
-                                    collision_flag = true;
-                                    break 'hitbox_loop;
-                                }
-                            }
-                            // if not collision, enemy will not take damage
-                            if collision_flag && !enemy.damage(1.) {
-                                keep_enemy = false;
-                                break 'bullet_loop;
-                            }
+
+                    let bullet_p = bullet.get_p();
+                    let bullet_last_p = bullet.get_last_p();
+                    // we introduct collision flag here
+                    // to prevent multiple collisions in many hitboxes in one bullet
+                    let mut collision_flag: bool = false;
+                    'hitbox_loop: for hitbox in enemy.get_hitboxes().iter() {
+                        let dist = linesegs_distance(
+                            enemy_p + hitbox.center,
+                            enemy_last_p + hitbox.center,
+                            bullet_p,
+                            bullet_last_p,
+                        );
+                        //println!("{} {:?} {:?}", dist, bullet_p, bullet_last_p);
+                        if dist < hitbox.r + bullet.get_r() {
+                            keep_bullet = false;
+                            collision_flag = true;
+                            break 'hitbox_loop;
                         }
                     }
+                    // if not collision, enemy will not take damage
+                    if collision_flag && !enemy.damage(1.) {
+                        keep_enemy = false;
+                        break 'bullet_loop;
+                    }
+
                     if keep_bullet {
                         player_bullet_pool.push(bullet);
                     }
@@ -72,15 +72,13 @@ pub fn collision_player(
     let bullet_len = enemy_bullet_pool.len();
     'bullet_loop: for _ in 0..bullet_len {
         let bullet = enemy_bullet_pool.pop().unwrap();
-        if let Some(bullet_p) = bullet.get_p() {
-            if let Some(bullet_last_p) = bullet.get_last_p() {
-                let dist = linesegs_distance(player_p, player_last_p, bullet_p, bullet_last_p);
-                //println!("{} {:?} {:?}", dist, bullet_p, bullet_last_p);
-                if dist < PLAYER_HITBOX_R + bullet.get_r() {
-                    println!("BOOM!");
-                    break 'bullet_loop;
-                }
-            }
+        let bullet_p = bullet.get_p();
+        let bullet_last_p = bullet.get_last_p();
+        let dist = linesegs_distance(player_p, player_last_p, bullet_p, bullet_last_p);
+        //println!("{} {:?} {:?}", dist, bullet_p, bullet_last_p);
+        if dist < PLAYER_HITBOX_R + bullet.get_r() {
+            println!("BOOM!");
+            break 'bullet_loop;
         }
         enemy_bullet_pool.push(bullet);
     }
