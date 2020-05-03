@@ -50,8 +50,6 @@ Still in its early development stage
 
 	* [x] New Cannon: Rotor with new bullet: RotateBullet
 
-	* [x] New GraphicObject and modify GraphicObjects
-
 	* [x] New EnemyPrototype: Medium
 
 	* [x] New Cannon: Shotgun
@@ -66,9 +64,15 @@ Still in its early development stage
 
 * [x] WavePool
 
-* [x] Fix lag decrease hit possibility
+* Fix
 
-* [ ] Fix overlapping of waves
+	* [x] Fix lag decrease hit possibility
+	
+	* [ ] Fix overlapping of waves
+	
+	* [ ] Enemy should not always fire
+
+* [ ] Player hit cd
 
 * [ ] Game mechanism
 

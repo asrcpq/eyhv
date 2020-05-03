@@ -67,6 +67,24 @@ mod wave_scheme_prototype {
                 ),]
             )]
         };
+        static ref CLOCKWISE_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
+            enemies: vec![(
+                enemy_prototype::SMALL.clone(),
+                vec![(
+                    enemy_paths::CLOCKWISE_ROLL.clone(),
+                    vec![0.5, 1., 1.5, 2., 2.5, 3.],
+                ),]
+            )]
+        };
+        static ref COUNTERCLOCKWISE_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
+            enemies: vec![(
+                enemy_prototype::SMALL.clone(),
+                vec![(
+                    enemy_paths::COUNTERCLOCKWISE_ROLL.clone(),
+                    vec![0.5, 1., 1.5, 2., 2.5, 3.],
+                ),]
+            )]
+        };
         static ref LEFT_MID_RIGHT_MEDIUM: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(
                 enemy_prototype::MEDIUM.clone(),
@@ -132,7 +150,7 @@ mod wave_scheme_prototype {
     }
 
     pub fn random_mapper(seed: u64, difficulty: f32) -> CompiledWave {
-        const SCHEME_SIZE: u32 = 5;
+        const SCHEME_SIZE: u32 = 7;
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
         match rng.gen_range(0, SCHEME_SIZE) {
             0 => LEFT_DOWN_CHAIN.compile(rng.gen::<u64>(), difficulty),
@@ -140,6 +158,8 @@ mod wave_scheme_prototype {
             2 => LEFT_RIGHT_CHAIN.compile(rng.gen::<u64>(), difficulty),
             3 => RIGHT_LEFT_CHAIN.compile(rng.gen::<u64>(), difficulty),
             4 => LEFT_MID_RIGHT_MEDIUM.compile(rng.gen::<u64>(), difficulty),
+            5 => CLOCKWISE_CHAIN.compile(rng.gen::<u64>(), difficulty),
+            6 => COUNTERCLOCKWISE_CHAIN.compile(rng.gen::<u64>(), difficulty),
             _ => unreachable!(),
         }
     }
@@ -191,7 +211,7 @@ impl WaveGenerator {
     pub fn new(seed: u64) -> WaveGenerator {
         WaveGenerator {
             wave_cd: 1.,
-            wave_interval: 2.5,
+            wave_interval: 2.,
             rng: rand_pcg::Pcg64Mcg::seed_from_u64(seed),
             wave_queue: VecDeque::new(),
         }
@@ -231,7 +251,7 @@ impl WaveGenerator {
                 self.wave_cd = self.wave_interval;
                 self.wave_queue.push_back(wave_scheme_prototype::random_mapper(
                     self.rng.gen::<u64>(),
-                    0.1,
+                    0.3,
                 ));
             }
         }

@@ -13,14 +13,15 @@ pub fn simple_try<F>(
 where
     F: Fn(&Vec<f32>) -> f32,
 {
-    let min = evaluate(&range.iter().map(|(x, _)| *x).collect());
-    let max = evaluate(&range.iter().map(|(_, y)| *y).collect());
-
     let mut mut_range = range.clone();
 
     let mut k = 0.5; // correlation component initial value
 
-    expect_difficulty = expect_difficulty * (max - min) + min;
+    expect_difficulty = evaluate(&range
+        .iter()
+        .map(|(x, y)| x * (1. - expect_difficulty) + y * expect_difficulty)
+        .collect()
+    );
 
     let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
     loop {
