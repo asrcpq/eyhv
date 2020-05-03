@@ -57,7 +57,9 @@ Still in its early development stage
 
 	* [x] New EnemyPrototype: Medium
 
-	* [x] New Cannon: shotgun
+	* [x] New Cannon: Shotgun
+
+	* [ ] New Cannon: Laserlocker
 
 * [x] Pause
 
@@ -71,11 +73,13 @@ Still in its early development stage
 
 ### Coding
 
-* [ ] Generalize tick() by using timer interface
+* [ ] Generalize tick() by using timer interface(?)
 
-* [ ] Fine-grained inter-module visibility
+* [x] Split cannons file
 
-* [ ] Using reference instead of cloning everything everywhere(necessary?)
+* [ ] Fine-grained inter-module visibility(?)
+
+* [ ] Using reference instead of cloning everything everywhere(?)
 
 ### Performance
 
