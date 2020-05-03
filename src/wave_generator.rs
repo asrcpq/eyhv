@@ -85,15 +85,12 @@ mod wave_scheme_prototype {
                 ),]
             )]
         };
-        static ref LEFT_MID_RIGHT_MEDIUM: WaveSchemePrototype = WaveSchemePrototype {
+        static ref LEFT_RIGHT_MEDIUM: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(
                 enemy_prototype::MEDIUM.clone(),
                 vec![(
                     enemy_paths::LEFT_STRAIGHT_DOWN.clone(),
                     vec![0.5],
-                ),(
-                    enemy_paths::MID_STRAIGHT_DOWN.clone(),
-                    vec![1.5],
                 ),(
                     enemy_paths::RIGHT_STRAIGHT_DOWN.clone(),
                     vec![2.5],
@@ -157,7 +154,7 @@ mod wave_scheme_prototype {
             1 => RIGHT_DOWN_CHAIN.compile(rng.gen::<u64>(), difficulty),
             2 => LEFT_RIGHT_CHAIN.compile(rng.gen::<u64>(), difficulty),
             3 => RIGHT_LEFT_CHAIN.compile(rng.gen::<u64>(), difficulty),
-            4 => LEFT_MID_RIGHT_MEDIUM.compile(rng.gen::<u64>(), difficulty),
+            4 => LEFT_RIGHT_MEDIUM.compile(rng.gen::<u64>(), difficulty),
             5 => CLOCKWISE_CHAIN.compile(rng.gen::<u64>(), difficulty),
             6 => COUNTERCLOCKWISE_CHAIN.compile(rng.gen::<u64>(), difficulty),
             _ => unreachable!(),

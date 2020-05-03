@@ -20,7 +20,10 @@ mod enemy_graphic_objects {
         ])
         .zoom(10.);
         pub static ref SMALL2: GraphicObjects = GraphicObjects::from_strs(vec![
-            "l 0.3 0.5 0.5 1 0 -1 0.5 -0.5 2 -1 0 1 -2 -1 -0.5 -0.5 0 -1",
+            "l 0.3 0.5 0.5 1 0 -1 1 0 0 1 -1 0 0 -1",
+            "l 0.3 0.5 0.5 1 0.5 -0.5 2 -1 1 0",
+            "l 0.3 0.5 0.5 1 -0.5 -0.5 -2 -1 -1 0",
+            "p 0.1 0.1 1 0.2 0 1 1.5 -0.5 -1.5 -0.5",
         ])
         .zoom(10.);
         pub static ref MEDIUM1: GraphicObjects = GraphicObjects::from_strs(vec![
@@ -29,8 +32,7 @@ mod enemy_graphic_objects {
             "l 1 1 1 0.5 -0.6 -0.1 -1.2 -0.1 -1.2 -1 -3 -1 -3 1 -1.2 1 -1.2 0.1 -0.6 0.1",
             "p 1 0.2 0.3 0.3 3 -1 3.5 -1 3.5 1 3 1",
             "p 1 0.2 0.3 0.3 -3 -1 -3.5 -1 -3.5 1 -3 1",
-        ])
-        .zoom(10.);
+        ]).zoom(15.);
     }
 }
 
@@ -80,10 +82,16 @@ pub mod enemy_prototype {
         pub static ref MEDIUM: EnemyPrototype = EnemyPrototype {
             speed: 0.5,
             life: 15.,
-            cannon_pits: vec![vec![
+            cannon_pits: vec![
+            vec![
                 Point2f::from_floats(-30., 0.),
                 Point2f::from_floats(30., 0.),
-            ]],
+            ],
+            vec![
+                Point2f::from_floats(-30., 0.),
+                Point2f::from_floats(30., 0.),
+            ],
+            ],
             hitboxes: vec![
                 Circle2f::from_floats(18., 0., 20.),
                 Circle2f::from_floats(-18., 0., 20.),

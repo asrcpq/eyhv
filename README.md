@@ -56,7 +56,7 @@ Still in its early development stage
 
 	* [x] New Cannon: LaserLocker
 
-	* [ ] New Cannon: LaserRotor
+	* [ ] New Cannon: LaserSlicer
 
 	* [ ] New Cannon: Sweeper
 
