@@ -152,21 +152,31 @@ pub struct CompiledWave {
 }
 
 impl CompiledWave {
-    pub fn new(enemies: VecDeque<(f32, Enemy)>) -> CompiledWave {
-        CompiledWave { enemies, timer: 0. }
+    pub fn new(
+        enemies: VecDeque<(f32, Enemy)>,
+    ) -> CompiledWave {
+        CompiledWave {
+            enemies,
+            timer: 0.,
+        }
     }
 
-    pub fn tick(&mut self, dt: f32) -> VecDeque<Enemy> {
-        let mut result = VecDeque::new();
-        self.timer += dt;
-        while match self.enemies.front() {
-            None => false,
-            Some(front) => front.0 < self.timer,
-        } {
-            let (_, enemy) = self.enemies.pop_front().unwrap();
-            result.push_back(enemy);
+    pub fn tick(&mut self, dt: f32) -> Option<VecDeque<Enemy>> {
+        match self.enemies.is_empty() {
+            true => None,
+            false => {
+                let mut result = VecDeque::new();
+                self.timer += dt;
+                while match self.enemies.front() {
+                    None => false,
+                    Some(front) => front.0 < self.timer,
+                } {
+                    let (_, enemy) = self.enemies.pop_front().unwrap();
+                    result.push_back(enemy);
+                }
+                Some(result)
+            },
         }
-        result
     }
 }
 
@@ -174,16 +184,16 @@ pub struct WaveGenerator {
     wave_cd: f32,
     wave_interval: f32,
     rng: rand_pcg::Pcg64Mcg,
-    current_wave: Option<CompiledWave>,
+    wave_queue: VecDeque<CompiledWave>,
 }
 
 impl WaveGenerator {
     pub fn new(seed: u64) -> WaveGenerator {
         WaveGenerator {
             wave_cd: 1.,
-            wave_interval: 4.,
+            wave_interval: 2.5,
             rng: rand_pcg::Pcg64Mcg::seed_from_u64(seed),
-            current_wave: None,
+            wave_queue: VecDeque::new(),
         }
     }
 
@@ -195,19 +205,31 @@ impl WaveGenerator {
         while dt > 0. {
             if self.wave_cd > dt {
                 self.wave_cd -= dt;
-                enemy_queue.extend(match &mut self.current_wave {
-                    None => VecDeque::new(),
-                    Some(compiled_wave) => compiled_wave.tick(dt),
-                });
+                for _ in 0..self.wave_queue.len() {
+                    let mut wave = self.wave_queue.pop_front().unwrap();
+                    match wave.tick(dt) {
+                        None => {},
+                        Some(new_enemy_queue) => {
+                            enemy_queue.extend(new_enemy_queue);
+                            self.wave_queue.push_back(wave);
+                        }
+                    }
+                }
                 dt = 0.;
             } else {
-                enemy_queue.extend(match &mut self.current_wave {
-                    None => VecDeque::new(),
-                    Some(compiled_wave) => compiled_wave.tick(self.wave_cd),
-                });
+                for _ in 0..self.wave_queue.len() {
+                    let mut wave = self.wave_queue.pop_front().unwrap();
+                    match wave.tick(self.wave_cd) {
+                        None => {},
+                        Some(new_enemy_queue) => {
+                            enemy_queue.extend(new_enemy_queue);
+                            self.wave_queue.push_back(wave);
+                        }
+                    }
+                }
                 dt -= self.wave_cd;
                 self.wave_cd = self.wave_interval;
-                self.current_wave = Some(wave_scheme_prototype::random_mapper(
+                self.wave_queue.push_back(wave_scheme_prototype::random_mapper(
                     self.rng.gen::<u64>(),
                     0.1,
                 ));

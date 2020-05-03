@@ -2,10 +2,7 @@ Still in its early development stage
 
 ## Key features
 
-* High speed and high fault tolerance(of player performance)
-
-* Minimalist design(game mechanism and design style)
-
+* High speed and high fault tolerance(of player performance) Minimalist design(game mechanism and design style) 
 * Randomly generated and reproducible(by u64 seed) enemies
 
 * Time in game always synchronized: player will suffer, not benefit from low FPS
@@ -67,7 +64,7 @@ Still in its early development stage
 
 * [x] Pause
 
-* [ ] WavePool
+* [x] WavePool
 
 * [ ] Game mechanism
 
@@ -77,15 +74,11 @@ Still in its early development stage
 
 	* [ ] Field background
 
+	* [ ] Destroy effect
+
 ### Coding
 
-* [ ] Generalize tick() by using timer interface(?)
-
 * [x] Split cannons file
-
-* [ ] Fine-grained inter-module visibility(?)
-
-* [ ] Using reference instead of cloning everything everywhere(?)
 
 ### Performance
 

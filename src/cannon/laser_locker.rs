@@ -50,7 +50,7 @@ impl CannonGeneratorInterface for LaserLocker {
         let (fire_duration, bs_ff) = (|x: Vec<f32>| (cycle_duration * x[0], x[1]))(simple_try(
             TRY_TIMES,
             |x| x[0] * x[1].powi(2),
-            vec![(0.05, 0.1), (0.5, 2.)], // 0.05-40
+            vec![(0.05, 0.2), (0.5, 2.)], // 0.05-40
             difficulty,
             0.5,
             rng.gen::<u64>(),
@@ -130,7 +130,7 @@ impl CannonControllerInterface for LaserLocker {
                     normed_vec2f * self.bullet_speed,
                     Point2f::new(),
                     BULLET_RADIUS,
-                    bullet_graphic_objects::RECTANGLE
+                    bullet_graphic_objects::LASER_BAR
                         .rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),
                 )));
                 self.fire_cd = self.fire_interval;
