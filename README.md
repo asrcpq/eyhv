@@ -72,6 +72,10 @@ Still in its early development stage
 	
 	* [ ] Enemy should not always fire
 
+* [x] Player moves faster when not firing
+
+* [ ] PlayerCannon2
+
 * [ ] Player hit cd
 
 * [ ] Game mechanism
@@ -90,7 +94,7 @@ Still in its early development stage
 
 ### Performance
 
-* [ ] SDL2 has poor performance, switch to raw OpenGL backend interface
+* [ ] SDL2 has poor draw performance, switch to raw OpenGL backend interface
 
 * [ ] Asynchronous wave generator
 

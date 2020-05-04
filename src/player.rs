@@ -13,12 +13,14 @@ pub struct Player {
     dp: Point2f,
 
     cannons: Vec<SimpleCannon>,
+    cannons_switch: bool,
 
     // Static
     graphic_objects: GraphicObjects,
 
     // params
-    speed: f32, // per second
+    speed_fast: f32, // per second
+    speed_slow: f32, // per second
 }
 
 impl Player {
@@ -43,10 +45,12 @@ impl Player {
                     false,
                 ),
             ],
+            cannons_switch: false,
             graphic_objects: GraphicObjects::from_strs(vec![
                 "l 0.3 1.0 1.0 1.0 -10 8 0 -10 10 8 3 4 -3 4 -10 8",
             ]),
-            speed: 500.0,
+            speed_fast: 600.0,
+            speed_slow: 300.0,
         }
     }
 
@@ -77,7 +81,11 @@ impl Player {
         if dp.x != 0. && dp.y != 0. {
             dp *= std::f32::consts::FRAC_1_SQRT_2;
         }
-        dp *= self.speed;
+        dp *= if self.cannons_switch {
+            self.speed_slow
+        } else {
+            self.speed_fast
+        };
         self.dp = dp;
     }
 
@@ -99,6 +107,7 @@ impl Player {
     }
 
     pub fn switch_cannons(&mut self, switch: bool) {
+        self.cannons_switch = switch;
         for cannon in self.cannons.iter_mut() {
             cannon.switch(switch);
         }

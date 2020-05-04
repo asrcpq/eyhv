@@ -248,7 +248,7 @@ impl WaveGenerator {
                 self.wave_cd = self.wave_interval;
                 self.wave_queue.push_back(wave_scheme_prototype::random_mapper(
                     self.rng.gen::<u64>(),
-                    1.0,
+                    0.1,
                 ));
             }
         }

@@ -16,7 +16,7 @@ pub struct SimpleCannon {
     // for player, -90 deg is facing forward
     v: Point2f,
 
-    switch: bool,
+    pub switch: bool,
 }
 
 impl SimpleCannon {
