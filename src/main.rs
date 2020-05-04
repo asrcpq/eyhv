@@ -57,14 +57,13 @@ pub fn main() {
         .index(find_sdl_gl_driver().unwrap())
         .build()
         .unwrap();
-    //canvas.set_blend_mode(sdl2::render::BlendMode::Blend);
     canvas.present();
     let mut texture_creator = canvas.texture_creator();
     let mut texture = texture_creator
         .create_texture_static(
-            None,
+            Some(sdl2::pixels::PixelFormatEnum::RGB24),
             WINDOW_SIZE.x as u32,
-            WINDOW_SIZE.y as u32
+            WINDOW_SIZE.y as u32,
         ).unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
 

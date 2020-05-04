@@ -79,11 +79,9 @@ impl GraphicObject for LineSegs2f {
             if !WINDOW_RECT.contain(*vertice) {
                 continue;
             }
-            let location = canvas.map_point2f(*vertice);
-
-            canvas.data[location] = self.color[0] as u8 * 255;
-            canvas.data[location + 1] = self.color[1] as u8 * 255;
-            canvas.data[location + 2] = self.color[2] as u8 * 255;
+            canvas.data[vertice.y as usize * 500 * 3 + vertice.x as usize * 3] = self.color[0] as u8 * 255;
+            canvas.data[vertice.y as usize * 500 * 3 + vertice.x as usize * 3 + 1] = self.color[1] as u8 * 255;
+            canvas.data[vertice.y as usize * 500 * 3 + vertice.x as usize * 3 + 2] = self.color[2] as u8 * 255;
         }
     }
 }
