@@ -69,7 +69,7 @@ impl Session {
         }
     }
 
-    pub fn graphic_object_iter(&self) -> SessionGraphicObjectsIter {
+    fn graphic_object_iter(&self) -> SessionGraphicObjectsIter {
         SessionGraphicObjectsIter {
             player_iter: self.player.graphic_objects_iter(),
             player_bullet_iter: self.player_bullet_pool.graphic_objects_iter(),
@@ -126,6 +126,9 @@ impl Session {
 
     pub fn render(&self) -> Vec<u8> {
         let mut canvas = Canvas::new((WINDOW_SIZE.x as u32, WINDOW_SIZE.y as u32));
+        for graphic_object in self.graphic_object_iter() {
+            graphic_object.render(&mut canvas);
+        }
         canvas.data
     }
 }

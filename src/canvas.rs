@@ -1,3 +1,5 @@
+use crate::algebra::Point2f;
+
 pub struct Canvas {
     pub data: Vec<u8>,
     size: (u32, u32),
@@ -13,6 +15,12 @@ impl Canvas {
 
     #[inline]
     pub fn map(&self, x: u32, y: u32) -> usize {
-        (y * self.size.0 + x) as usize
+        ((y * self.size.0 + x) * 3) as usize
+    }
+
+    // this is a temporary test function
+    #[inline]
+    pub fn map_point2f(&self, point2f: Point2f) -> usize {
+        (point2f.y as u32 * self.size.0 + point2f.x as u32) as usize
     }
 }

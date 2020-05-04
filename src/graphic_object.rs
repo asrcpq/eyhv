@@ -1,6 +1,9 @@
 use crate::algebra::{Mat2x2f, Point2f};
+use crate::canvas::Canvas;
 use dyn_clone::DynClone;
 use std::any::Any;
+
+use crate::window_rect::WINDOW_RECT;
 
 #[derive(Clone, Debug)]
 pub struct LineSegs2f {
@@ -40,7 +43,7 @@ pub trait GraphicObject: DynClone + Sync + Any {
     fn rotate(&self, rotate_mat: Mat2x2f) -> Box<dyn GraphicObject>;
     fn zoom(&self, k: f32) -> Box<dyn GraphicObject>;
 
-    fn render(&self, canvas: &mut Vec<u8>);
+    fn render(&self, canvas: &mut Canvas);
 }
 
 dyn_clone::clone_trait_object!(GraphicObject);
@@ -71,7 +74,17 @@ impl GraphicObject for LineSegs2f {
         })
     }
 
-    fn render(&self, canvas: &mut Vec<u8>) {
+    fn render(&self, canvas: &mut Canvas) {
+        for vertice in self.vertices.iter() {
+            if !WINDOW_RECT.contain(*vertice) {
+                continue;
+            }
+            let location = canvas.map_point2f(*vertice);
+
+            canvas.data[location] = self.color[0] as u8 * 255;
+            canvas.data[location + 1] = self.color[1] as u8 * 255;
+            canvas.data[location + 2] = self.color[2] as u8 * 255;
+        }
     }
 }
 
@@ -107,7 +120,7 @@ impl GraphicObject for Polygon2f {
         })
     }
 
-    fn render(&self, canvas: &mut Vec<u8>) {
+    fn render(&self, canvas: &mut Canvas) {
     }
 }
 
