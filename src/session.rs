@@ -7,6 +7,7 @@ use crate::player::Player;
 use crate::time_manager::TimeManager;
 use crate::wave_generator::WaveGenerator;
 use crate::window_rect::WINDOW_SIZE;
+use crate::canvas::Canvas;
 
 pub struct SessionGraphicObjectsIter {
     player_iter: GraphicObjectsIntoIter,
@@ -124,7 +125,7 @@ impl Session {
     }
 
     pub fn render(&self) -> Vec<u8> {
-        let mut canvas = vec![127u8; WINDOW_SIZE.x as usize * WINDOW_SIZE.y as usize * 3];
-        canvas
+        let mut canvas = Canvas::new((WINDOW_SIZE.x as u32, WINDOW_SIZE.y as u32));
+        canvas.data
     }
 }

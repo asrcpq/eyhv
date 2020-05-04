@@ -39,6 +39,8 @@ pub trait GraphicObject: DynClone + Sync + Any {
     fn shift(&self, dp: Point2f) -> Box<dyn GraphicObject>;
     fn rotate(&self, rotate_mat: Mat2x2f) -> Box<dyn GraphicObject>;
     fn zoom(&self, k: f32) -> Box<dyn GraphicObject>;
+
+    fn render(&self, canvas: &mut Vec<u8>);
 }
 
 dyn_clone::clone_trait_object!(GraphicObject);
@@ -67,6 +69,9 @@ impl GraphicObject for LineSegs2f {
             vertices: self.vertices.iter().map(|x| *x * k).collect(),
             color: self.color,
         })
+    }
+
+    fn render(&self, canvas: &mut Vec<u8>) {
     }
 }
 
@@ -100,6 +105,9 @@ impl GraphicObject for Polygon2f {
             vertices: self.vertices.iter().map(|x| *x * k).collect(),
             color: self.color,
         })
+    }
+
+    fn render(&self, canvas: &mut Vec<u8>) {
     }
 }
 
