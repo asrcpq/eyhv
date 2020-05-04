@@ -2,7 +2,10 @@ Still in its early development stage
 
 ## Key features
 
-* High speed and high fault tolerance(of player performance) Minimalist design(game mechanism and design style) 
+* High speed and high fault tolerance(of player performance)
+
+* Minimalist design(game mechanism and design style) 
+
 * Randomly generated and reproducible(by u64 seed) enemies
 
 * Time in game always synchronized: player will suffer, not benefit from low FPS
@@ -70,11 +73,11 @@ Still in its early development stage
 	
 	* [ ] Fix overlapping of waves
 	
-	* [ ] Enemy should not always fire
-
 * [x] Player moves faster when not firing
 
 * [x] Player hit reset
+
+* [ ] Path can stop enemy from firing
 
 * [ ] PlayerCannon2
 
