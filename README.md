@@ -95,10 +95,12 @@ Still in its early development stage
 
 * [x] Split cannons file
 
-### Performance
-
 * [ ] SDL2 has poor draw performance, switch to raw OpenGL backend interface
 
 * [ ] Asynchronous wave generator
 
 * [ ] Parallelize
+
+### Frontend
+
+* [ ] Simple line and polygon drawing

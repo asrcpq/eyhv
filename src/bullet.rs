@@ -27,7 +27,7 @@ pub mod bullet_graphic_objects {
         pub static ref OCTAGON: GraphicObjects =
             GraphicObjects::from_strs(vec![
                 "l 1 0.7 0.7 1 5 2 5 -2 2 -5 -2 -5 -5 -2 -5 2 -2 5 2 5 5 2",
-                "p 1 1 1 0.2 5 2 5 -2 2 -5 -2 -5 -5 -2 -5 2 -2 5 2 5",
+                "p 1 0 0 0.2 5 2 5 -2 2 -5 -2 -5 -5 -2 -5 2 -2 5 2 5",
             ]).zoom(1.6);
     }
 }

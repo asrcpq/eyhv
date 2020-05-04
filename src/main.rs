@@ -57,11 +57,15 @@ pub fn main() {
         .index(find_sdl_gl_driver().unwrap())
         .build()
         .unwrap();
-
-    canvas.set_blend_mode(sdl2::render::BlendMode::Blend);
-    canvas.set_draw_color(Color::RGB(0, 255, 255));
-    canvas.clear();
+    //canvas.set_blend_mode(sdl2::render::BlendMode::Blend);
     canvas.present();
+    let mut texture_creator = canvas.texture_creator();
+    let mut texture = texture_creator
+        .create_texture_static(
+            None,
+            window_size.x as u32,
+            window_size.y as u32
+        ).unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
     let mut session = Session::new();
@@ -116,6 +120,14 @@ pub fn main() {
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
 
+        texture.update(
+            None,
+            &[255u8; 500*700*3],
+            window_size.x as usize * 3,
+        );
+
+        canvas.copy(&texture, None, None);
+
         // draw after tick
         for graphic_object in session.graphic_object_iter() {
             if let Some(line_segs) = graphic_object.as_any().downcast_ref::<LineSegs2f>() {
@@ -125,24 +137,24 @@ pub fn main() {
                     (line_segs.color[2] * 255.) as u8,
                     (line_segs.color[3] * 255.) as u8,
                 );
-                let mut iter = line_segs.vertices.iter();
-                let mut last_vertex = iter.next().unwrap();
-                while match iter.next() {
-                    None => false,
-                    Some(vertex) => {
-                        canvas
-                            .aa_line(
-                                last_vertex.x as i16,
-                                last_vertex.y as i16,
-                                vertex.x as i16,
-                                vertex.y as i16,
-                                color,
-                            )
-                            .unwrap();
-                        last_vertex = vertex;
-                        true
-                    }
-                } {}
+                //let mut iter = line_segs.vertices.iter();
+                //let mut last_vertex = iter.next().unwrap();
+                //while match iter.next() {
+                //    None => false,
+                //    Some(vertex) => {
+                //        canvas
+                //            .aa_line(
+                //                last_vertex.x as i16,
+                //                last_vertex.y as i16,
+                //                vertex.x as i16,
+                //                vertex.y as i16,
+                //                color,
+                //            )
+                //            .unwrap();
+                //        last_vertex = vertex;
+                //        true
+                //    }
+                //} {}
             } else if let Some(polygon) = graphic_object.as_any().downcast_ref::<Polygon2f>() {
                 let color = Color::RGBA(
                     (polygon.color[0] * 255.) as u8,
@@ -150,23 +162,23 @@ pub fn main() {
                     (polygon.color[2] * 255.) as u8,
                     (polygon.color[3] * 255.) as u8,
                 );
-                canvas
-                    .filled_polygon(
-                        polygon
-                            .vertices
-                            .iter()
-                            .map(|x| x.x as i16)
-                            .collect::<Vec<i16>>()
-                            .as_slice(),
-                        polygon
-                            .vertices
-                            .iter()
-                            .map(|x| x.y as i16)
-                            .collect::<Vec<i16>>()
-                            .as_slice(),
-                        color,
-                    )
-                    .unwrap();
+                //canvas
+                //    .filled_polygon(
+                //        polygon
+                //            .vertices
+                //            .iter()
+                //            .map(|x| x.x as i16)
+                //            .collect::<Vec<i16>>()
+                //            .as_slice(),
+                //        polygon
+                //            .vertices
+                //            .iter()
+                //            .map(|x| x.y as i16)
+                //            .collect::<Vec<i16>>()
+                //            .as_slice(),
+                //        color,
+                //    )
+                //    .unwrap();
             }
         }
 
