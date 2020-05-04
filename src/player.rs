@@ -21,6 +21,9 @@ pub struct Player {
     // params
     speed_fast: f32, // per second
     speed_slow: f32, // per second
+
+    hit_reset: f32,
+    hit_reset_timer: f32,
 }
 
 impl Player {
@@ -51,6 +54,8 @@ impl Player {
             ]),
             speed_fast: 600.0,
             speed_slow: 300.0,
+            hit_reset: 1.,
+            hit_reset_timer: 0.,
         }
     }
 
@@ -94,6 +99,7 @@ impl Player {
         self.last_p = self.p;
         self.p += self.dp * dt;
         self.p = WINDOW_RECT.nearest(self.p);
+        self.hit_reset_timer -= dt;
 
         let mut bullet_queue = VecDeque::new();
         for cannon in self.cannons.iter_mut() {
@@ -111,5 +117,17 @@ impl Player {
         for cannon in self.cannons.iter_mut() {
             cannon.switch(switch);
         }
+    }
+
+    pub fn hit(&mut self) {
+        println!("BOOM");
+        if self.hit_reset_timer > 0. {
+            unreachable!();
+        }
+        self.hit_reset_timer = self.hit_reset;
+    }
+
+    pub fn hit_reset(&self) -> bool {
+        self.hit_reset_timer > 0.
     }
 }

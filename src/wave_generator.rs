@@ -179,20 +179,19 @@ impl CompiledWave {
     }
 
     pub fn tick(&mut self, dt: f32) -> Option<VecDeque<Enemy>> {
-        match self.enemies.is_empty() {
-            true => None,
-            false => {
-                let mut result = VecDeque::new();
-                self.timer += dt;
-                while match self.enemies.front() {
-                    None => false,
-                    Some(front) => front.0 < self.timer,
-                } {
-                    let (_, enemy) = self.enemies.pop_front().unwrap();
-                    result.push_back(enemy);
-                }
-                Some(result)
-            },
+        if self.enemies.is_empty() {
+            None
+        } else {
+            let mut result = VecDeque::new();
+            self.timer += dt;
+            while match self.enemies.front() {
+                None => false,
+                Some(front) => front.0 < self.timer,
+            } {
+                let (_, enemy) = self.enemies.pop_front().unwrap();
+                result.push_back(enemy);
+            }
+            Some(result)
         }
     }
 }

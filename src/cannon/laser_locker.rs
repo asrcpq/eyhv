@@ -47,18 +47,19 @@ impl CannonGeneratorInterface for LaserLocker {
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
         let cycle_duration: f32 = rng.gen_range(0.5, 2.);
         // k(fd / cd) * bs_ff^2
-        let (fire_duration, bs_ff) = (|x: Vec<f32>| (cycle_duration * x[0], x[1]))(simple_try(
+        let result = simple_try(
             TRY_TIMES,
             |x| x[0] * x[1].powi(2),
             vec![(0.05, 0.13), (0.1, 2.)], // 0.05-40
             difficulty,
             0.5,
             rng.gen::<u64>(),
-        ));
+        );
+        let (fire_duration, bs_ff) = (cycle_duration * result[0], result[1]);
         let mut bullet_speed = bs_ff.sqrt();
         let fire_interval = 0.05 * bullet_speed / bs_ff;
         bullet_speed *= 400.;
-        let p = LaserLocker {
+        LaserLocker {
             p: Point2f::new(),
             fire_duration,
             cycle_duration,
@@ -68,8 +69,7 @@ impl CannonGeneratorInterface for LaserLocker {
             switch: true,
             bullet_speed,
             phase_timer: 0.,
-        };
-        return p;
+        }
     }
 }
 
@@ -83,16 +83,12 @@ impl LaserLocker {
 
 impl CannonControllerInterface for LaserLocker {
     fn switch(&mut self, switch: bool) {
-        if self.switch {
-            if !switch {
-                self.switch = false;
-                self.phase_timer = 0.;
-                self.fire_cd = self.fire_interval;
-            }
-        } else {
-            if switch {
-                self.switch = true;
-            }
+        if self.switch && !switch {
+            self.switch = false;
+            self.phase_timer = 0.;
+            self.fire_cd = self.fire_interval;
+        } else if switch {
+            self.switch = true;
         }
     }
 

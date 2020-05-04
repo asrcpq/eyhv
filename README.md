@@ -74,9 +74,9 @@ Still in its early development stage
 
 * [x] Player moves faster when not firing
 
-* [ ] PlayerCannon2
+* [x] Player hit reset
 
-* [ ] Player hit cd
+* [ ] PlayerCannon2
 
 * [ ] Game mechanism
 

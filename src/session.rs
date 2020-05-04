@@ -89,11 +89,13 @@ impl Session {
         self.enemy_bullet_pool
             .extend(self.enemy_pool.tick(dt, self.player.get_p()));
         collision_enemy(&mut self.enemy_pool, &mut self.player_bullet_pool);
-        collision_player(
+        if !self.player.hit_reset() && collision_player(
             self.player.get_p(),
             self.player.get_last_p(),
             &mut self.enemy_bullet_pool,
-        );
+        ) {
+            self.player.hit();
+        }
 
         // memleak monitor
         // println!(
