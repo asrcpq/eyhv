@@ -6,6 +6,7 @@ use crate::key_state::KeyState;
 use crate::player::Player;
 use crate::time_manager::TimeManager;
 use crate::wave_generator::WaveGenerator;
+use crate::window_rect::WINDOW_SIZE;
 
 pub struct SessionGraphicObjectsIter {
     player_iter: GraphicObjectsIntoIter,
@@ -120,5 +121,10 @@ impl Session {
         } else {
             self.key_state.proc_key(key_id, updown);
         }
+    }
+
+    pub fn render(&self) -> Vec<u8> {
+        let mut canvas = vec![127u8; WINDOW_SIZE.x as usize * WINDOW_SIZE.y as usize * 3];
+        canvas
     }
 }

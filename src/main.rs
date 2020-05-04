@@ -20,7 +20,7 @@ mod wave_generator;
 mod window_rect;
 
 use session::Session;
-use window_rect::WINDOW_RECT;
+use window_rect::WINDOW_SIZE;
 
 use sdl2::event::Event;
 use sdl2::gfx::primitives::DrawRenderer;
@@ -43,10 +43,9 @@ fn find_sdl_gl_driver() -> Option<u32> {
 pub fn main() {
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
-    let window_size = WINDOW_RECT.get_size();
 
     let window = video_subsystem
-        .window("eyhv", window_size.x as u32, window_size.y as u32)
+        .window("eyhv", WINDOW_SIZE.x as u32, WINDOW_SIZE.y as u32)
         .opengl()
         .position_centered()
         .build()
@@ -63,8 +62,8 @@ pub fn main() {
     let mut texture = texture_creator
         .create_texture_static(
             None,
-            window_size.x as u32,
-            window_size.y as u32
+            WINDOW_SIZE.x as u32,
+            WINDOW_SIZE.y as u32
         ).unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
@@ -117,71 +116,16 @@ pub fn main() {
         last_time = current_time;
         session.tick(duration_secs);
 
-        canvas.set_draw_color(Color::RGB(0, 0, 0));
-        canvas.clear();
-
         texture.update(
             None,
-            &[255u8; 500*700*3],
-            window_size.x as usize * 3,
+            &session.render(),
+            WINDOW_SIZE.x as usize * 3,
         );
 
+
+        canvas.set_draw_color(Color::RGB(0, 0, 0));
+        canvas.clear();
         canvas.copy(&texture, None, None);
-
-        // draw after tick
-        for graphic_object in session.graphic_object_iter() {
-            if let Some(line_segs) = graphic_object.as_any().downcast_ref::<LineSegs2f>() {
-                let color = Color::RGBA(
-                    (line_segs.color[0] * 255.) as u8,
-                    (line_segs.color[1] * 255.) as u8,
-                    (line_segs.color[2] * 255.) as u8,
-                    (line_segs.color[3] * 255.) as u8,
-                );
-                //let mut iter = line_segs.vertices.iter();
-                //let mut last_vertex = iter.next().unwrap();
-                //while match iter.next() {
-                //    None => false,
-                //    Some(vertex) => {
-                //        canvas
-                //            .aa_line(
-                //                last_vertex.x as i16,
-                //                last_vertex.y as i16,
-                //                vertex.x as i16,
-                //                vertex.y as i16,
-                //                color,
-                //            )
-                //            .unwrap();
-                //        last_vertex = vertex;
-                //        true
-                //    }
-                //} {}
-            } else if let Some(polygon) = graphic_object.as_any().downcast_ref::<Polygon2f>() {
-                let color = Color::RGBA(
-                    (polygon.color[0] * 255.) as u8,
-                    (polygon.color[1] * 255.) as u8,
-                    (polygon.color[2] * 255.) as u8,
-                    (polygon.color[3] * 255.) as u8,
-                );
-                //canvas
-                //    .filled_polygon(
-                //        polygon
-                //            .vertices
-                //            .iter()
-                //            .map(|x| x.x as i16)
-                //            .collect::<Vec<i16>>()
-                //            .as_slice(),
-                //        polygon
-                //            .vertices
-                //            .iter()
-                //            .map(|x| x.y as i16)
-                //            .collect::<Vec<i16>>()
-                //            .as_slice(),
-                //        color,
-                //    )
-                //    .unwrap();
-            }
-        }
-
         canvas.present();
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 80));
     }
