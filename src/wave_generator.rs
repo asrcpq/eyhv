@@ -128,17 +128,20 @@ mod wave_scheme_prototype {
                 }
 
                 for (path, dts) in group_vec.iter() {
-                    let enemy_construct = Enemy::new(
-                        path.clone(),
-                        enemy_prototype.speed,
-                        enemy_prototype.life,
-                        cannons.clone(),
-                        graphic_objects.clone(),
-                        enemy_prototype.hitboxes.clone(),
-                    );
                     for dt in dts.iter() {
-                        enemies.push((*dt, enemy_construct.clone()));
-                    }
+                        let mut cloned_cannons = cannons.clone();
+                        for cannon in cloned_cannons.iter_mut() {
+                            cannon.set_rng(rng.gen::<u64>());
+                        }
+                        enemies.push((*dt, Enemy::new(
+                            path.clone(),
+                            enemy_prototype.speed,
+                            enemy_prototype.life,
+                            cloned_cannons,
+                            graphic_objects.clone(),
+                            enemy_prototype.hitboxes.clone(),
+                        )));
+                    };
                 }
             }
             enemies.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
@@ -247,7 +250,7 @@ impl WaveGenerator {
                 self.wave_cd = self.wave_interval;
                 self.wave_queue.push_back(wave_scheme_prototype::random_mapper(
                     self.rng.gen::<u64>(),
-                    1.,
+                    0.1,
                 ));
             }
         }
