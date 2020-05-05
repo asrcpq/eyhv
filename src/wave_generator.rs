@@ -28,6 +28,7 @@ mod wave_scheme_prototype {
             enemy_prototype::EnemyPrototype,
             GroupMemberSpatiotemporalInfo,
         )>,
+        next_wave: f32,
     }
 
     lazy_static! {
@@ -38,7 +39,8 @@ mod wave_scheme_prototype {
                     enemy_paths::LEFT_DOWN_OUT.clone(),
                     vec![0.5, 1., 1.5, 2., 2.5, 3.],
                 ),]
-            )]
+            )],
+            next_wave: 2.,
         };
         static ref RIGHT_DOWN_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(
@@ -47,7 +49,8 @@ mod wave_scheme_prototype {
                     enemy_paths::RIGHT_DOWN_OUT.clone(),
                     vec![0.5, 1., 1.5, 2., 2.5, 3.],
                 ),]
-            )]
+            )],
+            next_wave: 2.,
         };
         static ref LEFT_RIGHT_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(
@@ -56,7 +59,8 @@ mod wave_scheme_prototype {
                     enemy_paths::LEFT_RIGHT.clone(),
                     vec![0.5, 1., 1.5, 2., 2.5, 3.]
                 ),]
-            )]
+            )],
+            next_wave: 2.,
         };
         static ref RIGHT_LEFT_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(
@@ -65,7 +69,8 @@ mod wave_scheme_prototype {
                     enemy_paths::RIGHT_LEFT.clone(),
                     vec![0.5, 1., 1.5, 2., 2.5, 3.],
                 ),]
-            )]
+            )],
+            next_wave: 2.,
         };
         static ref CLOCKWISE_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(
@@ -74,7 +79,8 @@ mod wave_scheme_prototype {
                     enemy_paths::CLOCKWISE_ROLL.clone(),
                     vec![0.5, 1., 1.5, 2., 2.5, 3.],
                 ),]
-            )]
+            )],
+            next_wave: 2.,
         };
         static ref COUNTERCLOCKWISE_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(
@@ -83,7 +89,8 @@ mod wave_scheme_prototype {
                     enemy_paths::COUNTERCLOCKWISE_ROLL.clone(),
                     vec![0.5, 1., 1.5, 2., 2.5, 3.],
                 ),]
-            )]
+            )],
+            next_wave: 2.,
         };
         static ref LEFT_RIGHT_MEDIUM: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(
@@ -95,7 +102,8 @@ mod wave_scheme_prototype {
                     enemy_paths::RIGHT_STRAIGHT_DOWN.clone(),
                     vec![2.5],
                 )]
-            )]
+            )],
+            next_wave: 3.,
         };
         static ref MID_LARGE1: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(
@@ -104,7 +112,8 @@ mod wave_scheme_prototype {
                     enemy_paths::MID_STRAIGHT_DOWN.clone(),
                     vec![1.],
                 )]
-            )]
+            )],
+            next_wave: 4.,
         };
     }
 
@@ -154,7 +163,7 @@ mod wave_scheme_prototype {
                 }
             }
             enemies.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
-            CompiledWave::new(VecDeque::from(enemies))
+            CompiledWave::new(VecDeque::from(enemies), self.next_wave)
         }
     }
 
@@ -179,15 +188,18 @@ pub struct CompiledWave {
     // always sorted
     enemies: VecDeque<(f32, Enemy)>,
     timer: f32,
+    next_wave: f32,
 }
 
 impl CompiledWave {
     pub fn new(
         enemies: VecDeque<(f32, Enemy)>,
+        next_wave: f32,
     ) -> CompiledWave {
         CompiledWave {
             enemies,
             timer: 0.,
+            next_wave,
         }
     }
 
@@ -211,7 +223,6 @@ impl CompiledWave {
 
 pub struct WaveGenerator {
     wave_cd: f32,
-    wave_interval: f32,
     rng: rand_pcg::Pcg64Mcg,
     wave_queue: VecDeque<CompiledWave>,
 }
@@ -220,7 +231,6 @@ impl WaveGenerator {
     pub fn new(seed: u64) -> WaveGenerator {
         WaveGenerator {
             wave_cd: 1.,
-            wave_interval: 2.,
             rng: rand_pcg::Pcg64Mcg::seed_from_u64(seed),
             wave_queue: VecDeque::new(),
         }
@@ -257,11 +267,11 @@ impl WaveGenerator {
                     }
                 }
                 dt -= self.wave_cd;
-                self.wave_cd = self.wave_interval;
                 self.wave_queue.push_back(wave_scheme_prototype::random_mapper(
                     self.rng.gen::<u64>(),
                     0.1,
                 ));
+                self.wave_cd = self.wave_queue.back().unwrap().next_wave;
             }
         }
         enemy_queue

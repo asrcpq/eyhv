@@ -61,11 +61,13 @@ Still in its early development stage
 
 	* [x] New Cannon: LaserSlicer
 
-	* [ ] New EnemyPrototype: Large1
+	* [x] New EnemyPrototype: Large1
 
 	* [ ] New Cannon: Sweeper
 
 	* [ ] New Cannon: Ring
+
+	* [ ] New path: wanderers
 
 * [x] Pause
 
@@ -94,6 +96,8 @@ Still in its early development stage
 	* [ ] Field background
 
 	* [ ] Destroy effect
+
+	* [ ] player hit
 
 ### Coding
 
