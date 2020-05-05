@@ -50,7 +50,7 @@ impl CannonGeneratorInterface for LaserLocker {
         let result = simple_try(
             TRY_TIMES,
             |x| x[0] * x[1].powi(2),
-            vec![(0.05, 0.13), (0.1, 2.)], // 0.05-40
+            vec![(0.05, 0.13), (0.05, 2.)], // 0.05-40
             difficulty,
             0.5,
             rng.gen::<u64>(),

@@ -38,13 +38,13 @@ impl CannonGeneratorInterface for Rotor {
         let generated = simple_try(
             TRY_TIMES,
             |x| x[0] / x[1],
-            vec![(200., 400.), (0.2, 0.01)], // 1000-40000
+            vec![(100., 300.), (0.2, 0.01)], // 1000-40000
             0.5,
             difficulty,
             rng.gen::<u64>(),
         );
         let (bullet_speed, fire_interval) = (generated[0], generated[1]);
-        let omega: f32 = rng.gen_range(1., 6.);
+        let omega: f32 = rng.gen_range(0.5, 5.);
         // let theta: f32 = rng.gen_range(0., 2. * std::f32::consts::PI);
         let theta: f32 = 0.;
         Rotor {

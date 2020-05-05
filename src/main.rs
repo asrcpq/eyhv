@@ -58,7 +58,7 @@ pub fn main() {
         .build()
         .unwrap();
     canvas.present();
-    let mut texture_creator = canvas.texture_creator();
+    let texture_creator = canvas.texture_creator();
     let mut texture = texture_creator
         .create_texture_static(
             Some(sdl2::pixels::PixelFormatEnum::RGB24),
@@ -115,10 +115,11 @@ pub fn main() {
         // println!("{}", 1. / duration_secs); // print fps
         last_time = current_time;
         session.tick(duration_secs);
+        session.render();
 
         texture.update(
             None,
-            &session.render(),
+            &session.canvas.data,
             WINDOW_SIZE.x as usize * 3,
         );
 
@@ -127,6 +128,6 @@ pub fn main() {
         canvas.clear();
         canvas.copy(&texture, None, None);
         canvas.present();
-        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 80));
+        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 100));
     }
 }

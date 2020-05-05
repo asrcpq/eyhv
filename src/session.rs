@@ -53,6 +53,8 @@ pub struct Session {
     pause: bool,
 
     time_manager: TimeManager,
+
+    pub canvas: Canvas,
 }
 
 impl Session {
@@ -66,6 +68,7 @@ impl Session {
             key_state: KeyState::new(),
             pause: false,
             time_manager: TimeManager::new(),
+            canvas: Canvas::new((WINDOW_SIZE.x as u32, WINDOW_SIZE.y as u32)),
         }
     }
 
@@ -124,11 +127,23 @@ impl Session {
         }
     }
 
-    pub fn render(&self) -> Vec<u8> {
-        let mut canvas = Canvas::new((WINDOW_SIZE.x as u32, WINDOW_SIZE.y as u32));
+    pub fn render(&mut self) {
+        self.canvas.flush();
         for graphic_object in self.graphic_object_iter() {
-            graphic_object.render(&mut canvas);
+            graphic_object.render(&mut self.canvas);
         }
-        canvas.data
+    }
+
+    pub fn test_render(&mut self) {
+        use crate::graphic_object::LineSegs2f;
+        self.canvas.flush();
+        let split = 90;
+        for k in 0..split {
+            let ang = 3.1415926 * 2. / split as f32 * -k as f32;
+            LineSegs2f::from_floats(vec![1., 1., 1., 1., 250., 250.,
+                250. + 200. * ang.cos(),
+                250. + 200. * ang.sin(),
+            ]).render(&mut self.canvas);
+        }
     }
 }

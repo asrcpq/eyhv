@@ -35,6 +35,188 @@ impl LineSegs2f {
         } {}
         LineSegs2f::new(vertices, color)
     }
+
+    #[inline]
+    fn wu(x1: f32, y1: f32, x2: f32, y2: f32, color: [f32; 4], canvas: &mut Canvas) {
+        let mut x1: i32 = x1.round() as i32;
+        let mut y1: i32 = y1.round() as i32;
+        let mut x2: i32 = x2.round() as i32;
+        let mut y2: i32 = y2.round() as i32;
+        let mut dx = x2 - x1;
+        let dy = y2 - y1;
+        if dx == 0 {
+            if dy < 0 {
+                let t = y1;
+                y1 = y2;
+                y2 = t;
+            }
+            for y in y1..y2 + 1 {
+                canvas.putpixel(x1, y, color);
+            }
+            return;
+        }
+
+        if dy == 0 {
+            if dx < 0 {
+                let t = x1;
+                x1 = x2;
+                x2 = t;
+            }
+            for x in x1..x2 + 1 {
+                canvas.putpixel(x, y1, color);
+            }
+            return;
+        }
+
+        if dx == dy {
+            if dx < 0 {
+                let t = x1;
+                x1 = x2;
+                x2 = t;
+                let t = y1;
+                y1 = y2;
+                y2 = t;
+                dx = -dx;
+            }
+            for i in 0..dx + 1 {
+                canvas.putpixel(x1 + i, y1 + i, color);
+            }
+            return;
+        }
+
+        if dx == -dy {
+            if dx < 0 {
+                let t = x1;
+                x1 = x2;
+                x2 = t;
+                let t = y1;
+                y1 = y2;
+                y2 = t;
+                dx = -dx;
+            }
+            for i in 0..dx + 1 {
+                canvas.putpixel(x1 + i, y1 - i, color);
+            }
+            return;
+        }
+
+        let k = dy as f32 / dx as f32;
+        let mut e: f32 = 0.;
+
+        if dx + dy < 0 {
+            let t = x1;
+            x1 = x2;
+            x2 = t;
+            let t = y1;
+            y1 = y2;
+            y2 = t;
+        }
+
+        if k > 0. && k < 1. {
+            let mut py = y1;
+            for px in x1..x2 {
+                canvas.putpixel(px, py, [color[0], color[1], color[2], color[3] * (1. - e)]);
+                canvas.putpixel(px, py + 1, [color[0], color[1], color[2], color[3] * e]);
+                e += k;
+                if e >= 1. {
+                    py += 1;
+                    e -= 1.;
+                }
+            }
+        } else if k > 1. {
+            let mut px = x1;
+            for py in y1..y2 {
+                canvas.putpixel(px, py, [color[0], color[1], color[2], color[3] * (1. - e)]);
+                canvas.putpixel(px + 1, py, [color[0], color[1], color[2], color[3] * e]);
+                e += 1. / k;
+                if e >= 1. {
+                    px += 1;
+                    e -= 1.;
+                }
+            }
+        }
+
+        else if k > -1. && k < 0. {
+            let mut py = y1;
+            for px in x1..x2 {
+                canvas.putpixel(px, py, [color[0], color[1], color[2], color[3] * (1. + e)]);
+                canvas.putpixel(px, py - 1, [color[0], color[1], color[2], color[3] * -e]);
+                e += k;
+                if e <= -1. {
+                    py -= 1;
+                    e += 1.0;
+                }
+            }
+        } else if k < -1. {
+            let mut px = x2;
+            for py in (y1..y2).rev() {
+                canvas.putpixel(px, py, [color[0], color[1], color[2], color[3] * (1. - e)]);
+                canvas.putpixel(px + 1, py, [color[0], color[1], color[2], color[3] * e]);
+                e += -1. / k;
+                if e >= 1. {
+                    px += 1;
+                    e -= 1.;
+                }
+            }
+        }
+    }
+
+    #[inline]
+    fn bresenham(x1: f32, y1: f32, x2: f32, y2: f32, color: [f32; 4], canvas: &mut Canvas) {
+        let mut x: i32;
+        let mut y: i32;
+        let mut dx: i32;
+        let mut dy: i32;
+        let mut s1: i32;
+        let mut s2: i32;
+        let mut p: i32;
+        let mut temp: i32;
+        let mut interchange: i32;
+        x = x1 as i32;
+        y = y1 as i32;
+        dx=(x2-x1).abs() as i32;
+        dy=(y2-y1).abs() as i32;
+
+        if x2 > x1 {
+            s1 = 1;
+        } else {
+            s1 = -1;
+        }
+
+        if y2 > y1 {
+            s2 = 1;
+        } else {
+            s2 = -1;
+        }
+
+        if dy > dx {
+            temp = dx;
+            dx = dy;
+            dy = temp;
+            interchange = 1;
+        } else {
+            interchange = 0;
+        }
+
+        p = 2 * dy - dx;
+        for _ in 1..dx + 1 {
+            canvas.putpixel(x, y, color);
+            if p >= 0 {
+                if interchange == 0 {
+                    y = y + s2;
+                } else {
+                    x = x + s1;
+                }
+                p = p - 2 * dx;
+            }
+            if interchange == 0 {
+                x = x + s1; 
+            } else {
+                y = y + s2;
+            }
+            p = p + 2 * dy;
+        }
+    }
 }
 
 pub trait GraphicObject: DynClone + Sync + Any {
@@ -74,14 +256,28 @@ impl GraphicObject for LineSegs2f {
         })
     }
 
-    fn render(&self, canvas: &mut Canvas) {
+    fn render(&self, mut canvas: &mut Canvas) {
+        let mut flag = false;
+        let mut x1: f32 = 0.; // convince compiler
+        let mut x2: f32;
+        let mut y1: f32 = 0.; // convince compiler
+        let mut y2: f32;
         for vertice in self.vertices.iter() {
             if !WINDOW_RECT.contain(*vertice) {
                 continue;
             }
-            canvas.data[vertice.y as usize * 500 * 3 + vertice.x as usize * 3] = self.color[0] as u8 * 255;
-            canvas.data[vertice.y as usize * 500 * 3 + vertice.x as usize * 3 + 1] = self.color[1] as u8 * 255;
-            canvas.data[vertice.y as usize * 500 * 3 + vertice.x as usize * 3 + 2] = self.color[2] as u8 * 255;
+
+            if !flag {
+                flag = true;
+                x1 = vertice.x;
+                y1 = vertice.y;
+            } else {
+                x2  = vertice.x;
+                y2  = vertice.y;
+                LineSegs2f::wu(x1, y1, x2, y2, self.color, &mut canvas);
+                x1 = x2;
+                y1 = y2;
+            }
         }
     }
 }

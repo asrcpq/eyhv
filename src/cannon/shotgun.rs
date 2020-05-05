@@ -48,7 +48,7 @@ impl CannonGeneratorInterface for Shotgun {
         let generated = simple_try(
             TRY_TIMES,
             |x| x[0] * x[1].powi(2),
-            vec![(1., 7.), (0.3, 2.)],
+            vec![(1., 7.), (0.1, 2.)],
             0.5,
             difficulty,
             rng.gen::<u64>(),
