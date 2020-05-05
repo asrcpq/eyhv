@@ -109,7 +109,7 @@ pub fn main() {
             .duration_since(last_time)
             .expect("Time error")
             .as_secs_f32();
-        //println!("{}", 1. / duration_secs); // print fps
+        println!("{}", 1. / duration_secs); // print fps
         last_time = current_time;
         session.tick(duration_secs);
         session.render();
@@ -119,7 +119,6 @@ pub fn main() {
             &session.canvas.data,
             WINDOW_SIZE.x as usize * 3,
         ).unwrap();
-
 
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();

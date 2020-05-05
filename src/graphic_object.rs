@@ -295,7 +295,6 @@ impl GraphicObject for Polygon2f {
         // should use balanced tree for massive points
         let mut sorted_processing_edges: Vec<Edge> = Vec::new();
         let mut current_y = edges.last().unwrap().starty;
-        let mut len = edges.len();
         loop {
             // debug checkpoint
             // if sorted_processing_edges.len() %2 != 0 {
@@ -303,7 +302,6 @@ impl GraphicObject for Polygon2f {
             // }
 
             let mut need_resort_flag = false;
-            let mut need_drop_flag = false;
             // push
             while !edges.is_empty() && edges.last().unwrap().starty == current_y {
                 sorted_processing_edges.push(edges.pop().unwrap());
@@ -361,7 +359,6 @@ impl GraphicObject for Polygon2f {
             }
 
             current_y += 1;
-            len = edges.len();
         }
     }
 }
