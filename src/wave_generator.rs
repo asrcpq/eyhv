@@ -97,6 +97,15 @@ mod wave_scheme_prototype {
                 )]
             )]
         };
+        static ref MID_LARGE1: WaveSchemePrototype = WaveSchemePrototype {
+            enemies: vec![(
+                enemy_prototype::LARGE1.clone(),
+                vec![(
+                    enemy_paths::MID_STRAIGHT_DOWN.clone(),
+                    vec![1.],
+                )]
+            )]
+        };
     }
 
     impl WaveSchemePrototype {
@@ -150,7 +159,7 @@ mod wave_scheme_prototype {
     }
 
     pub fn random_mapper(seed: u64, difficulty: f32) -> CompiledWave {
-        const SCHEME_SIZE: u32 = 7;
+        const SCHEME_SIZE: u32 = 8;
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
         match rng.gen_range(0, SCHEME_SIZE) {
             0 => LEFT_DOWN_CHAIN.compile(rng.gen::<u64>(), difficulty),
@@ -160,6 +169,7 @@ mod wave_scheme_prototype {
             4 => LEFT_RIGHT_MEDIUM.compile(rng.gen::<u64>(), difficulty),
             5 => CLOCKWISE_CHAIN.compile(rng.gen::<u64>(), difficulty),
             6 => COUNTERCLOCKWISE_CHAIN.compile(rng.gen::<u64>(), difficulty),
+            7 => MID_LARGE1.compile(rng.gen::<u64>(), difficulty),
             _ => unreachable!(),
         }
     }

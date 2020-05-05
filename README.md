@@ -59,9 +59,13 @@ Still in its early development stage
 
 	* [x] New Cannon: LaserLocker
 
-	* [ ] New Cannon: LaserSlicer
+	* [x] New Cannon: LaserSlicer
+
+	* [ ] New EnemyPrototype: Large1
 
 	* [ ] New Cannon: Sweeper
+
+	* [ ] New Cannon: Ring
 
 * [x] Pause
 
