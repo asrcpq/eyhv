@@ -43,7 +43,7 @@ pub struct LaserSlicer {
 }
 
 impl CannonGeneratorInterface for LaserSlicer {
-    fn generate(seed: u64, difficulty: f32) -> LaserSlicer {
+    fn generate(seed: u64, difficulty: f32, correlation: f32) -> LaserSlicer {
         // difficulty expression
         // difficulty = fire_duration * (bullet_speed / fire_interval)
         // fire_freq = fd(cd * (0.2 - 1)) / cd(1 - 3) / fi(infer)
@@ -53,15 +53,15 @@ impl CannonGeneratorInterface for LaserSlicer {
         let result = simple_try(
             TRY_TIMES,
             |x| x[0] * x[1].powi(2),
-            vec![(0.2, 0.9), (0.05, 3.)], // 0.05-40
+            vec![(0.01, 0.9), (0.01, 3.)], // 0.05-40
+            correlation,
             difficulty,
-            0.5,
             rng.gen::<u64>(),
         );
         let (fire_duration, bs_ff) = (cycle_duration * result[0], result[1]);
         let mut bullet_speed = bs_ff.sqrt();
         let fire_interval = 0.05 * bullet_speed / bs_ff;
-        bullet_speed *= 600.;
+        bullet_speed *= 500.;
         LaserSlicer {
             p: Point2f::new(),
             fire_duration,

@@ -29,6 +29,7 @@ mod wave_scheme_prototype {
             GroupMemberSpatiotemporalInfo,
         )>,
         next_wave: f32,
+        difficulty_scaler: f32,
     }
 
     lazy_static! {
@@ -41,6 +42,7 @@ mod wave_scheme_prototype {
                 ),]
             )],
             next_wave: 2.,
+            difficulty_scaler: 1.,
         };
         static ref RIGHT_DOWN_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(
@@ -51,6 +53,7 @@ mod wave_scheme_prototype {
                 ),]
             )],
             next_wave: 2.,
+            difficulty_scaler: 1.,
         };
         static ref LEFT_RIGHT_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(
@@ -61,6 +64,7 @@ mod wave_scheme_prototype {
                 ),]
             )],
             next_wave: 2.,
+            difficulty_scaler: 1.,
         };
         static ref RIGHT_LEFT_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(
@@ -71,6 +75,7 @@ mod wave_scheme_prototype {
                 ),]
             )],
             next_wave: 2.,
+            difficulty_scaler: 1.,
         };
         static ref CLOCKWISE_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(
@@ -81,6 +86,7 @@ mod wave_scheme_prototype {
                 ),]
             )],
             next_wave: 2.,
+            difficulty_scaler: 0.8,
         };
         static ref COUNTERCLOCKWISE_CHAIN: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(
@@ -91,6 +97,7 @@ mod wave_scheme_prototype {
                 ),]
             )],
             next_wave: 2.,
+            difficulty_scaler: 0.8,
         };
         static ref LEFT_RIGHT_MEDIUM: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(
@@ -104,6 +111,7 @@ mod wave_scheme_prototype {
                 )]
             )],
             next_wave: 3.,
+            difficulty_scaler: 1.3,
         };
         static ref MID_LARGE1: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(
@@ -114,6 +122,7 @@ mod wave_scheme_prototype {
                 )]
             )],
             next_wave: 4.,
+            difficulty_scaler: 1.6,
         };
     }
 
@@ -137,7 +146,10 @@ mod wave_scheme_prototype {
 
                 for cannon_p_group in enemy_prototype.cannon_pits.iter() {
                     // each cycle represents a cannon group in an enemy group
-                    let cannon_template = cannon::random_mapper(rng.gen::<u64>(), difficulty);
+                    let cannon_template = cannon::random_mapper(
+                        rng.gen::<u64>(),
+                        difficulty * self.difficulty_scaler,
+                    );
                     for each_cannon_p in cannon_p_group {
                         let mut each_p_cannon = cannon_template.clone();
                         each_p_cannon.set_p(*each_cannon_p);
@@ -269,7 +281,7 @@ impl WaveGenerator {
                 dt -= self.wave_cd;
                 self.wave_queue.push_back(wave_scheme_prototype::random_mapper(
                     self.rng.gen::<u64>(),
-                    0.1,
+                    0.08,
                 ));
                 self.wave_cd = self.wave_queue.back().unwrap().next_wave;
             }

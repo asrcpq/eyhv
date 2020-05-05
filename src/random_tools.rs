@@ -16,6 +16,8 @@ where
     let mut mut_range = range.clone();
 
     let mut k = 0.5; // correlation component initial value
+    let mut k_down = 0.;
+    let mut k_up = 1.;
 
     expect_difficulty = evaluate(&range
         .iter()
@@ -65,10 +67,11 @@ where
             .map(|(x, y)| x * (1. - k) + y * k)
             .collect()
         ) - expect_difficulty > 0. {
-            k /= 2.;
+            k_up = k;
         } else {
-            k = (k + 1.) / 2.;
+            k_down = k;
         }
+        k = (k_up + k_down) / 2.;
     }
 }
 

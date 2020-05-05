@@ -39,7 +39,7 @@ pub struct Shotgun {
 }
 
 impl CannonGeneratorInterface for Shotgun {
-    fn generate(seed: u64, difficulty: f32) -> Shotgun {
+    fn generate(seed: u64, difficulty: f32, correlation: f32) -> Shotgun {
         // difficulty expression
         // difficulty = fire_duration * count * (bullet_speed / fire_interval)
         // fire_freq = fd(cd * (0.2 - 1)) / cd(1 - 3) / fi(infer)
@@ -48,8 +48,8 @@ impl CannonGeneratorInterface for Shotgun {
         let generated = simple_try(
             TRY_TIMES,
             |x| x[0] * x[1].powi(2),
-            vec![(1., 7.), (0.1, 2.)],
-            0.5,
+            vec![(1., 7.), (0.01, 2.)],
+            correlation,
             difficulty,
             rng.gen::<u64>(),
         );
@@ -57,7 +57,7 @@ impl CannonGeneratorInterface for Shotgun {
         let bs_ff_k = rng.gen_range(0.8, 1.2);
         let mut bullet_speed = (bs_ff * bs_ff_k).sqrt();
         let fire_interval = 0.3 * bullet_speed / bs_ff;
-        bullet_speed *= 400.;
+        bullet_speed *= 600.;
         let open_angle: f32 = rng.gen_range(-1f32, 1.2f32).exp();
         Shotgun {
             p: Point2f::new(),
@@ -114,7 +114,7 @@ impl CannonControllerInterface for Shotgun {
                     self.theta - self.open_angle / 2.,
                     self.theta + self.open_angle / 2.,
                 ));
-                let bullet_speed = normed_vec2f * self.bullet_speed * self.rng.gen_range(0.6, 1.8);
+                let bullet_speed = normed_vec2f * self.bullet_speed * self.rng.gen_range(0.8, 1.2);
                 bullet_queue.push_back(Box::new(SimpleBullet::new(
                     self.p + host_p,
                     bullet_speed,

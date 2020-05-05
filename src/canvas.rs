@@ -19,11 +19,6 @@ impl Canvas {
     }
 
     #[inline]
-    pub fn map(&self, x: u32, y: u32) -> usize {
-        ((y * self.size.0 + x) * 3) as usize
-    }
-
-    #[inline]
     pub fn putpixel(&mut self, x: i32, y: i32, color: [f32; 4]) {
         if !WINDOW_RECT.contain(Point2f::from_floats(x as f32, y as f32)) {
             return;

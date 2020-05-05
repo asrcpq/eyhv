@@ -40,19 +40,19 @@ pub struct LaserLocker {
 }
 
 impl CannonGeneratorInterface for LaserLocker {
-    fn generate(seed: u64, difficulty: f32) -> LaserLocker {
+    fn generate(seed: u64, difficulty: f32, correlation: f32) -> LaserLocker {
         // difficulty expression
         // difficulty = fire_duration * (bullet_speed / fire_interval)
         // fire_freq = fd(cd * (0.2 - 1)) / cd(1 - 3) / fi(infer)
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
-        let cycle_duration: f32 = rng.gen_range(0.5, 2.);
+        let cycle_duration: f32 = rng.gen_range(2., 5.);
         // k(fd / cd) * bs_ff^2
         let result = simple_try(
             TRY_TIMES,
             |x| x[0] * x[1].powi(2),
-            vec![(0.05, 0.13), (0.05, 2.)], // 0.05-40
+            vec![(0.001, 0.20), (0.02, 3.)], // 0.05-40
+            correlation,
             difficulty,
-            0.5,
             rng.gen::<u64>(),
         );
         let (fire_duration, bs_ff) = (cycle_duration * result[0], result[1]);
@@ -110,7 +110,9 @@ impl CannonControllerInterface for LaserLocker {
                 } else {
                     dt -= self.cycle_duration - self.phase_timer;
                     self.phase_timer = 0.;
-                    self.fire_cd = self.fire_interval;
+                    // self.fire_cd = self.fire_interval;
+                    // fire immediately to fire 1 bullet at least
+                    self.fire_cd = 0.;
                 }
             }
             while self.phase_timer < self.fire_duration {

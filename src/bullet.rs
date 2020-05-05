@@ -12,12 +12,12 @@ pub mod bullet_graphic_objects {
             GraphicObjects::from_strs(vec!["l 1 1 0.5 0.5 -2 -10 2 -10 2 10 -2 10 -2 -10"]);
         pub static ref WEDGE: GraphicObjects =
             GraphicObjects::from_strs(vec![
-                "l 1 1 0 0.7 -10 -5 -10 5 10 0 -10 -5",
+                "l 1 1 0.2 0.7 -10 -5 -10 5 10 0 -10 -5",
                 "p 1 1 1 0.3 -10 -5 -10 5 10 0",
             ]).zoom(1.2);
         pub static ref LASER_BAR: GraphicObjects =
             GraphicObjects::from_strs(vec!["
-                l 0.3 1 0.3 1 -10 -3 10 -3 10 3 -10 3 -10 -3"
+                l 0.5 1 0.5 1 -10 -3 10 -3 10 3 -10 3 -10 -3"
             ]).zoom(1.2);
         pub static ref LASER_SOLID_BAR: GraphicObjects =
             GraphicObjects::from_strs(vec!["
@@ -25,13 +25,13 @@ pub mod bullet_graphic_objects {
             ]).zoom(1.2);
         pub static ref DIAMOND: GraphicObjects =
             GraphicObjects::from_strs(vec![
-                "l 0.7 0.5 1 1 -8 0 0 6 8 0 0 -6 -8 0",
+                "l 0.8 0.9 1 1 -8 0 0 6 8 0 0 -6 -8 0",
                 "p 0.8 0.6 1 0.3 -8 0 0 6 8 0 0 -6",
             ]).zoom(1.6);
         pub static ref OCTAGON: GraphicObjects =
             GraphicObjects::from_strs(vec![
-                "l 1 0.7 0.7 1 5 2 5 -2 2 -5 -2 -5 -5 -2 -5 2 -2 5 2 5 5 2",
-                "p 1 0 0 0.2 5 2 5 -2 2 -5 -2 -5 -5 -2 -5 2 -2 5 2 5",
+                "l 1 0.8 0.8 1 5 2 5 -2 2 -5 -2 -5 -5 -2 -5 2 -2 5 2 5 5 2",
+                "p 1 0.6 0.6 0.2 5 2 5 -2 2 -5 -2 -5 -5 -2 -5 2 -2 5 2 5",
             ]).zoom(1.6);
     }
 }

@@ -3,8 +3,6 @@ use crate::canvas::Canvas;
 use dyn_clone::DynClone;
 use std::any::Any;
 
-use crate::window_rect::WINDOW_RECT;
-
 #[derive(Clone, Debug)]
 pub struct LineSegs2f {
     pub vertices: Vec<Point2f>,
@@ -190,10 +188,6 @@ impl GraphicObject for LineSegs2f {
         let mut y1: f32 = 0.; // convince compiler
         let mut y2: f32;
         for vertex in self.vertices.iter() {
-            if !WINDOW_RECT.contain(*vertex) {
-                continue;
-            }
-
             if !flag {
                 flag = true;
                 x1 = vertex.x;

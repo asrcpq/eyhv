@@ -38,7 +38,7 @@ pub struct PlayerLocker {
 }
 
 impl CannonGeneratorInterface for PlayerLocker {
-    fn generate(seed: u64, difficulty: f32) -> PlayerLocker {
+    fn generate(seed: u64, difficulty: f32, correlation: f32) -> PlayerLocker {
         // difficulty expression
         // difficulty = fire_duration * count * (bullet_speed / fire_interval)
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
@@ -47,7 +47,7 @@ impl CannonGeneratorInterface for PlayerLocker {
             TRY_TIMES,
             |x| x[0] * x[1].powi(2),
             vec![(1., 7.), (0.2, 1.5)],
-            0.5,
+            correlation,
             difficulty,
             rng.gen::<u64>(),
         );
