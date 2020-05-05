@@ -58,7 +58,7 @@ impl CannonGeneratorInterface for LaserLocker {
         let (fire_duration, bs_ff) = (cycle_duration * result[0], result[1]);
         let mut bullet_speed = bs_ff.sqrt();
         let fire_interval = 0.05 * bullet_speed / bs_ff;
-        bullet_speed *= 400.;
+        bullet_speed *= 600.;
         LaserLocker {
             p: Point2f::new(),
             fire_duration,

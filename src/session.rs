@@ -134,16 +134,18 @@ impl Session {
         }
     }
 
+    #[allow(dead_code)]
     pub fn test_render(&mut self) {
-        use crate::graphic_object::LineSegs2f;
+        use crate::graphic_object::{LineSegs2f, Polygon2f};
         self.canvas.flush();
-        let split = 90;
-        for k in 0..split {
-            let ang = 3.1415926 * 2. / split as f32 * -k as f32;
-            LineSegs2f::from_floats(vec![1., 1., 1., 1., 250., 250.,
-                250. + 200. * ang.cos(),
-                250. + 200. * ang.sin(),
-            ]).render(&mut self.canvas);
-        }
+        //let split = 90;
+        //for k in 0..split {
+        //    let ang = std::f32::consts::PI * 2. / split as f32 * -k as f32;
+        //    LineSegs2f::from_floats(vec![1., 1., 1., 1., 250., 250.,
+        //        250. + 200. * ang.cos(),
+        //        250. + 200. * ang.sin(),
+        //    ]).render(&mut self.canvas);
+        //}
+        Polygon2f::from_floats(vec![1., 1., 1., 1., 100., 50., 50., 100., 100., 150., 150., 100. ]).render(&mut self.canvas);
     }
 }

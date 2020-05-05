@@ -24,13 +24,10 @@ use session::Session;
 use window_rect::WINDOW_SIZE;
 
 use sdl2::event::Event;
-use sdl2::gfx::primitives::DrawRenderer;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use std::time::Duration;
 use std::time::SystemTime;
-
-use graphic_object::{LineSegs2f, Polygon2f};
 
 fn find_sdl_gl_driver() -> Option<u32> {
     for (index, item) in sdl2::render::drivers().enumerate() {
@@ -112,7 +109,7 @@ pub fn main() {
             .duration_since(last_time)
             .expect("Time error")
             .as_secs_f32();
-        // println!("{}", 1. / duration_secs); // print fps
+        //println!("{}", 1. / duration_secs); // print fps
         last_time = current_time;
         session.tick(duration_secs);
         session.render();
@@ -121,12 +118,12 @@ pub fn main() {
             None,
             &session.canvas.data,
             WINDOW_SIZE.x as usize * 3,
-        );
+        ).unwrap();
 
 
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();
-        canvas.copy(&texture, None, None);
+        canvas.copy(&texture, None, None).unwrap();
         canvas.present();
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 100));
     }

@@ -103,4 +103,4 @@ Still in its early development stage
 
 ### Frontend
 
-* [ ] Simple line and polygon drawing
+* [x] Simple line and polygon drawing
