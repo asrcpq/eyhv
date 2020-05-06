@@ -77,7 +77,7 @@ Still in its early development stage
 
 	* [x] Fix lag decrease hit possibility
 	
-	* [ ] Fix overlapping of waves
+	* [x] Fix overlapping of waves
 	
 * [x] Player moves faster when not firing
 

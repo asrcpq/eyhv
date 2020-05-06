@@ -195,10 +195,19 @@ mod wave_scheme_prototype {
         }
     }
 
-    pub fn random_mapper(seed: u64, difficulty: f32) -> CompiledWave {
+    pub fn random_mapper(seed: u64, difficulty: f32, last: Option<u32>) -> (Option<u32>, CompiledWave) {
         const SCHEME_SIZE: u32 = 9;
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
-        match rng.gen_range(0, SCHEME_SIZE) {
+        let mut type_id = rng.gen_range(0, SCHEME_SIZE - 1);
+        match last {
+            Some(last) => if type_id >= last {
+                type_id += 1;
+                type_id %= SCHEME_SIZE;
+            },
+            None => {},
+        }
+        (Some(type_id),
+        match type_id {
             0 => WaveSchemePrototype::generate_wanderer1(rng.gen::<u64>())
                 .compile(rng.gen::<u64>(), difficulty),
             1 => LEFT_DOWN_CHAIN.compile(rng.gen::<u64>(), difficulty),
@@ -210,7 +219,7 @@ mod wave_scheme_prototype {
             7 => COUNTERCLOCKWISE_CHAIN.compile(rng.gen::<u64>(), difficulty),
             8 => MID_LARGE1.compile(rng.gen::<u64>(), difficulty),
             _ => unreachable!(),
-        }
+        })
     }
 }
 
@@ -255,6 +264,8 @@ pub struct WaveGenerator {
     wave_cd: f32,
     rng: rand_pcg::Pcg64Mcg,
     wave_queue: VecDeque<CompiledWave>,
+
+    last_type: Option<u32>,
 }
 
 impl WaveGenerator {
@@ -263,6 +274,7 @@ impl WaveGenerator {
             wave_cd: 1.,
             rng: rand_pcg::Pcg64Mcg::seed_from_u64(seed),
             wave_queue: VecDeque::new(),
+            last_type: None,
         }
     }
 
@@ -297,10 +309,16 @@ impl WaveGenerator {
                     }
                 }
                 dt -= self.wave_cd;
-                self.wave_queue.push_back(wave_scheme_prototype::random_mapper(
+                match wave_scheme_prototype::random_mapper(
                     self.rng.gen::<u64>(),
                     0.12,
-                ));
+                    self.last_type,
+                ) {
+                    (last_type, compiled_wave) => {
+                        self.last_type = last_type;
+                        self.wave_queue.push_back(compiled_wave);
+                    }
+                }
                 self.wave_cd = self.wave_queue.back().unwrap().next_wave;
             }
         }
