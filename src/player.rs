@@ -94,7 +94,7 @@ impl Player {
         self.dp = dp;
     }
 
-    pub fn tick(&mut self, dt: f32, directions: [bool; 4]) -> VecDeque<Box<dyn Bullet>> {
+    pub fn tick(&mut self, dt: f32, directions: [bool; 4], world_slowdown: bool) -> VecDeque<Box<dyn Bullet>> {
         self.set_dp(directions);
         self.last_p = self.p;
         self.p += self.dp * dt;
@@ -103,7 +103,7 @@ impl Player {
 
         let mut bullet_queue = VecDeque::new();
         for cannon in self.cannons.iter_mut() {
-            bullet_queue.extend(cannon.tick(self.p, dt));
+            bullet_queue.extend(cannon.tick(self.p, dt, world_slowdown));
         }
         bullet_queue
     }

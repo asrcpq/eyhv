@@ -310,7 +310,7 @@ impl WaveGenerator {
                 dt -= self.wave_cd;
                 let (last_type, compiled_wave) = wave_scheme_prototype::random_mapper(
                     self.rng.gen::<u64>(),
-                    0.12,
+                    0.2,
                     self.last_type,
                 );
                 self.last_type = last_type;

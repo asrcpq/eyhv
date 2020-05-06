@@ -31,6 +31,10 @@ impl TimeManager {
         }
     }
 
+    pub fn get_state(&self) -> bool {
+        self.slowdown
+    }
+
     fn update_scaler(&mut self, dt: f32) {
         if self.shifting {
             if self.slowdown {

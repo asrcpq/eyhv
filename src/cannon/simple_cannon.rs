@@ -45,7 +45,7 @@ impl SimpleCannon {
         }
     }
 
-    pub fn tick(&mut self, host_p: Point2f, mut dt: f32) -> VecDeque<Box<dyn Bullet>> {
+    pub fn tick(&mut self, host_p: Point2f, mut dt: f32, side_cannon_off: bool) -> VecDeque<Box<dyn Bullet>> {
         const BULLET_RADIUS: f32 = 3.;
         const SIDE_CANNON_CD: u32 = 5;
         const SIDE_CANNON_RESET: u32 = 10;
@@ -61,7 +61,8 @@ impl SimpleCannon {
             } else {
                 dt -= self.fire_cd;
                 self.fire_cd = self.fire_interval;
-                for left_mid_right in if self.side_cannon_angle > SIDE_CANNON_CD {
+                for left_mid_right in if side_cannon_off ||
+                    self.side_cannon_angle > SIDE_CANNON_CD {
                     0..1
                 } else {
                     -1..2

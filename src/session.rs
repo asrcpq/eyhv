@@ -88,7 +88,11 @@ impl Session {
         dt *= self.time_manager.update_and_get_dt_scaler(dt);
         self.player_bullet_pool.tick(dt);
         self.player_bullet_pool
-            .extend(self.player.tick(dt, self.key_state.directions));
+            .extend(self.player.tick(
+                dt,
+                self.key_state.directions,
+                self.time_manager.get_state(),
+            ));
         self.enemy_pool.extend(self.wave_generator.tick(dt));
         self.enemy_bullet_pool.tick(dt);
         self.enemy_bullet_pool

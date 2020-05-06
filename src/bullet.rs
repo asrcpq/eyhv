@@ -21,7 +21,7 @@ pub mod bullet_graphic_objects {
             ]).zoom(1.2);
         pub static ref LASER_SOLID_BAR: GraphicObjects =
             GraphicObjects::from_strs(vec!["
-                p 1 1 1 0.8 -15 -3 15 -3 15 3 -15 3"
+                p 1 1 1 0.5 -15 -3 15 -3 15 3 -15 3"
             ]).zoom(1.2);
         pub static ref DIAMOND: GraphicObjects =
             GraphicObjects::from_strs(vec![
