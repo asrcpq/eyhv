@@ -80,6 +80,7 @@ impl PlayerLocker {
 }
 
 impl CannonControllerInterface for PlayerLocker {
+    #[inline]
     fn switch(&mut self, switch: bool) {
         if self.switch && !switch {
             self.switch = false;

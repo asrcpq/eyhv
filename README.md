@@ -83,7 +83,7 @@ Still in its early development stage
 
 * [x] Player hit reset
 
-* [ ] Path can stop enemy from firing
+* [x] Path can stop enemy from firing
 
 * [ ] PlayerCannon2
 

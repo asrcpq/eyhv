@@ -138,7 +138,7 @@ mod wave_scheme_prototype {
                             vec![x as f32 / 2.],
                         )).collect(),
                 )],
-                next_wave: 1.5,
+                next_wave: 1.,
                 difficulty_scaler: 1.,
             }
         }

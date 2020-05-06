@@ -79,6 +79,7 @@ impl CannonGeneratorInterface for LaserSlicer {
 }
 
 impl CannonControllerInterface for LaserSlicer {
+    #[inline]
     fn switch(&mut self, switch: bool) {
         if self.switch && !switch {
             self.switch = false;
@@ -91,6 +92,9 @@ impl CannonControllerInterface for LaserSlicer {
 
     fn tick(&mut self, host_p: Point2f, _: Point2f, mut dt: f32) -> VecDeque<Box<dyn Bullet>> {
         let mut bullet_queue = VecDeque::new();
+        if !self.switch {
+            return bullet_queue;
+        }
         const BULLET_RADIUS: f32 = 3.;
         'cycle: loop {
             if self.phase_timer > self.fire_duration {

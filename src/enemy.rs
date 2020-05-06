@@ -163,9 +163,12 @@ impl Enemy {
         match self.path.tick(dt * self.speed) {
             // update p first to prevent displaying (0, 0)
             None => return EnemyTickReturnOption::Removed,
-            Some(point2f) => {
+            Some((point2f, switch)) => {
                 self.last_p = self.p;
                 self.p = Some(point2f);
+                for cannon in self.cannons.iter_mut() {
+                    cannon.switch(switch);
+                }
             }
         }
 

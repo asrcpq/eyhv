@@ -82,6 +82,7 @@ impl LaserLocker {
 }
 
 impl CannonControllerInterface for LaserLocker {
+    #[inline]
     fn switch(&mut self, switch: bool) {
         if self.switch && !switch {
             self.switch = false;
