@@ -85,7 +85,7 @@ Still in its early development stage
 
 * [x] Path can stop enemy from firing
 
-* [ ] PlayerCannon2
+* [x] PlayerCannon2
 
 * [ ] Game mechanism
 

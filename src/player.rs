@@ -37,13 +37,13 @@ impl Player {
             cannons: vec![
                 SimpleCannon::new(
                     Point2f::from_floats(-3., -5.),
-                    Point2f::from_floats(0., -2500.),
+                    -2500.,
                     0.05,
                     false,
                 ),
                 SimpleCannon::new(
                     Point2f::from_floats(3., -5.),
-                    Point2f::from_floats(0., -2500.),
+                    -2500.,
                     0.05,
                     false,
                 ),
