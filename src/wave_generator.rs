@@ -199,12 +199,11 @@ mod wave_scheme_prototype {
         const SCHEME_SIZE: u32 = 9;
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
         let mut type_id = rng.gen_range(0, SCHEME_SIZE - 1);
-        match last {
-            Some(last) => if type_id >= last {
+        if let Some(last) = last {
+            if type_id >= last {
                 type_id += 1;
                 type_id %= SCHEME_SIZE;
-            },
-            None => {},
+            }
         }
         (Some(type_id),
         match type_id {
@@ -309,16 +308,13 @@ impl WaveGenerator {
                     }
                 }
                 dt -= self.wave_cd;
-                match wave_scheme_prototype::random_mapper(
+                let (last_type, compiled_wave) = wave_scheme_prototype::random_mapper(
                     self.rng.gen::<u64>(),
                     0.12,
                     self.last_type,
-                ) {
-                    (last_type, compiled_wave) => {
-                        self.last_type = last_type;
-                        self.wave_queue.push_back(compiled_wave);
-                    }
-                }
+                );
+                self.last_type = last_type;
+                self.wave_queue.push_back(compiled_wave);
                 self.wave_cd = self.wave_queue.back().unwrap().next_wave;
             }
         }

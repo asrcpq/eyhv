@@ -28,11 +28,16 @@ pub mod bullet_graphic_objects {
                 "l 0.8 0.9 1 1 -8 0 0 6 8 0 0 -6 -8 0",
                 "p 0.8 0.6 1 0.3 -8 0 0 6 8 0 0 -6",
             ]).zoom(1.6);
-        pub static ref OCTAGON: GraphicObjects =
+        pub static ref SQUARE: GraphicObjects =
             GraphicObjects::from_strs(vec![
-                "l 1 0.8 0.8 1 5 2 5 -2 2 -5 -2 -5 -5 -2 -5 2 -2 5 2 5 5 2",
-                "p 1 0.6 0.6 0.2 5 2 5 -2 2 -5 -2 -5 -5 -2 -5 2 -2 5 2 5",
+                "l 1 0.8 0.8 1 5 5 5 -5 -5 -5 -5 5 5 5",
+                "p 1 0.6 0.6 0.2 5 5 5 -5 -5 -5 -5 5",
             ]).zoom(1.6);
+        //pub static ref OCTAGON: GraphicObjects =
+        //    GraphicObjects::from_strs(vec![
+        //        "l 1 0.8 0.8 1 5 2 5 -2 2 -5 -2 -5 -5 -2 -5 2 -2 5 2 5 5 2",
+        //        "p 1 0.6 0.6 0.2 5 2 5 -2 2 -5 -2 -5 -5 -2 -5 2 -2 5 2 5",
+        //    ]).zoom(1.6);
     }
 }
 

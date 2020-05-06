@@ -4,7 +4,7 @@ use rand::Rng;
 use rand::SeedableRng;
 
 use crate::algebra::{Mat2x2f, Point2f};
-use crate::bullet::{bullet_graphic_objects, Bullet, SimpleBullet};
+use crate::bullet::{bullet_graphic_objects, Bullet, RotateBullet};
 use crate::random_tools::simple_try;
 use crate::cannon::{CannonGeneratorInterface, CannonControllerInterface};
 
@@ -102,6 +102,7 @@ impl CannonControllerInterface for Shotgun {
         self.update_theta(player_p, host_p);
         let mut bullet_queue = VecDeque::new();
         const BULLET_RADIUS: f32 = 3.;
+        let rotate_matrix: Mat2x2f = Mat2x2f::from_theta(0.1);
         loop {
             if self.fire_cd > dt {
                 self.fire_cd -= dt;
@@ -115,13 +116,14 @@ impl CannonControllerInterface for Shotgun {
                     self.theta + self.open_angle / 2.,
                 ));
                 let bullet_speed = normed_vec2f * self.bullet_speed * self.rng.gen_range(0.8, 1.2);
-                bullet_queue.push_back(Box::new(SimpleBullet::new(
+                bullet_queue.push_back(Box::new(RotateBullet::new(
                     self.p + host_p,
                     bullet_speed,
                     Point2f::new(),
                     dt,
                     BULLET_RADIUS,
-                    bullet_graphic_objects::OCTAGON
+                    rotate_matrix,
+                    bullet_graphic_objects::SQUARE
                         .rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),
                 )));
             }
