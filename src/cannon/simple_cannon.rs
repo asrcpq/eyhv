@@ -1,6 +1,6 @@
 use std::collections::VecDeque;
 
-use crate::algebra::{Point2f, Mat2x2f};
+use crate::algebra::{Mat2x2f, Point2f};
 use crate::bullet::{bullet_graphic_objects, Bullet, SimpleBullet};
 
 // SimpleCannon fires bullets with the same and constant speed
@@ -45,7 +45,12 @@ impl SimpleCannon {
         }
     }
 
-    pub fn tick(&mut self, host_p: Point2f, mut dt: f32, side_cannon_off: bool) -> VecDeque<Box<dyn Bullet>> {
+    pub fn tick(
+        &mut self,
+        host_p: Point2f,
+        mut dt: f32,
+        side_cannon_off: bool,
+    ) -> VecDeque<Box<dyn Bullet>> {
         const BULLET_RADIUS: f32 = 3.;
         const SIDE_CANNON_CD: u32 = 5;
         const SIDE_CANNON_RESET: u32 = 10;
@@ -61,8 +66,8 @@ impl SimpleCannon {
             } else {
                 dt -= self.fire_cd;
                 self.fire_cd = self.fire_interval;
-                for left_mid_right in if side_cannon_off ||
-                    self.side_cannon_angle > SIDE_CANNON_CD {
+                for left_mid_right in if side_cannon_off || self.side_cannon_angle > SIDE_CANNON_CD
+                {
                     0..1
                 } else {
                     -1..2
@@ -71,8 +76,8 @@ impl SimpleCannon {
                         self.p + host_p,
                         Point2f::from_polar(
                             self.vy,
-                            std::f32::consts::FRAC_PI_2 +
-                                angle_k * self.side_cannon_angle as f32 * left_mid_right as f32,
+                            std::f32::consts::FRAC_PI_2
+                                + angle_k * self.side_cannon_angle as f32 * left_mid_right as f32,
                         ),
                         Point2f::new(),
                         dt,

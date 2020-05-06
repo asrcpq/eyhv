@@ -97,7 +97,9 @@ Still in its early development stage
 
 * Visual effects
 
-	* [ ] Slowdown and health display
+	* [ ] Health display
+
+	* [ ] Slowdown display
 
 	* [ ] player being hit and reset cd
 

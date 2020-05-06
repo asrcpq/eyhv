@@ -102,13 +102,10 @@ mod wave_scheme_prototype {
         static ref LEFT_RIGHT_MEDIUM: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(
                 enemy_prototype::MEDIUM.clone(),
-                vec![(
-                    enemy_paths::LEFT_STRAIGHT_DOWN.clone(),
-                    vec![0.5],
-                ),(
-                    enemy_paths::RIGHT_STRAIGHT_DOWN.clone(),
-                    vec![2.5],
-                )]
+                vec![
+                    (enemy_paths::LEFT_STRAIGHT_DOWN.clone(), vec![0.5],),
+                    (enemy_paths::RIGHT_STRAIGHT_DOWN.clone(), vec![2.5],)
+                ]
             )],
             next_wave: 3.,
             difficulty_scaler: 1.3,
@@ -116,10 +113,7 @@ mod wave_scheme_prototype {
         static ref MID_LARGE1: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(
                 enemy_prototype::LARGE1.clone(),
-                vec![(
-                    enemy_paths::MID_STRAIGHT_DOWN.clone(),
-                    vec![1.],
-                )]
+                vec![(enemy_paths::MID_STRAIGHT_DOWN.clone(), vec![1.],)]
             )],
             next_wave: 4.,
             difficulty_scaler: 1.6,
@@ -133,10 +127,13 @@ mod wave_scheme_prototype {
                 enemies: vec![(
                     enemy_prototype::SMALL.clone(),
                     (1..7)
-                        .map(|x| (
-                            EnemyPath::generate_wanderer1(rng.gen::<u64>()),
-                            vec![x as f32 / 2.],
-                        )).collect(),
+                        .map(|x| {
+                            (
+                                EnemyPath::generate_wanderer1(rng.gen::<u64>()),
+                                vec![x as f32 / 2.],
+                            )
+                        })
+                        .collect(),
                 )],
                 next_wave: 1.,
                 difficulty_scaler: 1.,
@@ -179,15 +176,18 @@ mod wave_scheme_prototype {
                         for cannon in cloned_cannons.iter_mut() {
                             cannon.set_rng(rng.gen::<u64>());
                         }
-                        enemies.push((*dt, Enemy::new(
-                            path.clone(),
-                            enemy_prototype.speed,
-                            enemy_prototype.life,
-                            cloned_cannons,
-                            graphic_objects.clone(),
-                            enemy_prototype.hitboxes.clone(),
-                        )));
-                    };
+                        enemies.push((
+                            *dt,
+                            Enemy::new(
+                                path.clone(),
+                                enemy_prototype.speed,
+                                enemy_prototype.life,
+                                cloned_cannons,
+                                graphic_objects.clone(),
+                                enemy_prototype.hitboxes.clone(),
+                            ),
+                        ));
+                    }
                 }
             }
             enemies.sort_by(|a, b| a.0.partial_cmp(&b.0).unwrap());
@@ -195,7 +195,11 @@ mod wave_scheme_prototype {
         }
     }
 
-    pub fn random_mapper(seed: u64, difficulty: f32, last: Option<u32>) -> (Option<u32>, CompiledWave) {
+    pub fn random_mapper(
+        seed: u64,
+        difficulty: f32,
+        last: Option<u32>,
+    ) -> (Option<u32>, CompiledWave) {
         const SCHEME_SIZE: u32 = 9;
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
         let mut type_id = rng.gen_range(0, SCHEME_SIZE - 1);
@@ -208,20 +212,22 @@ mod wave_scheme_prototype {
                 }
             }
         }
-        (Some(type_id),
-        match type_id {
-            0 => WaveSchemePrototype::generate_wanderer1(rng.gen::<u64>())
-                .compile(rng.gen::<u64>(), difficulty),
-            1 => LEFT_DOWN_CHAIN.compile(rng.gen::<u64>(), difficulty),
-            2 => RIGHT_DOWN_CHAIN.compile(rng.gen::<u64>(), difficulty),
-            3 => LEFT_RIGHT_CHAIN.compile(rng.gen::<u64>(), difficulty),
-            4 => RIGHT_LEFT_CHAIN.compile(rng.gen::<u64>(), difficulty),
-            5 => LEFT_RIGHT_MEDIUM.compile(rng.gen::<u64>(), difficulty),
-            6 => CLOCKWISE_CHAIN.compile(rng.gen::<u64>(), difficulty),
-            7 => COUNTERCLOCKWISE_CHAIN.compile(rng.gen::<u64>(), difficulty),
-            8 => MID_LARGE1.compile(rng.gen::<u64>(), difficulty),
-            _ => unreachable!(),
-        })
+        (
+            Some(type_id),
+            match type_id {
+                0 => WaveSchemePrototype::generate_wanderer1(rng.gen::<u64>())
+                    .compile(rng.gen::<u64>(), difficulty),
+                1 => LEFT_DOWN_CHAIN.compile(rng.gen::<u64>(), difficulty),
+                2 => RIGHT_DOWN_CHAIN.compile(rng.gen::<u64>(), difficulty),
+                3 => LEFT_RIGHT_CHAIN.compile(rng.gen::<u64>(), difficulty),
+                4 => RIGHT_LEFT_CHAIN.compile(rng.gen::<u64>(), difficulty),
+                5 => LEFT_RIGHT_MEDIUM.compile(rng.gen::<u64>(), difficulty),
+                6 => CLOCKWISE_CHAIN.compile(rng.gen::<u64>(), difficulty),
+                7 => COUNTERCLOCKWISE_CHAIN.compile(rng.gen::<u64>(), difficulty),
+                8 => MID_LARGE1.compile(rng.gen::<u64>(), difficulty),
+                _ => unreachable!(),
+            },
+        )
     }
 }
 
@@ -233,10 +239,7 @@ pub struct CompiledWave {
 }
 
 impl CompiledWave {
-    pub fn new(
-        enemies: VecDeque<(f32, Enemy)>,
-        next_wave: f32,
-    ) -> CompiledWave {
+    pub fn new(enemies: VecDeque<(f32, Enemy)>, next_wave: f32) -> CompiledWave {
         CompiledWave {
             enemies,
             timer: 0.,
@@ -305,7 +308,7 @@ impl WaveGenerator {
                 for _ in 0..self.wave_queue.len() {
                     let mut wave = self.wave_queue.pop_front().unwrap();
                     match wave.tick(dt) {
-                        None => {},
+                        None => {}
                         Some(new_enemy_queue) => {
                             enemy_queue.extend(new_enemy_queue);
                             self.wave_queue.push_back(wave);
@@ -317,7 +320,7 @@ impl WaveGenerator {
                 for _ in 0..self.wave_queue.len() {
                     let mut wave = self.wave_queue.pop_front().unwrap();
                     match wave.tick(self.wave_cd) {
-                        None => {},
+                        None => {}
                         Some(new_enemy_queue) => {
                             enemy_queue.extend(new_enemy_queue);
                             self.wave_queue.push_back(wave);
@@ -332,8 +335,8 @@ impl WaveGenerator {
                 );
                 self.last_type = last_type;
                 self.wave_queue.push_back(compiled_wave);
-                self.wave_cd = self.wave_queue.back().unwrap().next_wave *
-                    (1. - self.difficulty / 1.6);
+                self.wave_cd =
+                    self.wave_queue.back().unwrap().next_wave * (1. - self.difficulty / 1.6);
             }
         }
         enemy_queue

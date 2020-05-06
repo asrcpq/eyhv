@@ -5,8 +5,8 @@ use rand::SeedableRng;
 
 use crate::algebra::{Mat2x2f, Point2f};
 use crate::bullet::{bullet_graphic_objects, Bullet, RotateBullet};
+use crate::cannon::{CannonControllerInterface, CannonGeneratorInterface};
 use crate::random_tools::simple_try;
-use crate::cannon::{CannonGeneratorInterface, CannonControllerInterface};
 
 const TRY_TIMES: u32 = 10;
 
@@ -116,10 +116,9 @@ impl CannonControllerInterface for Shotgun {
                     self.theta - self.open_angle / 2.,
                     self.theta + self.open_angle / 2.,
                 ));
-                let bullet_speed =
-                    normed_vec2f *
-                    self.bullet_speed *
-                    self.rng.as_mut().unwrap().gen_range(0.8, 1.2);
+                let bullet_speed = normed_vec2f
+                    * self.bullet_speed
+                    * self.rng.as_mut().unwrap().gen_range(0.8, 1.2);
                 bullet_queue.push_back(Box::new(RotateBullet::new(
                     self.p + host_p,
                     bullet_speed,
@@ -127,8 +126,7 @@ impl CannonControllerInterface for Shotgun {
                     dt,
                     BULLET_RADIUS,
                     rotate_matrix,
-                    bullet_graphic_objects::SQUARE
-                        .rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),
+                    bullet_graphic_objects::SQUARE.rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),
                 )));
             }
             self.fire_cd = self.fire_interval;

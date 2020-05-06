@@ -5,8 +5,8 @@ use rand::SeedableRng;
 
 use crate::algebra::{Mat2x2f, Point2f};
 use crate::bullet::{bullet_graphic_objects, Bullet, SimpleBullet};
+use crate::cannon::{CannonControllerInterface, CannonGeneratorInterface};
 use crate::random_tools::simple_try;
-use crate::cannon::{CannonGeneratorInterface, CannonControllerInterface};
 
 const TRY_TIMES: u32 = 10;
 
@@ -118,8 +118,7 @@ impl CannonControllerInterface for PlayerLocker {
                     Point2f::new(),
                     dt,
                     BULLET_RADIUS,
-                    bullet_graphic_objects::WEDGE
-                        .rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),
+                    bullet_graphic_objects::WEDGE.rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),
                 )));
             }
             self.fire_cd = self.fire_interval;

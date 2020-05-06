@@ -5,8 +5,8 @@ use rand::SeedableRng;
 
 use crate::algebra::{Mat2x2f, Point2f};
 use crate::bullet::{bullet_graphic_objects, Bullet, RotateBullet};
+use crate::cannon::{CannonControllerInterface, CannonGeneratorInterface};
 use crate::random_tools::simple_try;
-use crate::cannon::{CannonGeneratorInterface, CannonControllerInterface};
 
 const TRY_TIMES: u32 = 10;
 

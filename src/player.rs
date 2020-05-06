@@ -39,18 +39,8 @@ impl Player {
             last_p: p0,
             dp: Point2f::new(),
             cannons: vec![
-                SimpleCannon::new(
-                    Point2f::from_floats(-3., -5.),
-                    -2500.,
-                    0.05,
-                    false,
-                ),
-                SimpleCannon::new(
-                    Point2f::from_floats(3., -5.),
-                    -2500.,
-                    0.05,
-                    false,
-                ),
+                SimpleCannon::new(Point2f::from_floats(-3., -5.), -2500., 0.05, false),
+                SimpleCannon::new(Point2f::from_floats(3., -5.), -2500., 0.05, false),
             ],
             cannons_switch: false,
             graphic_objects: GraphicObjects::from_strs(vec![
@@ -102,7 +92,12 @@ impl Player {
         self.dp = dp;
     }
 
-    pub fn tick(&mut self, dt: f32, directions: [bool; 4], world_slowdown: bool) -> VecDeque<Box<dyn Bullet>> {
+    pub fn tick(
+        &mut self,
+        dt: f32,
+        directions: [bool; 4],
+        world_slowdown: bool,
+    ) -> VecDeque<Box<dyn Bullet>> {
         self.set_dp(directions);
         self.last_p = self.p;
         self.p += self.dp * dt;
@@ -138,8 +133,8 @@ impl Player {
         self.health > 0.
     }
 
-    pub fn get_health(&self) -> f32 {
-        self.health
+    pub fn get_health_percent(&self) -> f32 {
+        self.health as f32 / self.health_max as f32
     }
 
     pub fn hit_reset(&self) -> bool {

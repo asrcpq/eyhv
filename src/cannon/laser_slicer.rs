@@ -6,8 +6,8 @@ use rand::SeedableRng;
 
 use crate::algebra::{Mat2x2f, Point2f};
 use crate::bullet::{bullet_graphic_objects, Bullet, SimpleBullet};
+use crate::cannon::{CannonControllerInterface, CannonGeneratorInterface};
 use crate::random_tools::simple_try;
-use crate::cannon::{CannonGeneratorInterface, CannonControllerInterface};
 
 const TRY_TIMES: u32 = 10;
 
@@ -117,7 +117,8 @@ impl CannonControllerInterface for LaserSlicer {
                         .as_mut()
                         .unwrap()
                         .gen_range(-*RANGE_CONST, *RANGE_CONST)
-                        .powf(3.) + std::f32::consts::FRAC_PI_2;
+                        .powf(3.)
+                        + std::f32::consts::FRAC_PI_2;
                     self.phase_timer = 0.;
                     self.fire_cd = self.fire_interval;
                 }

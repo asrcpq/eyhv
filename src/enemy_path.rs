@@ -12,10 +12,14 @@ pub mod enemy_paths {
         pub static ref LEFT_STRAIGHT_DOWN: EnemyPath = EnemyPath::from_str("0.3 0 9 1 0.3 1 0 0");
         pub static ref MID_STRAIGHT_DOWN: EnemyPath = EnemyPath::from_str("0.5 0 9 1 0.5 1 0 0");
         pub static ref RIGHT_STRAIGHT_DOWN: EnemyPath = EnemyPath::from_str("0.7 0 9 1 0.7 1 0 0");
-        pub static ref CLOCKWISE_ROLL: EnemyPath = EnemyPath::from_str("0.3 0 2 1 0.2 0.4 1 1 0.3 0.6 5 1 1 0.7 0 0");
-        pub static ref COUNTERCLOCKWISE_ROLL: EnemyPath = EnemyPath::from_str("0.7 0 2 1 0.8 0.4 1 1 0.7 0.6 5 1 0 0.7 0 0");
-        pub static ref LEFT_DOWN_OUT: EnemyPath = EnemyPath::from_str("0.2 0 4 1 0.3 0.5 3 1 0 0.7 0 0");
-        pub static ref RIGHT_DOWN_OUT: EnemyPath = EnemyPath::from_str("0.8 0 4 1 0.7 0.5 3 1 1 0.7 0 0");
+        pub static ref CLOCKWISE_ROLL: EnemyPath =
+            EnemyPath::from_str("0.3 0 2 1 0.2 0.4 1 1 0.3 0.6 5 1 1 0.7 0 0");
+        pub static ref COUNTERCLOCKWISE_ROLL: EnemyPath =
+            EnemyPath::from_str("0.7 0 2 1 0.8 0.4 1 1 0.7 0.6 5 1 0 0.7 0 0");
+        pub static ref LEFT_DOWN_OUT: EnemyPath =
+            EnemyPath::from_str("0.2 0 4 1 0.3 0.5 3 1 0 0.7 0 0");
+        pub static ref RIGHT_DOWN_OUT: EnemyPath =
+            EnemyPath::from_str("0.8 0 4 1 0.7 0.5 3 1 1 0.7 0 0");
         pub static ref LEFT_RIGHT: EnemyPath = EnemyPath::from_str("0 0.1 6 1 1 0.2 0 0");
         pub static ref RIGHT_LEFT: EnemyPath = EnemyPath::from_str("1 0.1 6 1 0 0.2 0 0");
     }
@@ -40,11 +44,17 @@ impl EnemyPath {
         let stay_height: f32 = rng.gen_range(0.2, 0.3);
         let start_p = Point2f::from_floats(rng.gen_range(0., 1.), 0.);
         let stay_p = Point2f::from_floats(
-            rng.gen_range(0f32.max(start_p.x - MAX_SHIFT), 1f32.min(start_p.x + MAX_SHIFT)),
+            rng.gen_range(
+                0f32.max(start_p.x - MAX_SHIFT),
+                1f32.min(start_p.x + MAX_SHIFT),
+            ),
             stay_height,
         );
         let end_p = Point2f::from_floats(
-            rng.gen_range(0f32.max(stay_p.x - MAX_SHIFT), 1f32.min(stay_p.x + MAX_SHIFT)),
+            rng.gen_range(
+                0f32.max(stay_p.x - MAX_SHIFT),
+                1f32.min(stay_p.x + MAX_SHIFT),
+            ),
             0.,
         );
         route.push((start_p * *WINDOW_SIZE, 1., false));
@@ -90,12 +100,12 @@ impl EnemyPath {
         loop {
             let next_weight = self.route[self.index].1 - self.timer;
             if next_weight > 0. {
-                return Some(
-                    ((self.route[self.index].0 * next_weight
+                return Some((
+                    (self.route[self.index].0 * next_weight
                         + self.route[self.index + 1].0 * self.timer)
                         / self.route[self.index].1,
-                    self.route[self.index].2)
-                );
+                    self.route[self.index].2,
+                ));
             } else {
                 if self.index == self.route.len() - 2 {
                     return None;

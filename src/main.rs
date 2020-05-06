@@ -63,7 +63,8 @@ pub fn main() {
             Some(sdl2::pixels::PixelFormatEnum::RGB24),
             WINDOW_SIZE.x as u32,
             WINDOW_SIZE.y as u32,
-        ).unwrap();
+        )
+        .unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
 
     let mut last_time = SystemTime::now();
@@ -114,11 +115,9 @@ pub fn main() {
         session.tick(duration_secs);
         session.render();
 
-        texture.update(
-            None,
-            &session.canvas.data,
-            WINDOW_SIZE.x as usize * 3,
-        ).unwrap();
+        texture
+            .update(None, &session.canvas.data, WINDOW_SIZE.x as usize * 3)
+            .unwrap();
 
         canvas.set_draw_color(Color::RGB(0, 0, 0));
         canvas.clear();

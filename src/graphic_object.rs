@@ -116,9 +116,7 @@ impl LineSegs2f {
                     e -= 1.;
                 }
             }
-        }
-
-        else if k > -1. && k < 0. {
+        } else if k > -1. && k < 0. {
             let mut py = y1;
             for px in x1..x2 {
                 canvas.putpixel(px, py, [color[0], color[1], color[2], color[3] * (1. + e)]);
@@ -193,8 +191,8 @@ impl GraphicObject for LineSegs2f {
                 x1 = vertex.x;
                 y1 = vertex.y;
             } else {
-                x2  = vertex.x;
-                y2  = vertex.y;
+                x2 = vertex.x;
+                y2 = vertex.y;
                 LineSegs2f::wu(x1, y1, x2, y2, self.color, &mut canvas);
                 x1 = x2;
                 y1 = y2;
@@ -260,8 +258,8 @@ impl GraphicObject for Polygon2f {
                     starty: last_vertex.1,
                     endx: vertex_i32.0,
                     endy: vertex_i32.1,
-                    dxy: (vertex_i32.0 - last_vertex.0) as f32 /
-                        (vertex_i32.1 - last_vertex.1) as f32,
+                    dxy: (vertex_i32.0 - last_vertex.0) as f32
+                        / (vertex_i32.1 - last_vertex.1) as f32,
                     current_x: last_vertex.0 as f32,
                 })
             } else {
@@ -270,8 +268,8 @@ impl GraphicObject for Polygon2f {
                     starty: vertex_i32.1,
                     endx: last_vertex.0,
                     endy: last_vertex.1,
-                    dxy: (vertex_i32.0 - last_vertex.0) as f32 /
-                        (vertex_i32.1 - last_vertex.1) as f32,
+                    dxy: (vertex_i32.0 - last_vertex.0) as f32
+                        / (vertex_i32.1 - last_vertex.1) as f32,
                     current_x: vertex_i32.0 as f32,
                 })
             }
@@ -280,10 +278,7 @@ impl GraphicObject for Polygon2f {
 
         // from big to small, for pop_back
         edges.sort_by(|x, y| y.starty.partial_cmp(&x.starty).unwrap());
-        let mut pop_yend_list = edges
-            .iter()
-            .map(|x| x.endy)
-            .collect::<Vec<i32>>();
+        let mut pop_yend_list = edges.iter().map(|x| x.endy).collect::<Vec<i32>>();
         pop_yend_list.sort();
         let mut pop_p: usize = 0;
         // should use balanced tree for massive points
@@ -314,17 +309,12 @@ impl GraphicObject for Polygon2f {
             }
 
             if need_resort_flag {
-                sorted_processing_edges
-                    .sort_by(|x, y| x
-                        .startx
+                sorted_processing_edges.sort_by(|x, y| {
+                    x.startx
                         .partial_cmp(&y.startx)
                         .unwrap()
-                        .then(x
-                            .endx
-                            .partial_cmp(&y.endx)
-                            .unwrap()
-                        )
-                    );
+                        .then(x.endx.partial_cmp(&y.endx).unwrap())
+                });
             }
 
             let mut draw_on = false;
@@ -384,6 +374,50 @@ impl Polygon2f {
     }
 }
 
+// works for both counter/clockwise direction
+pub fn generate_arc_vertices(
+    center: Point2f,
+    r: f32,
+    theta: (f32, f32),
+) -> Vec<Point2f> {
+    const SPLIT_R_K: f32 = 0.5; // points every pixel length of arc
+    let split: u32 = ((theta.1 - theta.0).abs() * SPLIT_R_K * r) as u32;
+    let d_theta: f32 = (theta.1 - theta.0) / split as f32;
+    let mut theta_now = theta.0;
+    let mut vertices: Vec<Point2f> = Vec::new();
+    for _ in 0..split + 1 {
+        vertices.push(Point2f::from_polar(r, theta_now) + center);
+        theta_now += d_theta;
+    }
+    vertices
+}
+
+pub fn generate_thick_arc(
+    center: Point2f,
+    r: (f32, f32),
+    theta: (f32, f32),
+    border_color: Option<[f32; 4]>,
+    fill_color: Option<[f32; 4]>,
+) -> GraphicObjects {
+    let mut nodes = generate_arc_vertices(center, r.0, theta);
+    nodes.extend(generate_arc_vertices(center, r.1, (theta.1, theta.0)));
+    let mut graphic_objects: GraphicObjects = Default::default();
+    if let Some(fill_color) = fill_color {
+        graphic_objects.push(Box::new(Polygon2f {
+            vertices: nodes.clone(),
+            color: fill_color,
+        }));
+    }
+    nodes.push(nodes[0]);
+    if let Some(border_color) = border_color {
+        graphic_objects.push(Box::new(LineSegs2f {
+            vertices: nodes,
+            color: border_color,
+        }));
+    }
+    graphic_objects
+}
+
 #[derive(Clone, Default)]
 pub struct GraphicObjects {
     graphic_objects: Vec<Box<dyn GraphicObject>>,
@@ -418,6 +452,10 @@ impl GraphicObjects {
                 .map(|graphic_object| graphic_object.zoom(k))
                 .collect(),
         }
+    }
+
+    pub fn push(&mut self, element: Box<dyn GraphicObject>) {
+        self.graphic_objects.push(element);
     }
 
     pub fn extend(&mut self, other: GraphicObjects) {

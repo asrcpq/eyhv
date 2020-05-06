@@ -5,8 +5,8 @@ use rand::SeedableRng;
 
 use crate::algebra::{Mat2x2f, Point2f};
 use crate::bullet::{bullet_graphic_objects, Bullet, SimpleBullet};
+use crate::cannon::{CannonControllerInterface, CannonGeneratorInterface};
 use crate::random_tools::simple_try;
-use crate::cannon::{CannonGeneratorInterface, CannonControllerInterface};
 
 const TRY_TIMES: u32 = 10;
 
@@ -93,7 +93,12 @@ impl CannonControllerInterface for LaserLocker {
         }
     }
 
-    fn tick(&mut self, host_p: Point2f, player_p: Point2f, mut dt: f32) -> VecDeque<Box<dyn Bullet>> {
+    fn tick(
+        &mut self,
+        host_p: Point2f,
+        player_p: Point2f,
+        mut dt: f32,
+    ) -> VecDeque<Box<dyn Bullet>> {
         self.update_theta(player_p, host_p);
         let mut bullet_queue = VecDeque::new();
         const BULLET_RADIUS: f32 = 3.;

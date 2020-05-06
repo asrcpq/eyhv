@@ -32,7 +32,8 @@ mod enemy_graphic_objects {
             "l 1 1 1 0.5 -0.6 -0.1 -1.2 -0.1 -1.2 -1 -3 -1 -3 1 -1.2 1 -1.2 0.1 -0.6 0.1",
             "p 1 0.2 0.3 0.3 3 -1 3.5 -1 3.5 1 3 1",
             "p 1 0.2 0.3 0.3 -3 -1 -3.5 -1 -3.5 1 -3 1",
-        ]).zoom(15.);
+        ])
+        .zoom(15.);
         pub static ref LARGE1: GraphicObjects = GraphicObjects::from_strs(vec![
             "l 0.8 0.8 1 0.8 2.4 0.5 2.4 -1 -2.4 -1 -2.4 0.5 -3.2 1.5 3.2 1.5 2.4 0.5",
             "p 0.8 0.8 1 0.2 2.4 0.5 2.4 -1 -2.4 -1 -2.4 0.5 -3.2 1.5 3.2 1.5",
@@ -45,7 +46,8 @@ mod enemy_graphic_objects {
             "l 1 0.9 0.7 1 4 0 6 -2 6 -1 5 0.5 7 3 5 3 4 0.5 4 0",
             "p 1 0.8 0.6 0.2 4 0 6 -2 6 -1 5 0.5 7 3 5 3 4 0.5",
             "l 1 1 1 1 3.2 1.5 3.2 2.5 -3.2 2.5 -3.2 1.5 3.2 1.5",
-        ]).zoom(15.);
+        ])
+        .zoom(15.);
     }
 }
 
@@ -96,44 +98,43 @@ pub mod enemy_prototype {
             speed: 0.5,
             life: 15.,
             cannon_pits: vec![
-            vec![
-                Point2f::from_floats(-30., 0.),
-                Point2f::from_floats(30., 0.),
-            ], vec![
-                Point2f::from_floats(-30., 0.),
-                Point2f::from_floats(30., 0.),
-            ]],
+                vec![
+                    Point2f::from_floats(-30., 0.),
+                    Point2f::from_floats(30., 0.),
+                ],
+                vec![
+                    Point2f::from_floats(-30., 0.),
+                    Point2f::from_floats(30., 0.),
+                ]
+            ],
             hitboxes: vec![
                 Circle2f::from_floats(18., 0., 20.),
                 Circle2f::from_floats(-18., 0., 20.),
             ],
-            graphic_objects_options: vec![
-                enemy_graphic_objects::MEDIUM1.clone(),
-            ],
+            graphic_objects_options: vec![enemy_graphic_objects::MEDIUM1.clone(),],
         };
         pub static ref LARGE1: EnemyPrototype = EnemyPrototype {
             speed: 0.4,
             life: 100.,
             cannon_pits: vec![
-            vec![
-                Point2f::from_floats(-45., 30.),
-                Point2f::from_floats(-15., 30.),
-                Point2f::from_floats(15., 30.),
-                Point2f::from_floats(45., 30.),
-            ], vec![
-                Point2f::from_floats(-75., 20.),
-                Point2f::from_floats(75., 20.),
-            ], vec![
-                Point2f::from_floats(0., 0.),
-            ]],
+                vec![
+                    Point2f::from_floats(-45., 30.),
+                    Point2f::from_floats(-15., 30.),
+                    Point2f::from_floats(15., 30.),
+                    Point2f::from_floats(45., 30.),
+                ],
+                vec![
+                    Point2f::from_floats(-75., 20.),
+                    Point2f::from_floats(75., 20.),
+                ],
+                vec![Point2f::from_floats(0., 0.),]
+            ],
             hitboxes: vec![
                 Circle2f::from_floats(60., 0., 30.),
                 Circle2f::from_floats(-60., 0., 30.),
-                Circle2f::from_floats(0., 15.,  30.),
+                Circle2f::from_floats(0., 15., 30.),
             ],
-            graphic_objects_options: vec![
-                enemy_graphic_objects::LARGE1.clone(),
-            ],
+            graphic_objects_options: vec![enemy_graphic_objects::LARGE1.clone(),],
         };
     }
 }

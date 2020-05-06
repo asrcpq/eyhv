@@ -1,17 +1,17 @@
 use std::collections::VecDeque;
 
+mod laser_locker;
+mod laser_slicer;
 mod player_locker;
 mod rotor;
 mod shotgun;
-mod laser_locker;
-mod laser_slicer;
 pub mod simple_cannon;
 
+use laser_locker::LaserLocker;
+use laser_slicer::LaserSlicer;
 use player_locker::PlayerLocker;
 use rotor::Rotor;
 use shotgun::Shotgun;
-use laser_locker::LaserLocker;
-use laser_slicer::LaserSlicer;
 pub use simple_cannon::SimpleCannon;
 
 use dyn_clone::DynClone;
@@ -43,11 +43,23 @@ pub fn random_mapper(seed: u64, difficulty: f32) -> Box<dyn CannonControllerInte
     let correlation: f32 = 0.5;
     const CANNON_TYPES: u32 = 5;
     match rng.gen_range(0, CANNON_TYPES) {
-        0 => Box::new(PlayerLocker::generate(rng.gen::<u64>(), difficulty, correlation)),
+        0 => Box::new(PlayerLocker::generate(
+            rng.gen::<u64>(),
+            difficulty,
+            correlation,
+        )),
         1 => Box::new(Rotor::generate(rng.gen::<u64>(), difficulty, correlation)),
         2 => Box::new(Shotgun::generate(rng.gen::<u64>(), difficulty, correlation)),
-        3 => Box::new(LaserLocker::generate(rng.gen::<u64>(), difficulty, correlation)),
-        4 => Box::new(LaserSlicer::generate(rng.gen::<u64>(), difficulty, correlation)),
+        3 => Box::new(LaserLocker::generate(
+            rng.gen::<u64>(),
+            difficulty,
+            correlation,
+        )),
+        4 => Box::new(LaserSlicer::generate(
+            rng.gen::<u64>(),
+            difficulty,
+            correlation,
+        )),
         _ => unreachable!(),
     }
 }

@@ -13,7 +13,7 @@ impl Canvas {
             size,
         }
     }
-    
+
     pub fn flush(&mut self) {
         self.data = vec![0; (self.size.0 * self.size.1 * 3) as usize];
     }
@@ -26,8 +26,7 @@ impl Canvas {
         for i in 0usize..3usize {
             let pos = ((y * self.size.0 as i32 + x) * 3) as usize + i;
             self.data[pos] =
-                (self.data[pos] as f32 * (1. - color[3]) +
-                color[i] * 255. * color[3]) as u8;
+                (self.data[pos] as f32 * (1. - color[3]) + color[i] * 255. * color[3]) as u8;
         }
     }
 }
