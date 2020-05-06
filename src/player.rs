@@ -17,6 +17,7 @@ pub struct Player {
 
     // Static
     graphic_objects: GraphicObjects,
+    graphic_objects_hit: GraphicObjects,
 
     // params
     speed_fast: f32, // per second
@@ -45,6 +46,9 @@ impl Player {
             cannons_switch: false,
             graphic_objects: GraphicObjects::from_strs(vec![
                 "l 0.3 1.0 1.0 1.0 -10 8 0 -10 10 8 3 4 -3 4 -10 8",
+            ]),
+            graphic_objects_hit: GraphicObjects::from_strs(vec![
+                "l 1.0 0.3 0.3 1.0 -10 8 0 -10 10 8 3 4 -3 4 -10 8",
             ]),
             speed_fast: 600.0,
             speed_slow: 300.0,
@@ -114,6 +118,9 @@ impl Player {
     }
 
     pub fn graphic_objects_iter(&self) -> GraphicObjectsIntoIter {
+        if self.hit_reset() {
+            return self.graphic_objects_hit.shift(self.p).into_iter();
+        }
         self.graphic_objects.shift(self.p).into_iter()
     }
 
