@@ -270,36 +270,24 @@ pub struct WaveGenerator {
     rng: rand_pcg::Pcg64Mcg,
     wave_queue: VecDeque<CompiledWave>,
 
-    difficulty: f32,
-    difficulty_growth: f32,
-
     last_type: Option<u32>,
 }
 
 impl WaveGenerator {
-    pub fn new(seed: u64, difficulty: f32, difficulty_growth: f32) -> WaveGenerator {
+    pub fn new(seed: u64) -> WaveGenerator {
         WaveGenerator {
             wave_cd: 1.,
             rng: rand_pcg::Pcg64Mcg::seed_from_u64(seed),
             wave_queue: VecDeque::new(),
-            difficulty,
-            difficulty_growth,
             last_type: None,
         }
     }
 
-    pub fn get_difficulty(&self) -> f32 {
-        self.difficulty
-    }
-
-    pub fn tick(&mut self, mut dt: f32) -> VecDeque<Enemy> {
+    pub fn tick(&mut self, mut dt: f32, difficulty: f32) -> VecDeque<Enemy> {
         let mut enemy_queue: VecDeque<Enemy> = VecDeque::new();
         // while is necessary, considering enemy generated at last frame and first frame
         // may appear in one tick call
 
-        // difficulty added before dt changed
-        // not necessary to limit diffculty under 1.0
-        self.difficulty += self.difficulty_growth * dt;
         // print difficulty to stdout
         // use std::io::Write;
         // print!("{}\r", self.difficulty);
@@ -333,13 +321,13 @@ impl WaveGenerator {
                 dt -= self.wave_cd;
                 let (last_type, compiled_wave) = wave_scheme_prototype::random_mapper(
                     self.rng.gen::<u64>(),
-                    self.difficulty,
+                    difficulty,
                     self.last_type,
                 );
                 self.last_type = last_type;
                 self.wave_queue.push_back(compiled_wave);
                 self.wave_cd =
-                    self.wave_queue.back().unwrap().next_wave * (1. - self.difficulty / 1.6);
+                    self.wave_queue.back().unwrap().next_wave * (1. - difficulty / 1.6);
             }
         }
         enemy_queue

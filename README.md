@@ -16,10 +16,7 @@ Still in its early development stage
 
 ### Implementation
 
-* [x] Moving
-
-* [x] Restrict position
-
+* [x] Moving [x] Restrict position 
 * [x] Slowdown
 
 * [x] Color and transparency
@@ -95,19 +92,21 @@ Still in its early development stage
 
 	* [x] slowdown time consumption and recovery rate
 
-* Visual effects
+	* [x] difficulty increases slower when player health down
+
+* Visual effects(Raw)
 
 	* [x] Health display
 
 	* [x] Slowdown display
 
-	* [ ] player being hit and reset cd
-
-	* [ ] Draw collision box in slowdown mode
+	* [x] player being hit and reset cd
 
 	* [ ] Field background
 
 	* [ ] Destroy effect
+
+	* [ ] Visualize difficulty
 
 * Replay
 

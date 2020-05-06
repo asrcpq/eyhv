@@ -53,6 +53,9 @@ pub struct Session {
     enemy_pool: EnemyPool,
     enemy_bullet_pool: BulletPool,
 
+    difficulty: f32,
+    difficulty_growth: f32,
+
     wave_generator: WaveGenerator,
 
     // control
@@ -129,8 +132,8 @@ impl Session {
         };
         let difficulty_growth = match matches.value_of("difficulty growth") {
             None => {
-                println!("Using default difficulty growth rate 0.003");
-                0.003
+                println!("Using default difficulty growth rate 0.002");
+                0.002
             },
             Some(difficulty_growth) => difficulty_growth.parse::<f32>().unwrap(),
         };
@@ -147,7 +150,9 @@ impl Session {
             player_bullet_pool: BulletPool::new(),
             enemy_pool: EnemyPool::new(),
             enemy_bullet_pool: BulletPool::new(),
-            wave_generator: WaveGenerator::new(seed, start_difficulty, difficulty_growth),
+            difficulty: start_difficulty,
+            difficulty_growth,
+            wave_generator: WaveGenerator::new(seed),
             key_state: KeyState::new(),
             pause: false,
             slowdown_manager: SlowdownManager::new(),
@@ -180,20 +185,26 @@ impl Session {
         }
         self.time_manager.set_state(self.slowdown_manager.tick(dt));
         dt *= self.time_manager.update_and_get_dt_scaler(dt);
+
+        let player_health = self.player.get_health_percent();
+        // difficulty added before dt changed
+        // not necessary to limit diffculty under 1.0
+        self.difficulty += self.difficulty_growth * dt * player_health;
+
         self.player_bullet_pool.tick(dt);
         self.player_bullet_pool.extend(self.player.tick(
             dt,
             self.key_state.directions,
             self.time_manager.get_state(),
         ));
-        self.enemy_pool.extend(self.wave_generator.tick(dt));
+        self.enemy_pool.extend(self.wave_generator.tick(dt, self.difficulty));
         self.enemy_bullet_pool.tick(dt);
         self.enemy_bullet_pool
             .extend(self.enemy_pool.tick(dt, self.player.get_p()));
         let slowdown_info = self.slowdown_manager.get_info();
         self.status_bar.tick(
             dt,
-            self.player.get_health_percent(),
+            player_health,
             slowdown_info.0,
             slowdown_info.1,
             slowdown_info.2,
@@ -208,7 +219,7 @@ impl Session {
             )
             && !self.player.hit()
         {
-            println!("Died! final difficulty: {}", self.wave_generator.get_difficulty());
+            println!("Died! final difficulty: {}", self.difficulty);
         }
 
         // memleak monitor
