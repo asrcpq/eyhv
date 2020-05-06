@@ -45,7 +45,7 @@ impl CannonGeneratorInterface for LaserLocker {
         // difficulty = fire_duration * (bullet_speed / fire_interval)
         // fire_freq = fd(cd * (0.2 - 1)) / cd(1 - 3) / fi(infer)
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
-        let cycle_duration: f32 = rng.gen_range(2., 5.);
+        let cycle_duration: f32 = rng.gen_range(1., 2.);
         // k(fd / cd) * bs_ff^2
         let result = simple_try(
             TRY_TIMES,

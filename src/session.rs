@@ -59,12 +59,53 @@ pub struct Session {
 
 impl Session {
     pub fn new() -> Session {
+        use clap::{App, Arg};
+        let matches = App::new("eyhv: Shoot 'em up game inspired by PARSEC47")
+            .arg(
+                Arg::with_name("seed")
+                    .short("s")
+                    .long("seed")
+                    .takes_value(true)
+                    .help("random seed used"),
+            ).arg(
+                Arg::with_name("start difficulty")
+                    .short("d")
+                    .long("start-difficulty")
+                    .takes_value(true)
+                    .help("difficulty at start"),
+            ).arg(
+                Arg::with_name("difficulty growth")
+                    .short("g")
+                    .long("difficulty-growth")
+                    .takes_value(true)
+                    .help("difficulty growth per second"),
+            )
+            .get_matches();
+        let seed = match matches.value_of("seed") {
+            None => {
+                use rand::Rng;
+                use rand::SeedableRng;
+                let mut rng = rand_pcg::Pcg64Mcg::from_entropy();
+                let seed = rng.gen::<u64>();
+                println!("Seed generated: {}", seed);
+                seed
+            },
+            Some(seed) => seed.parse::<u64>().unwrap(),
+        };
+        let start_difficulty = match matches.value_of("start difficulty") {
+            None => 0.1,
+            Some(start_difficulty) => start_difficulty.parse::<f32>().unwrap(),
+        };
+        let difficulty_growth = match matches.value_of("difficulty growth") {
+            None => 0.001,
+            Some(difficulty_growth) => difficulty_growth.parse::<f32>().unwrap(),
+        };
         Session {
             player: Player::new(),
             player_bullet_pool: BulletPool::new(),
             enemy_pool: EnemyPool::new(),
             enemy_bullet_pool: BulletPool::new(),
-            wave_generator: WaveGenerator::new(12345),
+            wave_generator: WaveGenerator::new(seed, start_difficulty, difficulty_growth),
             key_state: KeyState::new(),
             pause: false,
             time_manager: TimeManager::new(),

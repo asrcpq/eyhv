@@ -87,17 +87,25 @@ Still in its early development stage
 
 * [x] PlayerCannon2
 
-* [ ] Game mechanism
+* Game mechanism
+
+	* [x] difficulty growth rate, start difficulty
+
+	* [ ] health recovery rate, full health
+
+	* [ ] slowdown time consumption and recovery rate
 
 * [ ] Visual effects
+
+	* [ ] Slowdown and health display
+
+	* [ ] player being hit and reset cd
 
 	* [ ] Draw collision box in slowdown mode
 
 	* [ ] Field background
 
 	* [ ] Destroy effect
-
-	* [ ] player hit
 
 ### Coding
 

@@ -30,7 +30,7 @@ pub struct Shotgun {
     theta: f32,
     open_angle: f32,
     count: u32,
-    rng: rand_pcg::Pcg64Mcg,
+    rng: Option<rand_pcg::Pcg64Mcg>,
 
     bullet_speed: f32,
 
@@ -66,7 +66,7 @@ impl CannonGeneratorInterface for Shotgun {
             theta: 0., // uninitialized
             open_angle,
             count: count as u32,
-            rng: rand_pcg::Pcg64Mcg::seed_from_u64(rng.gen::<u64>()),
+            rng: None,
             switch: true,
             bullet_speed,
             phase_timer: 0.,
@@ -112,11 +112,14 @@ impl CannonControllerInterface for Shotgun {
             }
             dt -= self.fire_cd;
             for _ in 0..self.count {
-                let normed_vec2f = Point2f::from_theta(self.rng.gen_range(
+                let normed_vec2f = Point2f::from_theta(self.rng.as_mut().unwrap().gen_range(
                     self.theta - self.open_angle / 2.,
                     self.theta + self.open_angle / 2.,
                 ));
-                let bullet_speed = normed_vec2f * self.bullet_speed * self.rng.gen_range(0.8, 1.2);
+                let bullet_speed =
+                    normed_vec2f *
+                    self.bullet_speed *
+                    self.rng.as_mut().unwrap().gen_range(0.8, 1.2);
                 bullet_queue.push_back(Box::new(RotateBullet::new(
                     self.p + host_p,
                     bullet_speed,
@@ -134,5 +137,9 @@ impl CannonControllerInterface for Shotgun {
 
     fn set_p(&mut self, p: Point2f) {
         self.p = p;
+    }
+
+    fn set_rng(&mut self, seed: u64) {
+        self.rng = Some(rand_pcg::Pcg64Mcg::seed_from_u64(seed));
     }
 }

@@ -81,7 +81,7 @@ mod test {
 
     #[test]
     fn test_simple_try() {
-        let result = simple_try(10, |x| x[0] + x[1], vec![(0., 1.), (0., 1.)], 1.5, 12345);
+        let result = simple_try(10, |x| x[0] + x[1], vec![(0., 1.), (0., 1.)], 0.5, 1.5, 12345);
         println!("{:?}", result);
         assert!(result[0] >= 0. && result[0] <= 1.);
         assert!(result[1] >= 0. && result[1] <= 1.);

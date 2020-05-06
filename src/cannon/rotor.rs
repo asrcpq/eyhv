@@ -38,7 +38,7 @@ impl CannonGeneratorInterface for Rotor {
         let generated = simple_try(
             TRY_TIMES,
             |x| x[0] / x[1],
-            vec![(100., 300.), (0.2, 0.01)], // 1000-40000
+            vec![(100., 600.), (0.2, 0.03)], // 1000-40000
             correlation,
             difficulty,
             rng.gen::<u64>(),

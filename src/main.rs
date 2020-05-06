@@ -39,6 +39,8 @@ fn find_sdl_gl_driver() -> Option<u32> {
 }
 
 pub fn main() {
+    let mut session = Session::new();
+
     let sdl_context = sdl2::init().unwrap();
     let video_subsystem = sdl_context.video().unwrap();
 
@@ -63,8 +65,6 @@ pub fn main() {
             WINDOW_SIZE.y as u32,
         ).unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
-
-    let mut session = Session::new();
 
     let mut last_time = SystemTime::now();
     'running: loop {
