@@ -1,3 +1,4 @@
+use crate::background::Background;
 use crate::bullet_pool::BulletPool;
 use crate::canvas::Canvas;
 use crate::collision::{collision_enemy, collision_player};
@@ -17,6 +18,7 @@ pub struct SessionGraphicObjectsIter {
     enemy_iter: GraphicObjectsIntoIter,
     enemy_bullet_iter: GraphicObjectsIntoIter,
     statusbar_iter: GraphicObjectsIntoIter,
+    background_iter: GraphicObjectsIntoIter,
 }
 
 impl Iterator for SessionGraphicObjectsIter {
@@ -43,6 +45,10 @@ impl Iterator for SessionGraphicObjectsIter {
             None => {}
             option => return option,
         }
+        match self.background_iter.next() {
+            None => {}
+            option => return option,
+        }
         None
     }
 }
@@ -65,6 +71,7 @@ pub struct Session {
     slowdown_manager: SlowdownManager,
     time_manager: TimeManager,
     status_bar: StatusBar,
+    background: Background,
 
     pub canvas: Canvas,
 
@@ -158,6 +165,7 @@ impl Session {
             slowdown_manager: SlowdownManager::new(),
             time_manager: TimeManager::new(),
             status_bar: StatusBar::new(),
+            background: Background::new(),
             canvas: Canvas::new((WINDOW_SIZE.x as u32, WINDOW_SIZE.y as u32)),
             session_info: (
                 seed,
@@ -176,6 +184,7 @@ impl Session {
             enemy_iter: self.enemy_pool.graphic_objects_iter(),
             enemy_bullet_iter: self.enemy_bullet_pool.graphic_objects_iter(),
             statusbar_iter: self.status_bar.graphic_objects_iter(),
+            background_iter: self.background.graphic_objects_iter(),
         }
     }
 
@@ -210,6 +219,7 @@ impl Session {
             slowdown_info.2,
             self.player.get_p(),
         );
+        self.background.tick(dt);
         collision_enemy(&mut self.enemy_pool, &mut self.player_bullet_pool);
         if !self.player.hit_reset()
             && collision_player(

@@ -3,6 +3,7 @@ extern crate rand_pcg;
 extern crate sdl2;
 
 mod algebra;
+mod background;
 mod bullet;
 mod bullet_pool;
 mod cannon;

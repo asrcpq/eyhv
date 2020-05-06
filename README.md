@@ -111,7 +111,7 @@ Still in its early development stage
 
 	* [ ] Visualize difficulty
 
-* Replay
+* [ ] Replay
 
 ### Coding
 
