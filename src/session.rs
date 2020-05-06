@@ -6,6 +6,7 @@ use crate::graphic_object::{GraphicObject, GraphicObjectsIntoIter, generate_thic
 use crate::key_state::KeyState;
 use crate::player::Player;
 use crate::time_manager::TimeManager;
+use crate::slowdown_manager::SlowdownManager;
 use crate::wave_generator::WaveGenerator;
 use crate::window_rect::WINDOW_SIZE;
 
@@ -57,6 +58,7 @@ pub struct Session {
     key_state: KeyState,
     pause: bool,
 
+    slowdown_manager: SlowdownManager,
     time_manager: TimeManager,
 
     pub canvas: Canvas,
@@ -140,6 +142,7 @@ impl Session {
             wave_generator: WaveGenerator::new(seed, start_difficulty, difficulty_growth),
             key_state: KeyState::new(),
             pause: false,
+            slowdown_manager: SlowdownManager::new(),
             time_manager: TimeManager::new(),
             canvas: Canvas::new((WINDOW_SIZE.x as u32, WINDOW_SIZE.y as u32)),
             session_info: (
@@ -163,7 +166,7 @@ impl Session {
                 (83., 95.),
                 (0., &self.player.get_health_percent() * 2. * std::f32::consts::PI),
                 None,
-                Some([1., 0.4, 0.4, 0.3]),
+                Some([0.2, 0.5, 1.0, 0.3]),
             ).into_iter(),
         }
     }
@@ -172,6 +175,7 @@ impl Session {
         if self.pause {
             return;
         }
+        self.time_manager.set_state(self.slowdown_manager.tick(dt));
         dt *= self.time_manager.update_and_get_dt_scaler(dt);
         self.player_bullet_pool.tick(dt);
         self.player_bullet_pool.extend(self.player.tick(
@@ -210,7 +214,7 @@ impl Session {
 
     pub fn proc_key(&mut self, key_id: i8, updown: bool) {
         if key_id == 4 {
-            self.time_manager.set_state(updown);
+            self.slowdown_manager.switch(updown);
         } else if key_id == 5 {
             self.player.switch_cannons(updown);
         } else if key_id == 6 {

@@ -16,6 +16,7 @@ mod key_state;
 mod player;
 mod random_tools;
 mod session;
+mod slowdown_manager;
 mod time_manager;
 mod wave_generator;
 mod window_rect;
