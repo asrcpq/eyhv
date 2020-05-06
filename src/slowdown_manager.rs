@@ -1,5 +1,3 @@
-use crate::graphic_object::GraphicObjects;
-
 pub struct SlowdownManager {
     quick: f32,
     slow: f32,
@@ -7,7 +5,6 @@ pub struct SlowdownManager {
     quick_max: f32,
     slow_max: f32,
     // cannot use slow pool if under threshold value
-    slow_thresh: f32,
     quick_replenish_rate: f32,
     slow_replenish_rate: f32,
 }
@@ -22,7 +19,6 @@ impl SlowdownManager {
             slowing: false,
             quick_max: QUICK_MAX,
             slow_max: SLOW_MAX,
-            slow_thresh: 1.,
             quick_replenish_rate: 1.,
             slow_replenish_rate: 0.3,
         }
@@ -73,5 +69,9 @@ impl SlowdownManager {
             self.slow = self.slow_max.min(self.slow + dt * self.slow_replenish_rate);
         }
         false
+    }
+
+    pub fn get_info(&self) -> (f32, f32, bool) {
+        (self.quick / self.quick_max, self.slow / self.slow_max, self.slowing)
     }
 }

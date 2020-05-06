@@ -17,6 +17,7 @@ mod player;
 mod random_tools;
 mod session;
 mod slowdown_manager;
+mod status_bar;
 mod time_manager;
 mod wave_generator;
 mod window_rect;

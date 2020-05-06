@@ -93,13 +93,13 @@ Still in its early development stage
 
 	* [x] health recovery rate, full health
 
-	* [ ] slowdown time consumption and recovery rate
+	* [x] slowdown time consumption and recovery rate
 
 * Visual effects
 
-	* [ ] Health display
+	* [x] Health display
 
-	* [ ] Slowdown display
+	* [x] Slowdown display
 
 	* [ ] player being hit and reset cd
 

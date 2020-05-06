@@ -288,7 +288,10 @@ impl WaveGenerator {
         }
     }
 
-    // dummy
+    pub fn get_difficulty(&self) -> f32 {
+        self.difficulty
+    }
+
     pub fn tick(&mut self, mut dt: f32) -> VecDeque<Enemy> {
         let mut enemy_queue: VecDeque<Enemy> = VecDeque::new();
         // while is necessary, considering enemy generated at last frame and first frame

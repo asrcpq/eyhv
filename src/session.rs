@@ -7,6 +7,7 @@ use crate::key_state::KeyState;
 use crate::player::Player;
 use crate::time_manager::TimeManager;
 use crate::slowdown_manager::SlowdownManager;
+use crate::status_bar::StatusBar;
 use crate::wave_generator::WaveGenerator;
 use crate::window_rect::WINDOW_SIZE;
 
@@ -15,7 +16,7 @@ pub struct SessionGraphicObjectsIter {
     player_bullet_iter: GraphicObjectsIntoIter,
     enemy_iter: GraphicObjectsIntoIter,
     enemy_bullet_iter: GraphicObjectsIntoIter,
-    healthbar_iter: GraphicObjectsIntoIter,
+    statusbar_iter: GraphicObjectsIntoIter,
 }
 
 impl Iterator for SessionGraphicObjectsIter {
@@ -38,7 +39,7 @@ impl Iterator for SessionGraphicObjectsIter {
             None => {}
             option => return option,
         }
-        match self.healthbar_iter.next() {
+        match self.statusbar_iter.next() {
             None => {}
             option => return option,
         }
@@ -60,6 +61,7 @@ pub struct Session {
 
     slowdown_manager: SlowdownManager,
     time_manager: TimeManager,
+    status_bar: StatusBar,
 
     pub canvas: Canvas,
 
@@ -119,11 +121,17 @@ impl Session {
             Some(seed) => seed.parse::<u64>().unwrap(),
         };
         let start_difficulty = match matches.value_of("start difficulty") {
-            None => 0.1,
+            None => {
+                println!("Using default start difficulty 0.1");
+                0.1
+            },
             Some(start_difficulty) => start_difficulty.parse::<f32>().unwrap(),
         };
         let difficulty_growth = match matches.value_of("difficulty growth") {
-            None => 0.001,
+            None => {
+                println!("Using default difficulty growth rate 0.003");
+                0.003
+            },
             Some(difficulty_growth) => difficulty_growth.parse::<f32>().unwrap(),
         };
         let health_max = match matches.value_of("health max") {
@@ -144,6 +152,7 @@ impl Session {
             pause: false,
             slowdown_manager: SlowdownManager::new(),
             time_manager: TimeManager::new(),
+            status_bar: StatusBar::new(),
             canvas: Canvas::new((WINDOW_SIZE.x as u32, WINDOW_SIZE.y as u32)),
             session_info: (
                 seed,
@@ -161,13 +170,7 @@ impl Session {
             player_bullet_iter: self.player_bullet_pool.graphic_objects_iter(),
             enemy_iter: self.enemy_pool.graphic_objects_iter(),
             enemy_bullet_iter: self.enemy_bullet_pool.graphic_objects_iter(),
-            healthbar_iter: generate_thick_arc(
-                self.player.get_p(),
-                (83., 95.),
-                (0., &self.player.get_health_percent() * 2. * std::f32::consts::PI),
-                None,
-                Some([0.2, 0.5, 1.0, 0.3]),
-            ).into_iter(),
+            statusbar_iter: self.status_bar.graphic_objects_iter(),
         }
     }
 
@@ -187,6 +190,15 @@ impl Session {
         self.enemy_bullet_pool.tick(dt);
         self.enemy_bullet_pool
             .extend(self.enemy_pool.tick(dt, self.player.get_p()));
+        let slowdown_info = self.slowdown_manager.get_info();
+        self.status_bar.tick(
+            dt,
+            self.player.get_health_percent(),
+            slowdown_info.0,
+            slowdown_info.1,
+            slowdown_info.2,
+            self.player.get_p(),
+        );
         collision_enemy(&mut self.enemy_pool, &mut self.player_bullet_pool);
         if !self.player.hit_reset()
             && collision_player(
@@ -196,7 +208,7 @@ impl Session {
             )
             && !self.player.hit()
         {
-            println!("Died!");
+            println!("Died! final difficulty: {}", self.wave_generator.get_difficulty());
         }
 
         // memleak monitor
