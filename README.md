@@ -16,7 +16,10 @@ Still in its early development stage
 
 ### Implementation
 
-* [x] Moving [x] Restrict position 
+* [x] Moving
+
+* [x] Restrict position 
+
 * [x] Slowdown
 
 * [x] Color and transparency
