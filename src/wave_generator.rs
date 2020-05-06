@@ -127,6 +127,22 @@ mod wave_scheme_prototype {
     }
 
     impl WaveSchemePrototype {
+        fn generate_wanderer1(seed: u64) -> WaveSchemePrototype {
+            let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
+            WaveSchemePrototype {
+                enemies: vec![(
+                    enemy_prototype::SMALL.clone(),
+                    (1..7)
+                        .map(|x| (
+                            EnemyPath::generate_wanderer1(rng.gen::<u64>()),
+                            vec![x as f32 / 2.],
+                        )).collect(),
+                )],
+                next_wave: 1.5,
+                difficulty_scaler: 1.,
+            }
+        }
+
         pub fn compile(&self, seed: u64, difficulty: f32) -> CompiledWave {
             let mut enemies: Vec<(f32, Enemy)> = Vec::new();
 
@@ -180,17 +196,19 @@ mod wave_scheme_prototype {
     }
 
     pub fn random_mapper(seed: u64, difficulty: f32) -> CompiledWave {
-        const SCHEME_SIZE: u32 = 8;
+        const SCHEME_SIZE: u32 = 9;
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
         match rng.gen_range(0, SCHEME_SIZE) {
-            0 => LEFT_DOWN_CHAIN.compile(rng.gen::<u64>(), difficulty),
-            1 => RIGHT_DOWN_CHAIN.compile(rng.gen::<u64>(), difficulty),
-            2 => LEFT_RIGHT_CHAIN.compile(rng.gen::<u64>(), difficulty),
-            3 => RIGHT_LEFT_CHAIN.compile(rng.gen::<u64>(), difficulty),
-            4 => LEFT_RIGHT_MEDIUM.compile(rng.gen::<u64>(), difficulty),
-            5 => CLOCKWISE_CHAIN.compile(rng.gen::<u64>(), difficulty),
-            6 => COUNTERCLOCKWISE_CHAIN.compile(rng.gen::<u64>(), difficulty),
-            7 => MID_LARGE1.compile(rng.gen::<u64>(), difficulty),
+            0 => WaveSchemePrototype::generate_wanderer1(rng.gen::<u64>())
+                .compile(rng.gen::<u64>(), difficulty),
+            1 => LEFT_DOWN_CHAIN.compile(rng.gen::<u64>(), difficulty),
+            2 => RIGHT_DOWN_CHAIN.compile(rng.gen::<u64>(), difficulty),
+            3 => LEFT_RIGHT_CHAIN.compile(rng.gen::<u64>(), difficulty),
+            4 => RIGHT_LEFT_CHAIN.compile(rng.gen::<u64>(), difficulty),
+            5 => LEFT_RIGHT_MEDIUM.compile(rng.gen::<u64>(), difficulty),
+            6 => CLOCKWISE_CHAIN.compile(rng.gen::<u64>(), difficulty),
+            7 => COUNTERCLOCKWISE_CHAIN.compile(rng.gen::<u64>(), difficulty),
+            8 => MID_LARGE1.compile(rng.gen::<u64>(), difficulty),
             _ => unreachable!(),
         }
     }
@@ -281,7 +299,7 @@ impl WaveGenerator {
                 dt -= self.wave_cd;
                 self.wave_queue.push_back(wave_scheme_prototype::random_mapper(
                     self.rng.gen::<u64>(),
-                    0.08,
+                    0.12,
                 ));
                 self.wave_cd = self.wave_queue.back().unwrap().next_wave;
             }

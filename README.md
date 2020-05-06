@@ -63,11 +63,11 @@ Still in its early development stage
 
 	* [x] New EnemyPrototype: Large1
 
+	* [x] New path: wanderers
+
 	* [ ] New Cannon: Sweeper
 
 	* [ ] New Cannon: Ring
-
-	* [ ] New path: wanderers
 
 * [x] Pause
 
