@@ -55,6 +55,9 @@ pub struct Session {
     time_manager: TimeManager,
 
     pub canvas: Canvas,
+
+    #[allow(dead_code)]
+    session_info: (u64, f32, f32, f32, f32),
 }
 
 impl Session {
@@ -79,6 +82,18 @@ impl Session {
                     .long("difficulty-growth")
                     .takes_value(true)
                     .help("difficulty growth per second"),
+            ).arg(
+                Arg::with_name("health max")
+                    .short("h")
+                    .long("health-max")
+                    .takes_value(true)
+                    .help("max healyh"),
+            ).arg(
+                Arg::with_name("health regen")
+                    .short("r")
+                    .long("health-rengen")
+                    .takes_value(true)
+                    .help("regeneration of health per second"),
             )
             .get_matches();
         let seed = match matches.value_of("seed") {
@@ -100,8 +115,16 @@ impl Session {
             None => 0.001,
             Some(difficulty_growth) => difficulty_growth.parse::<f32>().unwrap(),
         };
+        let health_max = match matches.value_of("health max") {
+            None => 10.,
+            Some(health_max) => health_max.parse::<f32>().unwrap(),
+        };
+        let health_regen = match matches.value_of("health regen") {
+            None => 0.07,
+            Some(health_regen) => health_regen.parse::<f32>().unwrap(),
+        };
         Session {
-            player: Player::new(),
+            player: Player::new(health_max, health_regen),
             player_bullet_pool: BulletPool::new(),
             enemy_pool: EnemyPool::new(),
             enemy_bullet_pool: BulletPool::new(),
@@ -110,6 +133,11 @@ impl Session {
             pause: false,
             time_manager: TimeManager::new(),
             canvas: Canvas::new((WINDOW_SIZE.x as u32, WINDOW_SIZE.y as u32)),
+            session_info: (
+                seed,
+                start_difficulty, difficulty_growth,
+                health_max, health_regen,
+            ),
         }
     }
 
@@ -143,9 +171,13 @@ impl Session {
             self.player.get_p(),
             self.player.get_last_p(),
             &mut self.enemy_bullet_pool,
-        ) {
-            self.player.hit();
+        ) && !self.player.hit() {
+            println!("Died!");
         }
+
+        use std::io::Write;
+        print!("{}\r", self.player.get_health());
+        std::io::stdout().flush().unwrap();
 
         // memleak monitor
         // println!(

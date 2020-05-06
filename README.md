@@ -78,7 +78,7 @@ Still in its early development stage
 	* [x] Fix lag decrease hit possibility
 	
 	* [x] Fix overlapping of waves
-	
+
 * [x] Player moves faster when not firing
 
 * [x] Player hit reset
@@ -91,11 +91,11 @@ Still in its early development stage
 
 	* [x] difficulty growth rate, start difficulty
 
-	* [ ] health recovery rate, full health
+	* [x] health recovery rate, full health
 
 	* [ ] slowdown time consumption and recovery rate
 
-* [ ] Visual effects
+* Visual effects
 
 	* [ ] Slowdown and health display
 
@@ -106,6 +106,8 @@ Still in its early development stage
 	* [ ] Field background
 
 	* [ ] Destroy effect
+
+* Replay
 
 ### Coding
 

@@ -295,9 +295,9 @@ impl WaveGenerator {
         // not necessary to limit diffculty under 1.0
         self.difficulty += self.difficulty_growth * dt;
         // print difficulty to stdout
-        use std::io::Write;
-        print!("{}\r", self.difficulty);
-        std::io::stdout().flush().unwrap();
+        // use std::io::Write;
+        // print!("{}\r", self.difficulty);
+        // std::io::stdout().flush().unwrap();
 
         while dt > 0. {
             if self.wave_cd > dt {

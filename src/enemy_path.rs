@@ -71,7 +71,7 @@ impl EnemyPath {
                     Point2f::from_floats(*f1, *iter.next().unwrap()) * *WINDOW_SIZE
                         + WINDOW_RECT.lu,
                     *iter.next().unwrap(),
-                    *iter.next().unwrap() == 1.,
+                    *iter.next().unwrap() > 0.5, // actually it is equal 1.0
                 ));
                 true
             }
