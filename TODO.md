@@ -95,6 +95,8 @@
 
 	* [ ] Visualize difficulty
 
+	* [ ] Hitboxes
+
 * Replay
 
 	* [x] Replay

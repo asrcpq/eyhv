@@ -16,7 +16,8 @@ Player's performance is evaluated by final global difficulty at death.
 * Minimalist design(game mechanism and design style):
 No bombs, drop items, etc.
 
-* Randomly generated and reproducible(by replay files) stages
+* Randomly generated and reproducible(by seed number) stages.
+Game replay is automatically saved.
 
 * Time in game always synchronized: player will suffer, not benefit from low FPS
 
