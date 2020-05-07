@@ -11,8 +11,11 @@ pub struct Background {
 impl Background {
     pub fn new() -> Background {
         Background {
-            warp_rails_l: (Point2f::from_floats(-0.5, 0.5,), Point2f::from_floats(0., 0.)),
-            warp_rails_r: (Point2f::from_floats(0.5, 1.5,), Point2f::from_floats(1., 1.)),
+            warp_rails_l: (
+                Point2f::from_floats(-0.5, 0.5),
+                Point2f::from_floats(0., 0.),
+            ),
+            warp_rails_r: (Point2f::from_floats(0.5, 1.5), Point2f::from_floats(1., 1.)),
             timer: 0.,
             cycle: 1.,
         }

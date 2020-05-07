@@ -326,8 +326,7 @@ impl WaveGenerator {
                 );
                 self.last_type = last_type;
                 self.wave_queue.push_back(compiled_wave);
-                self.wave_cd =
-                    self.wave_queue.back().unwrap().next_wave * (1. - difficulty / 1.6);
+                self.wave_cd = self.wave_queue.back().unwrap().next_wave * (1. - difficulty / 1.6);
             }
         }
         enemy_queue

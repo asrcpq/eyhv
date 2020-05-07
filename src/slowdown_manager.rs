@@ -64,7 +64,9 @@ impl SlowdownManager {
         }
 
         if self.quick < self.quick_max {
-            self.quick = self.quick_max.min(self.quick + dt * self.quick_replenish_rate);
+            self.quick = self
+                .quick_max
+                .min(self.quick + dt * self.quick_replenish_rate);
         } else {
             self.slow = self.slow_max.min(self.slow + dt * self.slow_replenish_rate);
         }
@@ -72,6 +74,10 @@ impl SlowdownManager {
     }
 
     pub fn get_info(&self) -> (f32, f32, bool) {
-        (self.quick / self.quick_max, self.slow / self.slow_max, self.slowing)
+        (
+            self.quick / self.quick_max,
+            self.slow / self.slow_max,
+            self.slowing,
+        )
     }
 }

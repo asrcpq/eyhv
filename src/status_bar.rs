@@ -1,5 +1,5 @@
 use crate::algebra::Point2f;
-use crate::graphic_object::{GraphicObjectsIntoIter, generate_thick_arc};
+use crate::graphic_object::{generate_thick_arc, GraphicObjectsIntoIter};
 
 // this is used for visualize, calculation only works as effects
 pub struct StatusBar {
@@ -10,6 +10,7 @@ pub struct StatusBar {
     slowing: bool,
     shift: f32,
     player_p: Point2f,
+    self_p: Point2f,
 
     rs: [f32; 3],
     rs_small: [f32; 3],
@@ -21,7 +22,7 @@ pub struct StatusBar {
 impl StatusBar {
     pub fn new() -> StatusBar {
         let rs_small = [70., 80., 90.];
-        let rs_large = [140., 155., 170.];
+        let rs_large = [180., 195., 210.];
         StatusBar {
             // these data should never be used
             health_percent: 0.,
@@ -30,13 +31,14 @@ impl StatusBar {
             slowing: false,
             shift: 0.,
             player_p: Point2f::new(),
+            self_p: Point2f::from_floats(250., 700.),
             rs: rs_small,
             rs_small,
             rs_large,
             split_angle: std::f32::consts::FRAC_PI_2,
         }
     }
-    
+
     pub fn tick(
         &mut self,
         dt: f32,
@@ -50,6 +52,7 @@ impl StatusBar {
         self.quick_percent = quick_percent;
         self.slow_percent = slow_percent;
         self.player_p = player_p;
+        self.self_p += (player_p - self.self_p) * dt * 20.;
         for i in 0..3 {
             self.rs[i] = self.rs_small[i] * (1. - self.shift) + self.rs_large[i] * self.shift;
         }
@@ -69,25 +72,41 @@ impl StatusBar {
         const QUICK_SPLIT: f32 = 2. / 9. * std::f32::consts::PI;
         const SLOW_SPLIT: f32 = 16. / 9. * std::f32::consts::PI;
         let mut graphic_objects = generate_thick_arc(
-            self.player_p,
+            self.self_p,
             (self.rs[0], self.rs[1]),
             (0., &self.health_percent * 2. * std::f32::consts::PI),
             None,
-            Some([if self.health_percent > 0.99 {0.4} else {1.0}, 0.4, 0.4, 0.3]),
+            Some([
+                if self.health_percent > 0.99 { 0.4 } else { 0.7 },
+                0.4,
+                0.4,
+                0.3,
+            ]),
         );
         graphic_objects.extend(generate_thick_arc(
-            self.player_p,
+            self.self_p,
             (self.rs[1], self.rs[2]),
-            (self.split_angle, self.split_angle - &self.quick_percent * QUICK_SPLIT),
+            (
+                self.split_angle,
+                self.split_angle - &self.quick_percent * QUICK_SPLIT,
+            ),
             None,
-            Some([0.4, 1.0, 0.3, if self.quick_percent > 0.99 {0.2} else {0.4}]),
+            Some([
+                0.4,
+                1.0,
+                0.3,
+                if self.quick_percent > 0.99 { 0.2 } else { 0.4 },
+            ]),
         ));
         graphic_objects.extend(generate_thick_arc(
-            self.player_p,
+            self.self_p,
             (self.rs[1], self.rs[2]),
-            (self.split_angle, self.split_angle + &self.slow_percent * SLOW_SPLIT),
+            (
+                self.split_angle,
+                self.split_angle + &self.slow_percent * SLOW_SPLIT,
+            ),
             None,
-            Some([0.5, 0.3, 1.0, 0.4]),
+            Some([0.5, 0.3, 1.0, 0.4 + 0.3 * self.shift]),
         ));
         graphic_objects.into_iter()
     }

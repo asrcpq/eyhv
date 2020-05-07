@@ -3,12 +3,12 @@ use crate::bullet_pool::BulletPool;
 use crate::canvas::Canvas;
 use crate::collision::{collision_enemy, collision_player};
 use crate::enemy_pool::EnemyPool;
-use crate::graphic_object::{GraphicObject, GraphicObjectsIntoIter, generate_thick_arc};
+use crate::graphic_object::{generate_thick_arc, GraphicObject, GraphicObjectsIntoIter};
 use crate::key_state::KeyState;
 use crate::player::Player;
-use crate::time_manager::TimeManager;
 use crate::slowdown_manager::SlowdownManager;
 use crate::status_bar::StatusBar;
+use crate::time_manager::TimeManager;
 use crate::wave_generator::WaveGenerator;
 use crate::window_rect::WINDOW_SIZE;
 
@@ -134,14 +134,14 @@ impl Session {
             None => {
                 println!("Using default start difficulty 0.1");
                 0.1
-            },
+            }
             Some(start_difficulty) => start_difficulty.parse::<f32>().unwrap(),
         };
         let difficulty_growth = match matches.value_of("difficulty growth") {
             None => {
                 println!("Using default difficulty growth rate 0.002");
                 0.002
-            },
+            }
             Some(difficulty_growth) => difficulty_growth.parse::<f32>().unwrap(),
         };
         let health_max = match matches.value_of("health max") {
@@ -206,7 +206,8 @@ impl Session {
             self.key_state.directions,
             self.time_manager.get_state(),
         ));
-        self.enemy_pool.extend(self.wave_generator.tick(dt, self.difficulty));
+        self.enemy_pool
+            .extend(self.wave_generator.tick(dt, self.difficulty));
         self.enemy_bullet_pool.tick(dt);
         self.enemy_bullet_pool
             .extend(self.enemy_pool.tick(dt, self.player.get_p()));
@@ -268,8 +269,8 @@ impl Session {
 
     #[allow(dead_code)]
     pub fn test_render(&mut self) {
-        use crate::graphic_object::{LineSegs2f, Polygon2f};
         use crate::algebra::Point2f;
+        use crate::graphic_object::{LineSegs2f, Polygon2f};
         self.canvas.flush();
         let split = 90;
         for k in 0..split {
@@ -296,7 +297,9 @@ impl Session {
             (0., 6.),
             Some([1., 0.5, 0.5, 1.]),
             Some([1., 0.4, 0.4, 0.3]),
-        ).into_iter() {
+        )
+        .into_iter()
+        {
             graphic_object.render(&mut self.canvas);
         }
     }

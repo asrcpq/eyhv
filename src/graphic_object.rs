@@ -375,11 +375,7 @@ impl Polygon2f {
 }
 
 // works for both counter/clockwise direction
-pub fn generate_arc_vertices(
-    center: Point2f,
-    r: f32,
-    theta: (f32, f32),
-) -> Vec<Point2f> {
+pub fn generate_arc_vertices(center: Point2f, r: f32, theta: (f32, f32)) -> Vec<Point2f> {
     const SPLIT_R_K: f32 = 1.; // points every pixel length of arc
     let split: u32 = ((theta.1 - theta.0).abs() * SPLIT_R_K * r) as u32;
     let d_theta: f32 = (theta.1 - theta.0) / split as f32;
