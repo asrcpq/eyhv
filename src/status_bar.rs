@@ -53,9 +53,16 @@ impl StatusBar {
         for i in 0..3 {
             self.rs[i] = self.rs_small[i] * (1. - self.shift) + self.rs_large[i] * self.shift;
         }
+        self.shift += (slowing as i32 as f32 - self.shift) * dt * 10.;
+
+        let mut split_target = (1. - slowing as i32 as f32 * 2.) * std::f32::consts::FRAC_PI_2;
+        const SPLIT_DIRECTION_THRESH: f32 = -std::f32::consts::FRAC_PI_2 + 0.5;
+        if self.split_angle < SPLIT_DIRECTION_THRESH && !slowing {
+            self.split_angle += 2. * std::f32::consts::PI;
+        }
+        println!("{}", split_target);
+        self.split_angle += (split_target - self.split_angle) * dt * 10.;
         self.slowing = slowing;
-        self.shift += (self.slowing as i32 as f32 - self.shift) * dt * 10.;
-        self.split_angle = std::f32::consts::FRAC_PI_2 * (1. - 2. * self.shift);
     }
 
     pub fn graphic_objects_iter(&self) -> GraphicObjectsIntoIter {
