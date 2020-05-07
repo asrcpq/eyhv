@@ -128,7 +128,7 @@ impl Session {
                     .short("f")
                     .long("replay-file")
                     .takes_value(true)
-                    .help("regeneration of health per second"),
+                    .help("enable replay mode and load replay file(other args will be suppressed)"),
             )
             .get_matches();
         let seed = match matches.value_of("seed") {

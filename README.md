@@ -1,4 +1,10 @@
-Still in its early development stage
+# eyhv
+
+## Run
+
+* Download and compile(libsdl2-dev is required)
+
+* Run eyhv --help to get more options
 
 ## Key features
 
