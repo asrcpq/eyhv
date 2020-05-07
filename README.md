@@ -14,9 +14,9 @@
 Player's performance is evaluated by final global difficulty at death.
 
 * Minimalist design(game mechanism and design style):
-No bombs, drop items, stages.
+No bombs, drop items, etc.
 
-* Randomly generated and reproducible(by u64 seed) enemies, simple replay mechanism
+* Randomly generated and reproducible(by replay files) stages
 
 * Time in game always synchronized: player will suffer, not benefit from low FPS
 
@@ -30,6 +30,6 @@ No bombs, drop items, stages.
 
 * LAlt: Pause, press again to resume
 
-* LShift: World slowdown, will disable side cannons
+* LShift: World slowdown, in a limited time and will disable side cannons
 
 * Space: Fast forward, only in replay mode
