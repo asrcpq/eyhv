@@ -78,7 +78,10 @@ pub fn main() {
                 | Event::KeyDown {
                     keycode: Some(Keycode::Escape),
                     ..
-                } => break 'running,
+                } => {
+                    session.exit();
+                    break 'running;
+                },
                 Event::KeyDown {
                     keycode: Some(keycode),
                     ..

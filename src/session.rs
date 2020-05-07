@@ -242,6 +242,10 @@ impl Session {
         // );
     }
 
+    pub fn exit(&self) {
+        println!("Early exit! final difficulty: {}", self.difficulty);
+    }
+
     fn toggle_pause(&mut self) {
         self.pause = !self.pause;
     }

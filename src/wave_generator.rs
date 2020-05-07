@@ -108,7 +108,7 @@ mod wave_scheme_prototype {
                 ]
             )],
             next_wave: 3.,
-            difficulty_scaler: 1.3,
+            difficulty_scaler: 1.2,
         };
         static ref MID_LARGE1: WaveSchemePrototype = WaveSchemePrototype {
             enemies: vec![(
@@ -116,7 +116,7 @@ mod wave_scheme_prototype {
                 vec![(enemy_paths::MID_STRAIGHT_DOWN.clone(), vec![1.],)]
             )],
             next_wave: 4.,
-            difficulty_scaler: 1.6,
+            difficulty_scaler: 1.3,
         };
     }
 

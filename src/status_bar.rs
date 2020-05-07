@@ -60,7 +60,7 @@ impl StatusBar {
         }
         self.shift += (slowing as i32 as f32 - self.shift) * dt * 10.;
 
-        let mut split_target = (1. - slowing as i32 as f32 * 2.) * std::f32::consts::FRAC_PI_2;
+        let split_target = (1. - slowing as i32 as f32 * 2.) * std::f32::consts::FRAC_PI_2;
         const SPLIT_DIRECTION_THRESH: f32 = -std::f32::consts::FRAC_PI_2 + 0.5;
         if self.split_angle < SPLIT_DIRECTION_THRESH && !slowing {
             self.split_angle += 2. * std::f32::consts::PI;
@@ -89,7 +89,7 @@ impl StatusBar {
             (self.rs[1], self.rs[2]),
             (
                 self.split_angle,
-                self.split_angle - &self.quick_percent * QUICK_SPLIT,
+                self.split_angle - self.quick_percent * QUICK_SPLIT,
             ),
             None,
             Some([
@@ -104,7 +104,7 @@ impl StatusBar {
             (self.rs[1], self.rs[2]),
             (
                 self.split_angle,
-                self.split_angle + &self.slow_percent * SLOW_SPLIT,
+                self.split_angle + self.slow_percent * SLOW_SPLIT,
             ),
             None,
             Some([0.5, 0.3, 1.0, 0.4 + 0.3 * self.shift]),

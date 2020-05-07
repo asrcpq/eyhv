@@ -74,7 +74,7 @@ impl Background {
         const Y_FLIP: f32 = 800.;
         for line in self.lines_h.iter().chain(self.lines_v.iter()) {
             let mut vertices = Vec::new();
-            let mut line_tmp = line.clone();
+            let mut line_tmp = *line;
             line_tmp[0] *= 200.;
             line_tmp[1] *= 200.;
             line_tmp[3] *= 200.;

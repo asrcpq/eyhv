@@ -105,7 +105,7 @@ Still in its early development stage
 
 	* [x] player being hit and reset cd
 
-	* [ ] Field background
+	* [x] Field background
 
 	* [ ] Destroy effect
 
