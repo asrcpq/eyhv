@@ -28,6 +28,11 @@ pub mod bullet_graphic_objects {
                 "l 0.8 0.9 1 1 -8 0 0 6 8 0 0 -6 -8 0",
                 "p 0.8 0.6 1 0.3 -8 0 0 6 8 0 0 -6",
             ]).zoom(1.6);
+        pub static ref FLAT_HEXAGON: GraphicObjects =
+            GraphicObjects::from_strs(vec![
+                "l 0.5 1 0.8 0.7 10 10 -10 10 -20 0 -10 -10 10 -10 20 0 10 10",
+                "p 0.1 1 0.8 0.2 10 10 -10 10 -20 0 -10 -10 10 -10 20 0",
+            ]).zoom(0.5);
         pub static ref SQUARE: GraphicObjects =
             GraphicObjects::from_strs(vec![
                 "l 1 0.8 0.8 1 5 5 5 -5 -5 -5 -5 5 5 5",

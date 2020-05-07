@@ -4,14 +4,14 @@ use rand::Rng;
 use rand::SeedableRng;
 
 use crate::algebra::{Mat2x2f, Point2f};
-use crate::bullet::{bullet_graphic_objects, Bullet, RotateBullet};
+use crate::bullet::{bullet_graphic_objects, Bullet, SimpleBullet};
 use crate::cannon::{CannonControllerInterface, CannonGeneratorInterface};
 use crate::random_tools::simple_try;
 
 const TRY_TIMES: u32 = 10;
 
 #[derive(Clone)]
-pub struct Rotor {
+pub struct Ring {
     // relative to moving object
     p: Point2f,
 
@@ -20,46 +20,41 @@ pub struct Rotor {
 
     // timer between intervals
     fire_cd: f32,
-
-    // rotating angle and speed
-    theta: f32,
-    omega: f32,
-
+    count: u32,
     bullet_speed: f32,
+
+    rng: rand_pcg::Pcg64Mcg,
 
     // status
     switch: bool, // on/off
 }
 
-impl CannonGeneratorInterface for Rotor {
-    fn generate(seed: u64, difficulty: f32, correlation: f32) -> Rotor {
+impl CannonGeneratorInterface for Ring {
+    fn generate(seed: u64, difficulty: f32, correlation: f32) -> Ring {
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
-        // difficulty = bullet_speed / fire_interval
+        // difficulty = bullet_speed / fire_interval * count
         let generated = simple_try(
             TRY_TIMES,
-            |x| x[0] / x[1],
-            vec![(100., 600.), (0.2, 0.03)],
+            |x| x[0] / x[1] * x[2],
+            vec![(100., 600.), (0.5, 3.), (10., 90.)],
             correlation,
             difficulty,
             rng.gen::<u64>(),
         );
-        let (bullet_speed, fire_interval) = (generated[0], generated[1]);
-        let omega: f32 = rng.gen_range(0.5, 5.);
-        // let theta: f32 = rng.gen_range(0., 2. * std::f32::consts::PI);
-        let theta: f32 = 0.;
-        Rotor {
+        let (bullet_speed, fire_interval, count) = (generated[0], generated[1], generated[2] as u32);
+        Ring {
             p: Point2f::new(),
             fire_interval,
             fire_cd: fire_interval,
-            theta,
-            omega,
+            count,
             bullet_speed,
+            rng: rand_pcg::Pcg64Mcg::seed_from_u64(rng.gen::<u64>()),
             switch: true,
         }
     }
 }
 
-impl CannonControllerInterface for Rotor {
+impl CannonControllerInterface for Ring {
     #[inline]
     fn switch(&mut self, switch: bool) {
         if self.switch && !switch {
@@ -72,24 +67,29 @@ impl CannonControllerInterface for Rotor {
 
     fn tick(&mut self, host_p: Point2f, _: Point2f, mut dt: f32) -> VecDeque<Box<dyn Bullet>> {
         let mut bullet_queue = VecDeque::new();
-        self.theta += self.omega * dt;
         const BULLET_RADIUS: f32 = 3.;
-        let rotate_matrix: Mat2x2f = Mat2x2f::from_theta(0.1);
         loop {
             if self.fire_cd > dt {
                 self.fire_cd -= dt;
                 break bullet_queue;
             }
             dt -= self.fire_cd;
-            bullet_queue.push_back(Box::new(RotateBullet::new(
-                self.p + host_p,
-                Point2f::from_polar(self.bullet_speed, self.theta),
-                Point2f::new(),
-                dt,
-                BULLET_RADIUS,
-                rotate_matrix,
-                bullet_graphic_objects::DIAMOND.clone(),
-            )));
+            let d_theta = 2. * std::f32::consts::PI / self.count as f32;
+            let mut theta = self.rng.gen_range(0., d_theta);
+            for _ in 0..self.count {
+                theta += d_theta;
+                let normed_vec2f = Point2f::from_theta(theta);
+                bullet_queue.push_back(Box::new(SimpleBullet::new(
+                    self.p + host_p,
+                    normed_vec2f * self.bullet_speed,
+                    Point2f::new(),
+                    dt,
+                    BULLET_RADIUS,
+                    bullet_graphic_objects::FLAT_HEXAGON
+                        .clone()
+                        .rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),
+                )));
+            }
             self.fire_cd = self.fire_interval;
         }
     }

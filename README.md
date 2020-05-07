@@ -65,9 +65,9 @@ Still in its early development stage
 
 	* [x] New path: wanderers
 
-	* [ ] New Cannon: Sweeper
+	* [x] New Cannon: Ring
 
-	* [ ] New Cannon: Ring
+	* [ ] New Cannon: Sweeper
 
 * [x] Pause
 
