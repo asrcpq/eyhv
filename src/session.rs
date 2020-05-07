@@ -198,7 +198,7 @@ impl Session {
         let player_health = self.player.get_health_percent();
         // difficulty added before dt changed
         // not necessary to limit diffculty under 1.0
-        self.difficulty += self.difficulty_growth * dt * player_health;
+        self.difficulty += self.difficulty_growth * dt * (player_health > 0.99) as i32 as f32;
 
         self.player_bullet_pool.tick(dt);
         self.player_bullet_pool.extend(self.player.tick(

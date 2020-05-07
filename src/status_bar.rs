@@ -8,18 +8,32 @@ pub struct StatusBar {
     quick_percent: f32,
     slow_percent: f32,
     slowing: bool,
+    shift: f32,
     player_p: Point2f,
+
+    rs: [f32; 3],
+    rs_small: [f32; 3],
+    rs_large: [f32; 3],
+
+    split_angle: f32,
 }
 
 impl StatusBar {
     pub fn new() -> StatusBar {
+        let rs_small = [70., 80., 90.];
+        let rs_large = [140., 155., 170.];
         StatusBar {
             // these data should never be used
             health_percent: 0.,
             quick_percent: 0.,
             slow_percent: 0.,
             slowing: false,
+            shift: 0.,
             player_p: Point2f::new(),
+            rs: rs_small,
+            rs_small,
+            rs_large,
+            split_angle: std::f32::consts::FRAC_PI_2,
         }
     }
     
@@ -35,29 +49,36 @@ impl StatusBar {
         self.health_percent = health_percent;
         self.quick_percent = quick_percent;
         self.slow_percent = slow_percent;
-        self.slowing = slowing;
         self.player_p = player_p;
+        for i in 0..3 {
+            self.rs[i] = self.rs_small[i] * (1. - self.shift) + self.rs_large[i] * self.shift;
+        }
+        self.slowing = slowing;
+        self.shift += (self.slowing as i32 as f32 - self.shift) * dt * 10.;
+        self.split_angle = std::f32::consts::FRAC_PI_2 * (1. - 2. * self.shift);
     }
 
     pub fn graphic_objects_iter(&self) -> GraphicObjectsIntoIter {
+        const QUICK_SPLIT: f32 = 2. / 9. * std::f32::consts::PI;
+        const SLOW_SPLIT: f32 = 16. / 9. * std::f32::consts::PI;
         let mut graphic_objects = generate_thick_arc(
             self.player_p,
-            (70., 80.),
+            (self.rs[0], self.rs[1]),
             (0., &self.health_percent * 2. * std::f32::consts::PI),
             None,
-            Some([0.2, 0.5, 1.0, 0.3]),
+            Some([if self.health_percent > 0.99 {0.4} else {1.0}, 0.4, 0.4, 0.3]),
         );
         graphic_objects.extend(generate_thick_arc(
             self.player_p,
-            (80., 90.),
-            (0., &self.quick_percent * 2. * std::f32::consts::PI),
+            (self.rs[1], self.rs[2]),
+            (self.split_angle, self.split_angle - &self.quick_percent * QUICK_SPLIT),
             None,
-            Some([0.4, 1.0, 0.3, 0.3]),
+            Some([0.4, 1.0, 0.3, if self.quick_percent > 0.99 {0.2} else {0.4}]),
         ));
         graphic_objects.extend(generate_thick_arc(
             self.player_p,
-            (90., 100.),
-            (0., &self.slow_percent * 2. * std::f32::consts::PI),
+            (self.rs[1], self.rs[2]),
+            (self.split_angle, self.split_angle + &self.slow_percent * SLOW_SPLIT),
             None,
             Some([0.5, 0.3, 1.0, 0.4]),
         ));
