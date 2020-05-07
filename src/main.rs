@@ -16,6 +16,7 @@ mod graphic_object;
 mod key_state;
 mod player;
 mod random_tools;
+mod record;
 mod session;
 mod slowdown_manager;
 mod status_bar;
@@ -118,7 +119,9 @@ pub fn main() {
             .as_secs_f32();
         // println!("{}", 1. / duration_secs); // print fps
         last_time = current_time;
-        session.tick(duration_secs);
+        if !session.tick(duration_secs) {
+            break 'running;
+        }
         session.render();
 
         texture

@@ -111,7 +111,9 @@ Still in its early development stage
 
 	* [ ] Visualize difficulty
 
-* [ ] Replay
+* [x] Replay
+
+* [ ] Cannon category
 
 ### Coding
 

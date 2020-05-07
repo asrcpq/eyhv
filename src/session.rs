@@ -6,6 +6,7 @@ use crate::enemy_pool::EnemyPool;
 use crate::graphic_object::{generate_thick_arc, GraphicObject, GraphicObjectsIntoIter};
 use crate::key_state::KeyState;
 use crate::player::Player;
+use crate::record::Record;
 use crate::slowdown_manager::SlowdownManager;
 use crate::status_bar::StatusBar;
 use crate::time_manager::TimeManager;
@@ -58,6 +59,10 @@ pub struct Session {
     player_bullet_pool: BulletPool,
     enemy_pool: EnemyPool,
     enemy_bullet_pool: BulletPool,
+
+    record: Record,
+    // ticks, operations
+    replay: Option<(usize, usize)>,
 
     difficulty: f32,
     difficulty_growth: f32,
@@ -114,7 +119,14 @@ impl Session {
             .arg(
                 Arg::with_name("health regen")
                     .short("r")
-                    .long("health-rengen")
+                    .long("health-regen")
+                    .takes_value(true)
+                    .help("regeneration of health per second"),
+            )
+            .arg(
+                Arg::with_name("replay file")
+                    .short("f")
+                    .long("replay-file")
                     .takes_value(true)
                     .help("regeneration of health per second"),
             )
@@ -152,14 +164,32 @@ impl Session {
             None => 0.07,
             Some(health_regen) => health_regen.parse::<f32>().unwrap(),
         };
+        let replay: Option<String> = matches.value_of("replay file").map(|s| s.to_string());
+        let params;
+        let mut record: Record;
+        let replay = match replay {
+            None => {
+                record = Default::default();
+                params = (seed, start_difficulty, difficulty_growth, health_max, health_regen);
+                record.params = params;
+                None
+            },
+            Some(replay_file) => {
+                record = Record::load(replay_file);
+                params = record.params;
+                Some((0, 0))
+            },
+        };
         Session {
-            player: Player::new(health_max, health_regen),
+            player: Player::new(params.3, params.4),
             player_bullet_pool: BulletPool::new(),
             enemy_pool: EnemyPool::new(),
             enemy_bullet_pool: BulletPool::new(),
-            difficulty: start_difficulty,
-            difficulty_growth,
-            wave_generator: WaveGenerator::new(seed),
+            record,
+            replay,
+            difficulty: params.1,
+            difficulty_growth: params.2,
+            wave_generator: WaveGenerator::new(params.0),
             key_state: KeyState::new(),
             pause: false,
             slowdown_manager: SlowdownManager::new(),
@@ -188,10 +218,40 @@ impl Session {
         }
     }
 
-    pub fn tick(&mut self, mut dt: f32) {
+    pub fn tick(&mut self, mut dt: f32) -> bool {
         if self.pause {
-            return;
+            return true;
         }
+        match self.replay {
+            None => {
+                self.record.dt_seq.push(dt);
+            },
+            Some((tn, opn)) => {
+                if tn >= self.record.dt_seq.len() {
+                    self.exit();
+                    return false;
+                }
+                dt = self.record.dt_seq[tn];
+                let mut new_opn = opn;
+                loop {
+                    if new_opn >= self.record.operation.len() {
+                        self.exit();
+                        return false;
+                    }
+                    let (tick_n, key_id, updown) = self.record.operation[new_opn];
+                    if tick_n < tn {
+                        panic!("Unexpected operation skip!");
+                    }
+                    if tick_n > tn {
+                        break;
+                    }
+                    self.proc_key(key_id, updown);
+                    new_opn += 1;
+                }
+                self.replay = Some((tn + 1, new_opn));
+            }
+        }
+
         self.time_manager.set_state(self.slowdown_manager.tick(dt));
         dt *= self.time_manager.update_and_get_dt_scaler(dt);
 
@@ -230,7 +290,8 @@ impl Session {
             )
             && !self.player.hit()
         {
-            println!("Died! final difficulty: {}", self.difficulty);
+            self.exit();
+            return false;
         }
 
         // memleak monitor
@@ -240,10 +301,12 @@ impl Session {
         //     self.enemy_bullet_pool.len(),
         //     self.enemy_pool.len()
         // );
+        true
     }
 
     pub fn exit(&self) {
-        println!("Early exit! final difficulty: {}", self.difficulty);
+        println!("Final difficulty: {}", self.difficulty);
+        self.record.save(".eyhv_replay".to_string());
     }
 
     fn toggle_pause(&mut self) {
@@ -251,12 +314,17 @@ impl Session {
     }
 
     pub fn proc_key(&mut self, key_id: i8, updown: bool) {
+        if key_id == 6 {
+            self.toggle_pause();
+            return;
+        }
+        if self.replay == None {
+            self.record.operation.push((self.record.dt_seq.len(), key_id, updown));
+        }
         if key_id == 4 {
             self.slowdown_manager.switch(updown);
         } else if key_id == 5 {
             self.player.switch_cannons(updown);
-        } else if key_id == 6 {
-            self.toggle_pause();
         } else {
             self.key_state.proc_key(key_id, updown);
         }
