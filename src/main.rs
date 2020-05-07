@@ -30,7 +30,6 @@ use window_rect::WINDOW_SIZE;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
-use std::time::Duration;
 use std::time::SystemTime;
 
 fn find_sdl_gl_driver() -> Option<u32> {
@@ -94,6 +93,7 @@ pub fn main() {
                     Keycode::LShift => session.proc_key(4, true),
                     Keycode::Z => session.proc_key(5, true),
                     Keycode::LAlt => session.proc_key(6, true),
+                    Keycode::Space => session.proc_key(7, true),
                     _ => {}
                 },
                 Event::KeyUp {
@@ -106,6 +106,7 @@ pub fn main() {
                     Keycode::Down => session.proc_key(3, false),
                     Keycode::LShift => session.proc_key(4, false),
                     Keycode::Z => session.proc_key(5, false),
+                    Keycode::Space => session.proc_key(7, false),
                     _ => (),
                 },
                 _ => {}
@@ -132,6 +133,5 @@ pub fn main() {
         canvas.clear();
         canvas.copy(&texture, None, None).unwrap();
         canvas.present();
-        ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 100));
     }
 }

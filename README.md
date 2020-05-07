@@ -8,15 +8,28 @@
 
 ## Key features
 
-* High speed and high fault tolerance(of player performance)
+* High speed and high fault tolerance(of player performance).
+Player's performance is evaluated by final global difficulty at death.
 
 * Minimalist design(game mechanism and design style) 
 
-* Randomly generated and reproducible(by u64 seed) enemies
+* Randomly generated and reproducible(by u64 seed) enemies, simple replay mechanism
 
 * Time in game always synchronized: player will suffer, not benefit from low FPS
 
 * Everything drawed, no resource file, replaceable GUI frontend
+
+## Control
+
+* Arrow keys: move
+
+* z: fire
+
+* LAlt: pause
+
+* LShift: World slowdown
+
+* Space: Fast forward in replay mode
 
 ## TODO
 
@@ -73,8 +86,6 @@
 
 	* [x] New Cannon: Ring
 
-	* [ ] New Cannon: Sweeper
-
 * [x] Pause
 
 * [x] WavePool
@@ -117,9 +128,15 @@
 
 	* [ ] Visualize difficulty
 
-* [x] Replay
+* Replay
+
+	[x] Replay
+
+	[x] Fast forward
 
 * [ ] Cannon category
+
+* Sound effects and BGM
 
 ### Coding
 

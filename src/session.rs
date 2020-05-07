@@ -63,6 +63,7 @@ pub struct Session {
     record: Record,
     // ticks, operations
     replay: Option<(usize, usize)>,
+    fast_replay: bool,
 
     difficulty: f32,
     difficulty_growth: f32,
@@ -187,6 +188,7 @@ impl Session {
             enemy_bullet_pool: BulletPool::new(),
             record,
             replay,
+            fast_replay: false,
             difficulty: params.1,
             difficulty_growth: params.2,
             wave_generator: WaveGenerator::new(params.0),
@@ -220,6 +222,7 @@ impl Session {
 
     pub fn tick(&mut self, mut dt: f32) -> bool {
         if self.pause {
+            std::thread::sleep(std::time::Duration::new(0, 1_000_000_000u32 / 100));
             return true;
         }
         match self.replay {
@@ -258,7 +261,7 @@ impl Session {
         let player_health = self.player.get_health_percent();
         // difficulty added before dt changed
         // not necessary to limit diffculty under 1.0
-        self.difficulty += self.difficulty_growth * dt * (player_health > 0.99) as i32 as f32;
+        self.difficulty += self.difficulty_growth * dt * (player_health > 0.5) as i32 as f32;
 
         self.player_bullet_pool.tick(dt);
         self.player_bullet_pool.extend(self.player.tick(
@@ -301,6 +304,10 @@ impl Session {
         //     self.enemy_bullet_pool.len(),
         //     self.enemy_pool.len()
         // );
+        if !self.fast_replay {
+            std::thread::sleep(std::time::Duration::new(0, 1_000_000_000u32 / 100));
+        }
+
         true
     }
 
@@ -316,6 +323,11 @@ impl Session {
     pub fn proc_key(&mut self, key_id: i8, updown: bool) {
         if key_id == 6 {
             self.toggle_pause();
+            return;
+        } else if key_id == 7 {
+            if self.replay != None {
+                self.fast_replay = updown;
+            }
             return;
         }
         if self.replay == None {
