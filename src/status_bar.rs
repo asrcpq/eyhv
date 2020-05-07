@@ -53,6 +53,8 @@ impl StatusBar {
         self.slow_percent = slow_percent;
         self.player_p = player_p;
         self.self_p += (player_p - self.self_p) * dt * 20.;
+        const MOMENTUM_SCALER: f32 = 0.5;
+        self.self_p = self.self_p * MOMENTUM_SCALER + player_p * (1. - MOMENTUM_SCALER);
         for i in 0..3 {
             self.rs[i] = self.rs_small[i] * (1. - self.shift) + self.rs_large[i] * self.shift;
         }
@@ -63,7 +65,6 @@ impl StatusBar {
         if self.split_angle < SPLIT_DIRECTION_THRESH && !slowing {
             self.split_angle += 2. * std::f32::consts::PI;
         }
-        println!("{}", split_target);
         self.split_angle += (split_target - self.split_angle) * dt * 10.;
         self.slowing = slowing;
     }
