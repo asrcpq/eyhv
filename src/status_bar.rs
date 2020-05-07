@@ -5,6 +5,10 @@ use crate::graphic_object::{generate_thick_arc, GraphicObjectsIntoIter};
 pub struct StatusBar {
     // update data
     health_percent: f32,
+    health_last: f32,
+    health_early: f32,
+    health_timer: f32,
+
     quick_percent: f32,
     slow_percent: f32,
     slowing: bool,
@@ -25,7 +29,6 @@ impl StatusBar {
         let rs_large = [180., 195., 210.];
         StatusBar {
             // these data should never be used
-            health_percent: 0.,
             quick_percent: 0.,
             slow_percent: 0.,
             slowing: false,
@@ -36,6 +39,11 @@ impl StatusBar {
             rs_small,
             rs_large,
             split_angle: std::f32::consts::FRAC_PI_2,
+
+            health_percent: 1.0,
+            health_last: 1.0,
+            health_early: 1.0,
+            health_timer: 5.,
         }
     }
 
@@ -49,6 +57,22 @@ impl StatusBar {
         player_p: Point2f,
     ) {
         self.health_percent = health_percent;
+        const HEALTH_CD: f32 = 1.;
+        const HEALTH_ROLL: f32 = 1.;
+        if self.health_percent > self.health_early {
+            self.health_timer = HEALTH_CD;
+            self.health_early = self.health_percent;
+        }
+        if self.health_percent < self.health_last {
+            self.health_timer = HEALTH_CD;
+        } else if self.health_percent < self.health_early {
+            if self.health_timer < 0. {
+                self.health_early -= HEALTH_ROLL * dt;
+            }
+            self.health_timer -= dt;
+        }
+        self.health_last = self.health_percent;
+
         self.quick_percent = quick_percent;
         self.slow_percent = slow_percent;
         self.player_p = player_p;
@@ -78,12 +102,24 @@ impl StatusBar {
             (0., &self.health_percent * 2. * std::f32::consts::PI),
             None,
             Some([
-                if self.health_percent > 0.99 { 0.4 } else { 0.7 },
+                if self.health_percent > 0.99 { 0.1 } else { 0.4 },
                 0.4,
                 0.4,
                 0.3,
             ]),
         );
+        if self.health_early > self.health_percent {
+            graphic_objects.extend(generate_thick_arc(
+                self.self_p,
+                (self.rs[0], self.rs[1]),
+                (
+                    &self.health_percent * 2. * std::f32::consts::PI,
+                    &self.health_early * 2. * std::f32::consts::PI,
+                ),
+                None,
+                Some([1.0, 0.4, 0.4, 0.3]),
+            ));
+        }
         graphic_objects.extend(generate_thick_arc(
             self.self_p,
             (self.rs[1], self.rs[2]),
