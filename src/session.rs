@@ -26,7 +26,7 @@ impl Iterator for SessionGraphicObjectsIter {
     type Item = Box<dyn GraphicObject>;
 
     fn next(&mut self) -> Option<Box<dyn GraphicObject>> {
-        match self.player_iter.next() {
+        match self.background_iter.next() {
             None => {}
             option => return option,
         }
@@ -38,15 +38,15 @@ impl Iterator for SessionGraphicObjectsIter {
             None => {}
             option => return option,
         }
-        match self.enemy_bullet_iter.next() {
-            None => {}
-            option => return option,
-        }
         match self.statusbar_iter.next() {
             None => {}
             option => return option,
         }
-        match self.background_iter.next() {
+        match self.enemy_bullet_iter.next() {
+            None => {}
+            option => return option,
+        }
+        match self.player_iter.next() {
             None => {}
             option => return option,
         }
@@ -283,7 +283,7 @@ impl Session {
             slowdown_info.2,
             self.player.get_p(),
         );
-        self.background.tick(dt);
+        self.background.tick(dt, slowdown_info.2);
         collision_enemy(&mut self.enemy_pool, &mut self.player_bullet_pool);
         if !self.player.hit_reset()
             && collision_player(

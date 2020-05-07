@@ -6,12 +6,15 @@
 
 * Run eyhv --help to get more options
 
+* Caution: a .eyhv\_replay file will be created under working directory
+
 ## Key features
 
 * High speed and high fault tolerance(of player performance).
 Player's performance is evaluated by final global difficulty at death.
 
-* Minimalist design(game mechanism and design style) 
+* Minimalist design(game mechanism and design style):
+No bombs, drop items, stages.
 
 * Randomly generated and reproducible(by u64 seed) enemies, simple replay mechanism
 

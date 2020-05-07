@@ -102,10 +102,10 @@ impl StatusBar {
             (0., &self.health_percent * 2. * std::f32::consts::PI),
             None,
             Some([
-                if self.health_percent > 0.99 { 0.1 } else { 0.4 },
+                if self.health_percent > 0.99 { 0.2 } else { 0.4 },
                 0.4,
                 0.4,
-                0.3,
+                0.6,
             ]),
         );
         if self.health_early > self.health_percent {
@@ -143,7 +143,7 @@ impl StatusBar {
                 self.split_angle + self.slow_percent * SLOW_SPLIT,
             ),
             None,
-            Some([0.5, 0.3, 1.0, 0.4 + 0.3 * self.shift]),
+            Some([0.5, 0.3, 1.0, 0.4 + 0.2 * self.shift]),
         ));
         graphic_objects.into_iter()
     }

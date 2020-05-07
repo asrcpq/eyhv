@@ -89,17 +89,19 @@
 
 	* [x] Field background
 
+	* [x] Slowdown background effect
+
 	* [ ] Destroy effect
 
 	* [ ] Visualize difficulty
 
 * Replay
 
-	[x] Replay
+	* [x] Replay
 
-	[x] Fast forward
+	* [x] Fast forward
 
-* [ ] Cannon category
+* [ ] Cannon groups(some cannons should not be generated on small ships)
 
 * Sound effects and BGM
 
@@ -107,9 +109,10 @@
 
 * [x] Split cannons file
 
-* [ ] Asynchronous wave generator
-
 * [ ] Parallelize
+
+* [ ] Asynchronous wave generator
+(Not planed, not a bottleneck at present)
 
 ### GUI Graphics
 
