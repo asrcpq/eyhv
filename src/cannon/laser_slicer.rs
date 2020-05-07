@@ -32,11 +32,12 @@ pub struct LaserSlicer {
     // direction, opening angle and bullet number
     // bullets are uniformly distributed on opening angle
     // and are shooted together
-    theta: f32,
+    theta: Vec<f32>,
     // has an uninitialized option
     rng: Option<rand_pcg::Pcg64Mcg>,
 
     bullet_speed: f32,
+    count: u32,
 
     // status
     switch: bool, // on/off
@@ -49,16 +50,15 @@ impl CannonGeneratorInterface for LaserSlicer {
         // fire_freq = fd(cd * (0.2 - 1)) / cd(1 - 3) / fi(infer)
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
         let cycle_duration: f32 = rng.gen_range(2., 4.);
-        // k(fd / cd) * bs_ff^2
         let result = simple_try(
             TRY_TIMES,
-            |x| x[0] * x[1].powi(2),
-            vec![(0.01, 0.9), (0.01, 3.)], // 0.05-40
+            |x| x[0] * x[1].powi(2) * x[2],
+            vec![(0.01, 0.9), (0.01, 3.), (1., 4.)], // 0.05-40
             correlation,
             difficulty,
             rng.gen::<u64>(),
         );
-        let (fire_duration, bs_ff) = (cycle_duration * result[0], result[1]);
+        let (fire_duration, bs_ff, count) = (cycle_duration * result[0], result[1], result[2] as u32);
         let mut bullet_speed = bs_ff.sqrt();
         let fire_interval = 0.05 * bullet_speed / bs_ff;
         bullet_speed *= 600.;
@@ -68,10 +68,11 @@ impl CannonGeneratorInterface for LaserSlicer {
             cycle_duration,
             fire_interval,
             fire_cd: fire_interval,
-            theta: 0., // uninitialized
+            theta: vec![0.; count as usize], // uninitialized
             rng: Some(rand_pcg::Pcg64Mcg::seed_from_u64(seed)),
             switch: true,
             bullet_speed,
+            count,
             // theta in updated when entering fire phase
             phase_timer: cycle_duration,
         }
@@ -112,13 +113,15 @@ impl CannonControllerInterface for LaserSlicer {
                     lazy_static! {
                         static ref RANGE_CONST: f32 = (std::f32::consts::PI / 2.).cbrt();
                     }
-                    self.theta = self
-                        .rng
-                        .as_mut()
-                        .unwrap()
-                        .gen_range(-*RANGE_CONST, *RANGE_CONST)
-                        .powf(3.)
-                        + std::f32::consts::FRAC_PI_2;
+                    for i in 0..self.count as usize {
+                        self.theta[i] = self
+                            .rng
+                            .as_mut()
+                            .unwrap()
+                            .gen_range(-*RANGE_CONST, *RANGE_CONST)
+                            .powf(3.)
+                            + std::f32::consts::FRAC_PI_2;
+                    }
                     self.phase_timer = 0.;
                     self.fire_cd = self.fire_interval;
                 }
@@ -130,16 +133,18 @@ impl CannonControllerInterface for LaserSlicer {
                     break 'cycle bullet_queue;
                 }
                 dt -= self.fire_cd;
-                let normed_vec2f = Point2f::from_theta(self.theta);
-                bullet_queue.push_back(Box::new(SimpleBullet::new(
-                    self.p + host_p,
-                    normed_vec2f * self.bullet_speed,
-                    Point2f::new(),
-                    dt,
-                    BULLET_RADIUS,
-                    bullet_graphic_objects::LASER_SOLID_BAR
-                        .rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),
-                )));
+                for i in 0..self.count as usize {
+                    let normed_vec2f = Point2f::from_theta(self.theta[i]);
+                    bullet_queue.push_back(Box::new(SimpleBullet::new(
+                        self.p + host_p,
+                        normed_vec2f * self.bullet_speed,
+                        Point2f::new(),
+                        dt,
+                        BULLET_RADIUS,
+                        bullet_graphic_objects::LASER_SOLID_BAR
+                            .rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),
+                    )));
+                }
                 self.fire_cd = self.fire_interval;
             }
         }

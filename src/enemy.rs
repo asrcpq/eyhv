@@ -81,6 +81,7 @@ pub mod enemy_prototype {
         pub cannon_pits: Vec<Vec<Point2f>>,
         pub hitboxes: Vec<Circle2f>,
         pub graphic_objects_options: Vec<GraphicObjects>,
+        pub cannon_pool: u32,
     }
 
     lazy_static! {
@@ -93,6 +94,7 @@ pub mod enemy_prototype {
                 enemy_graphic_objects::SMALL1.clone(),
                 enemy_graphic_objects::SMALL2.clone(),
             ],
+            cannon_pool: 0,
         };
         pub static ref MEDIUM: EnemyPrototype = EnemyPrototype {
             speed: 0.5,
@@ -112,6 +114,7 @@ pub mod enemy_prototype {
                 Circle2f::from_floats(-18., 0., 20.),
             ],
             graphic_objects_options: vec![enemy_graphic_objects::MEDIUM1.clone(),],
+            cannon_pool: 1,
         };
         pub static ref LARGE1: EnemyPrototype = EnemyPrototype {
             speed: 0.4,
@@ -135,6 +138,7 @@ pub mod enemy_prototype {
                 Circle2f::from_floats(0., 15., 30.),
             ],
             graphic_objects_options: vec![enemy_graphic_objects::LARGE1.clone(),],
+            cannon_pool: 1,
         };
     }
 }

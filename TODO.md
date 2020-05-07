@@ -101,13 +101,15 @@
 
 	* [x] Fast forward
 
-* [ ] Cannon groups(some cannons should not be generated on small ships)
+* [x] Cannon groups(some cannons should not be generated on small ships)
 
 * Sound effects and BGM
 
-### Coding
+### Performance
 
 * [x] Split cannons file
+
+* [ ] Get fps above 40 in debug mode
 
 * [ ] Parallelize
 

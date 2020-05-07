@@ -162,6 +162,7 @@ mod wave_scheme_prototype {
                     let cannon_template = cannon::random_mapper(
                         rng.gen::<u64>(),
                         difficulty * self.difficulty_scaler,
+                        enemy_prototype.cannon_pool,
                     );
                     for each_cannon_p in cannon_p_group {
                         let mut each_p_cannon = cannon_template.clone();

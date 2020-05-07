@@ -40,29 +40,51 @@ trait CannonGeneratorInterface {
     fn generate(seed: u64, difficulty: f32, correlation: f32) -> Self;
 }
 
-pub fn random_mapper(seed: u64, difficulty: f32) -> Box<dyn CannonControllerInterface> {
+pub fn random_mapper(seed: u64, difficulty: f32, pool: u32) -> Box<dyn CannonControllerInterface> {
     let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
     let correlation: f32 = 0.5;
-    const CANNON_TYPES: u32 = 6;
-    match rng.gen_range(0, CANNON_TYPES) {
-        0 => Box::new(PlayerLocker::generate(
-            rng.gen::<u64>(),
-            difficulty,
-            correlation,
-        )),
-        1 => Box::new(Ring::generate(rng.gen::<u64>(), difficulty, correlation)),
-        2 => Box::new(Rotor::generate(rng.gen::<u64>(), difficulty, correlation)),
-        3 => Box::new(Shotgun::generate(rng.gen::<u64>(), difficulty, correlation)),
-        4 => Box::new(LaserLocker::generate(
-            rng.gen::<u64>(),
-            difficulty,
-            correlation,
-        )),
-        5 => Box::new(LaserSlicer::generate(
-            rng.gen::<u64>(),
-            difficulty,
-            correlation,
-        )),
-        _ => unreachable!(),
+    match pool {
+        0 => {
+            match rng.gen_range(0, 5) {
+                0 => Box::new(PlayerLocker::generate(
+                    rng.gen::<u64>(),
+                    difficulty,
+                    correlation,
+                )),
+                1 => Box::new(Ring::generate(rng.gen::<u64>(), difficulty, correlation)),
+                2 => Box::new(Rotor::generate(rng.gen::<u64>(), difficulty, correlation)),
+                3 => Box::new(Shotgun::generate(rng.gen::<u64>(), difficulty, correlation)),
+                4 => Box::new(LaserLocker::generate(
+                    rng.gen::<u64>(),
+                    difficulty,
+                    correlation,
+                )),
+                _ => unreachable!(),
+            }
+        },
+        1 => {
+            match rng.gen_range(0, 6) {
+                0 => Box::new(PlayerLocker::generate(
+                    rng.gen::<u64>(),
+                    difficulty,
+                    correlation,
+                )),
+                1 => Box::new(Ring::generate(rng.gen::<u64>(), difficulty, correlation)),
+                2 => Box::new(Rotor::generate(rng.gen::<u64>(), difficulty, correlation)),
+                3 => Box::new(Shotgun::generate(rng.gen::<u64>(), difficulty, correlation)),
+                4 => Box::new(LaserLocker::generate(
+                    rng.gen::<u64>(),
+                    difficulty,
+                    correlation,
+                )),
+                5 => Box::new(LaserSlicer::generate(
+                    rng.gen::<u64>(),
+                    difficulty,
+                    correlation,
+                )),
+                _ => unreachable!(),
+            }
+        },
+        _ => unreachable!{},
     }
 }
