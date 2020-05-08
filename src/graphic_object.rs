@@ -315,8 +315,8 @@ impl GraphicObject for Polygon2f {
 
             if need_resort_flag {
                 sorted_processing_edges.sort_by(|x, y| {
-                    x.startx
-                        .partial_cmp(&y.startx)
+                    x.current_x
+                        .partial_cmp(&y.current_x)
                         .unwrap()
                         .then(x.endx.partial_cmp(&y.endx).unwrap())
                 });

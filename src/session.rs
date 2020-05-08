@@ -397,7 +397,7 @@ impl Session {
             .render(&mut self.canvas);
         }
         Polygon2f::from_floats(vec![
-            1., 1., 1., 1., 100., 50., 50., 100., 100., 150., 150., 100.,
+            1., 1., 1., 1., 75., 50., 100., 50., 100., 100., 85., 75., 65., 75., 50., 100.,
         ])
         .render(&mut self.canvas);
         for graphic_object in generate_thick_arc(

@@ -45,10 +45,10 @@ impl Player {
             ],
             cannons_switch: false,
             graphic_objects: GraphicObjects::from_strs(vec![
-                "l 0.3 1.0 1.0 1.0 -10 8 0 -10 10 8 3 4 -3 4 -10 8",
+                "l 0.3 1 1 1 -10 8 0 -10 10 8 3 4 -3 4 -10 8",
             ]),
             graphic_objects_hit: GraphicObjects::from_strs(vec![
-                "l 1.0 0.3 0.3 1.0 -10 8 0 -10 10 8 3 4 -3 4 -10 8",
+                "l 1 0 0 1 -10 8 0 -10 10 8 3 4 -3 4 -10 8",
             ]),
             speed_fast: 800.0,
             speed_slow: 400.0,
