@@ -1,5 +1,7 @@
 # eyhv
 
+![demo](https://asrcpq.github.io/resources/2005/eyhv_demo.gif)
+
 ## Run
 
 * Download and compile(libsdl2-dev is required)
