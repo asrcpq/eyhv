@@ -86,7 +86,7 @@ impl Background {
     pub fn graphic_objects_iter(&self) -> GraphicObjectsIntoIter {
         let mut graphic_objects: GraphicObjects = Default::default();
         const WINDOW_SCALER: f32 = 100.;
-        const WINDOW_SHIFT_X: f32 = 250.;
+        const WINDOW_SHIFT_X: f32 = 200.;
         const WINDOW_SHIFT_Y: f32 = 350.;
 
         let c1 = 10f32.to_radians().cos();
