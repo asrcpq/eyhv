@@ -36,7 +36,7 @@ impl CannonGeneratorInterface for Ring {
         let generated = simple_try(
             TRY_TIMES,
             |x| x[0] / x[1] * x[2],
-            vec![(100., 600.), (0.5, 3.), (10., 90.)],
+            vec![(100., 600.), (0.3, 3.), (10., 90.)],
             correlation,
             difficulty,
             rng.gen::<u64>(),

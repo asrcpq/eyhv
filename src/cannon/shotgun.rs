@@ -48,7 +48,7 @@ impl CannonGeneratorInterface for Shotgun {
         let generated = simple_try(
             TRY_TIMES,
             |x| x[0] * x[1].powi(2),
-            vec![(1., 7.), (0.01, 2.)],
+            vec![(1., 7.), (0.02, 2.)],
             correlation,
             difficulty,
             rng.gen::<u64>(),
@@ -56,8 +56,8 @@ impl CannonGeneratorInterface for Shotgun {
         let (count, bs_ff) = (generated[0], generated[1]);
         let bs_ff_k = rng.gen_range(0.8, 1.2);
         let mut bullet_speed = (bs_ff * bs_ff_k).sqrt();
-        let fire_interval = 0.25 * bullet_speed / bs_ff;
-        bullet_speed *= 650.;
+        let fire_interval = 0.2 * bullet_speed / bs_ff;
+        bullet_speed *= 500.;
         let open_angle: f32 = rng.gen_range(-1f32, 1.2f32).exp();
         Shotgun {
             p: Point2f::new(),

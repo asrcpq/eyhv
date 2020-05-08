@@ -55,7 +55,7 @@ impl LineSegs2f {
                 std::mem::swap(&mut y1, &mut y2);
             }
             for y in y1..y2 + 1 {
-                canvas.putpixel(x1, y, color);
+                canvas.putpixel(x1, y, &color);
             }
             return;
         }
@@ -65,7 +65,7 @@ impl LineSegs2f {
                 std::mem::swap(&mut x1, &mut x2);
             }
             for x in x1..x2 + 1 {
-                canvas.putpixel(x, y1, color);
+                canvas.putpixel(x, y1, &color);
             }
             return;
         }
@@ -77,7 +77,7 @@ impl LineSegs2f {
                 dx = -dx;
             }
             for i in 0..dx + 1 {
-                canvas.putpixel(x1 + i, y1 + i, color);
+                canvas.putpixel(x1 + i, y1 + i, &color);
             }
             return;
         }
@@ -89,7 +89,7 @@ impl LineSegs2f {
                 dx = -dx;
             }
             for i in 0..dx + 1 {
-                canvas.putpixel(x1 + i, y1 - i, color);
+                canvas.putpixel(x1 + i, y1 - i, &color);
             }
             return;
         }
@@ -105,8 +105,8 @@ impl LineSegs2f {
         if k > 0. && k < 1. {
             let mut py = y1;
             for px in x1..x2 {
-                canvas.putpixel(px, py, [color[0], color[1], color[2], color[3] * (1. - e)]);
-                canvas.putpixel(px, py + 1, [color[0], color[1], color[2], color[3] * e]);
+                canvas.putpixel(px, py, &[color[0], color[1], color[2], color[3] * (1. - e)]);
+                canvas.putpixel(px, py + 1, &[color[0], color[1], color[2], color[3] * e]);
                 e += k;
                 if e >= 1. {
                     py += 1;
@@ -116,8 +116,8 @@ impl LineSegs2f {
         } else if k > 1. {
             let mut px = x1;
             for py in y1..y2 {
-                canvas.putpixel(px, py, [color[0], color[1], color[2], color[3] * (1. - e)]);
-                canvas.putpixel(px + 1, py, [color[0], color[1], color[2], color[3] * e]);
+                canvas.putpixel(px, py, &[color[0], color[1], color[2], color[3] * (1. - e)]);
+                canvas.putpixel(px + 1, py, &[color[0], color[1], color[2], color[3] * e]);
                 e += 1. / k;
                 if e >= 1. {
                     px += 1;
@@ -127,8 +127,8 @@ impl LineSegs2f {
         } else if k > -1. && k < 0. {
             let mut py = y1;
             for px in x1..x2 {
-                canvas.putpixel(px, py, [color[0], color[1], color[2], color[3] * (1. + e)]);
-                canvas.putpixel(px, py - 1, [color[0], color[1], color[2], color[3] * -e]);
+                canvas.putpixel(px, py, &[color[0], color[1], color[2], color[3] * (1. + e)]);
+                canvas.putpixel(px, py - 1, &[color[0], color[1], color[2], color[3] * -e]);
                 e += k;
                 if e <= -1. {
                     py -= 1;
@@ -138,8 +138,8 @@ impl LineSegs2f {
         } else if k < -1. {
             let mut px = x2;
             for py in (y1..y2).rev() {
-                canvas.putpixel(px, py, [color[0], color[1], color[2], color[3] * (1. - e)]);
-                canvas.putpixel(px + 1, py, [color[0], color[1], color[2], color[3] * e]);
+                canvas.putpixel(px, py, &[color[0], color[1], color[2], color[3] * (1. - e)]);
+                canvas.putpixel(px + 1, py, &[color[0], color[1], color[2], color[3] * e]);
                 e += -1. / k;
                 if e >= 1. {
                     px += 1;
@@ -340,7 +340,7 @@ impl GraphicObject for Polygon2f {
                     //     panic!("not sorted!");
                     // }
                     for x in last_x..current_x {
-                        canvas.putpixel(x, current_y, self.color);
+                        canvas.putpixel(x, current_y, &self.color);
                     }
                 }
                 last_x = each_processing_edge.current_x as i32;

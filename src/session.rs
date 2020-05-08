@@ -214,7 +214,7 @@ impl Session {
             time_manager: TimeManager::new(),
             status_bar: StatusBar::new(),
             background: Background::new(),
-            canvas: Canvas::new((WINDOW_SIZE.x as u32, WINDOW_SIZE.y as u32)),
+            canvas: Canvas::new((WINDOW_SIZE.x as i32, WINDOW_SIZE.y as i32)),
             session_info: (
                 seed,
                 start_difficulty,

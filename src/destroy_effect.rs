@@ -41,7 +41,7 @@ impl DestroyedObjects {
     }
 
     pub fn push(&mut self, graphic_objects: GraphicObjects) {
-        let move_direction = Point2f::from_floats(self.rng.gen_range(-1., 1.), -1.);
+        let move_direction = Point2f::from_floats(0., -2.);
         for graphic_object in graphic_objects.into_iter() {
             if let Some(line_segs) = graphic_object.as_any().downcast_ref::<LineSegs2f>() {
                 let mut iter = line_segs.vertices.iter();
@@ -52,8 +52,8 @@ impl DestroyedObjects {
                 for vertex in iter {
                     self.lines.push_back((
                         Point2f::from_floats(
-                            self.rng.gen_range(-3., 3.),
-                            self.rng.gen_range(-1., 1.),
+                            (self.rng.gen_range(-1., 1.) as f32).powi(3) * 6.,
+                            (self.rng.gen_range(-1., 1.) as f32).powi(3) * 6.,
                         ) + move_direction,
                         LineSegs2f {
                             vertices: vec![*last_vertex, *vertex],

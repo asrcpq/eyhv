@@ -93,11 +93,13 @@
 
 	* [x] Destroy effect
 
-	* [ ] Destroy can break line
-
 	* [ ] Visualize difficulty
 
 	* [ ] Hitboxes
+
+	* [ ] fps indicator
+
+	* [ ] Destroy can break line(?)
 
 * Replay
 
@@ -107,7 +109,9 @@
 
 * [x] Cannon groups(some cannons should not be generated on small ships)
 
-* Sound effects and BGM
+* Sound effects
+
+	* [ ] Audio backend and PCM buffer interface
 
 ### Performance
 
@@ -123,3 +127,5 @@
 ### GUI Graphics
 
 * [x] Simple line and polygon drawing
+
+* [x] Thick arc generator

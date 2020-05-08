@@ -119,6 +119,7 @@ pub fn main() {
             .duration_since(last_time)
             .expect("Time error")
             .as_secs_f32();
+        // println!("FPS: {}", 1. / duration_secs);
         if duration_secs > 0.025 {
             println!("LOW FPS: {}", 1. / duration_secs);
         }

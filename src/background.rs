@@ -96,11 +96,16 @@ impl Background {
         let c3 = 0f32.to_radians().cos();
         let s3 = 0f32.to_radians().sin();
 
-        let each_z = [10. - self.shift * 2., 8. - self.shift * 2.];
+        let each_z = [10. - self.shift * 3., 8. - self.shift * 1.2];
         let each_x = [-49.5, -50.];
         let each_color = [
-            [0.5, 0.0, 1., 0.4 + self.shift * 0.2],
-            [0., 0.8, 1., 0.5 - self.shift * 0.2],
+            [
+                0.7,
+                0.8 - self.shift * 0.8,
+                0.2 + self.shift * 0.8,
+                0.25 + self.shift * 0.2,
+            ],
+            [0., 0.8 - self.shift * 0.5, 1., 0.35],
         ];
 
         for i in 0..2 {
