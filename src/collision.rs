@@ -1,7 +1,7 @@
 use crate::algebra::{linesegs_distance, Point2f};
 use crate::bullet_pool::BulletPool;
-use crate::enemy_pool::EnemyPool;
 use crate::destroy_effect::DestroyedObjects;
+use crate::enemy_pool::EnemyPool;
 
 pub trait CollisionPipeInterface {
     type Object;
@@ -11,7 +11,11 @@ pub trait CollisionPipeInterface {
     fn len(&self) -> usize;
 }
 
-pub fn collision_enemy(enemy_pool: &mut EnemyPool, player_bullet_pool: &mut BulletPool, destroyed_objects: &mut DestroyedObjects) {
+pub fn collision_enemy(
+    enemy_pool: &mut EnemyPool,
+    player_bullet_pool: &mut BulletPool,
+    destroyed_objects: &mut DestroyedObjects,
+) {
     // Time complexity notes:
     // O(l_e * l_pb)
     // player_bullet_pool < 10^2

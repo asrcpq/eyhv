@@ -93,6 +93,8 @@
 
 	* [x] Destroy effect
 
+	* [ ] Destroy can break line
+
 	* [ ] Visualize difficulty
 
 	* [ ] Hitboxes

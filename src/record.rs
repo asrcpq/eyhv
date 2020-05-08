@@ -1,7 +1,7 @@
 use std::fs::File;
 use std::io::prelude::*;
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Debug, Default)]
 pub struct Record {

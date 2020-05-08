@@ -120,13 +120,26 @@ impl Background {
 
                 macro_rules! x {
                     ($n: expr, $o: expr, $x: expr, $y: expr, $z: expr) => {
-                        line_tmp[$n] = line_tmp[$o] * $x + line_tmp[$o + 1] * $y + line_tmp[$o + 2] * $z;
-                    }
+                        line_tmp[$n] =
+                            line_tmp[$o] * $x + line_tmp[$o + 1] * $y + line_tmp[$o + 2] * $z;
+                    };
                 }
 
                 for i in [0, 3].iter() {
-                    x!(i + 0, *i, c2 * c3, s1 * s2 * c3 - c1 * s3, c1 * s2 * c3 + s1 * s3);
-                    x!(i + 1, *i, c2 * s3, s1 * s2 * s3 + c1 * c3, c1 * s2 * s3 - s1 * c3);
+                    x!(
+                        *i,
+                        *i,
+                        c2 * c3,
+                        s1 * s2 * c3 - c1 * s3,
+                        c1 * s2 * c3 + s1 * s3
+                    );
+                    x!(
+                        i + 1,
+                        *i,
+                        c2 * s3,
+                        s1 * s2 * s3 + c1 * c3,
+                        c1 * s2 * s3 - s1 * c3
+                    );
                     x!(i + 2, *i, -s2, s1 * c2, c1 * c2);
                 }
                 if line_tmp[2] < 1. || line_tmp[5] < 1. {

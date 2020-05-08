@@ -58,7 +58,8 @@ impl CannonGeneratorInterface for LaserSlicer {
             difficulty,
             rng.gen::<u64>(),
         );
-        let (fire_duration, bs_ff, count) = (cycle_duration * result[0], result[1], result[2] as u32);
+        let (fire_duration, bs_ff, count) =
+            (cycle_duration * result[0], result[1], result[2] as u32);
         let mut bullet_speed = bs_ff.sqrt();
         let fire_interval = 0.05 * bullet_speed / bs_ff;
         bullet_speed *= 600.;

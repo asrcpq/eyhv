@@ -1,8 +1,7 @@
-use std::any::Any;
 use std::collections::VecDeque;
 
 use crate::algebra::Point2f;
-use crate::graphic_object::{LineSegs2f, GraphicObject, GraphicObjects, GraphicObjectsIntoIter};
+use crate::graphic_object::{GraphicObject, GraphicObjects, GraphicObjectsIntoIter, LineSegs2f};
 
 use rand::Rng;
 use rand::SeedableRng;
@@ -22,6 +21,7 @@ impl DestroyedObjects {
     }
 
     // for memleak monitor
+    #[allow(dead_code)]
     pub fn len(&self) -> usize {
         self.lines.len()
     }
@@ -33,7 +33,7 @@ impl DestroyedObjects {
             let mut line = self.lines.pop_front().unwrap();
             line.1.color[3] -= dt * D_ALPHA;
             if line.1.color[3] <= 0. {
-                continue
+                continue;
             }
             line.1 = line.1.shift(line.0);
             self.lines.push_back(line);
@@ -49,15 +49,16 @@ impl DestroyedObjects {
                     None => continue,
                     Some(vertex) => vertex,
                 };
-                while let Some(vertex) = iter.next() {
+                for vertex in iter {
                     self.lines.push_back((
                         Point2f::from_floats(
-                            self.rng.gen_range(-3., 3.), self.rng.gen_range(-1., 1.)
+                            self.rng.gen_range(-3., 3.),
+                            self.rng.gen_range(-1., 1.),
                         ) + move_direction,
                         LineSegs2f {
                             vertices: vec![*last_vertex, *vertex],
                             color: line_segs.color,
-                        }
+                        },
                     ));
                     last_vertex = vertex;
                 }
@@ -67,11 +68,11 @@ impl DestroyedObjects {
 
     pub fn graphic_objects_iter(&self) -> GraphicObjectsIntoIter {
         GraphicObjects::new(
-            self
-                .lines
+            self.lines
                 .iter()
                 .map(|x| Box::<dyn GraphicObject>::from(Box::new(x.1.clone())))
-                .collect()
-        ).into_iter()
+                .collect(),
+        )
+        .into_iter()
     }
 }

@@ -42,7 +42,6 @@ impl LineSegs2f {
         }
     }
 
-
     #[inline]
     fn wu(x1: f32, y1: f32, x2: f32, y2: f32, color: [f32; 4], canvas: &mut Canvas) {
         let mut x1: i32 = x1.round() as i32;
@@ -427,9 +426,7 @@ pub struct GraphicObjects {
 
 impl GraphicObjects {
     pub fn new(graphic_objects: Vec<Box<dyn GraphicObject>>) -> GraphicObjects {
-        GraphicObjects {
-            graphic_objects,
-        }
+        GraphicObjects { graphic_objects }
     }
 
     pub fn shift(&self, point2f: Point2f) -> GraphicObjects {

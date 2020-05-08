@@ -41,7 +41,8 @@ impl CannonGeneratorInterface for Ring {
             difficulty,
             rng.gen::<u64>(),
         );
-        let (bullet_speed, fire_interval, count) = (generated[0], generated[1], generated[2] as u32);
+        let (bullet_speed, fire_interval, count) =
+            (generated[0], generated[1], generated[2] as u32);
         Ring {
             p: Point2f::new(),
             fire_interval,

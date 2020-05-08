@@ -1,8 +1,9 @@
 use crate::background::Background;
 use crate::bullet_pool::BulletPool;
 use crate::canvas::Canvas;
-use crate::collision::{collision_enemy, collision_player};
+#[allow(unused_imports)]
 use crate::collision::CollisionPipeInterface; // for memleak
+use crate::collision::{collision_enemy, collision_player};
 use crate::destroy_effect::DestroyedObjects;
 use crate::enemy_pool::EnemyPool;
 use crate::graphic_object::{generate_thick_arc, GraphicObject, GraphicObjectsIntoIter};
@@ -179,15 +180,21 @@ impl Session {
         let replay = match replay {
             None => {
                 record = Default::default();
-                params = (seed, start_difficulty, difficulty_growth, health_max, health_regen);
+                params = (
+                    seed,
+                    start_difficulty,
+                    difficulty_growth,
+                    health_max,
+                    health_regen,
+                );
                 record.params = params;
                 None
-            },
+            }
             Some(replay_file) => {
                 record = Record::load(replay_file);
                 params = record.params;
                 Some((0, 0))
-            },
+            }
         };
         Session {
             player: Player::new(params.3, params.4),
@@ -238,7 +245,7 @@ impl Session {
         match self.replay {
             None => {
                 self.record.dt_seq.push(dt);
-            },
+            }
             Some((tn, opn)) => {
                 if tn >= self.record.dt_seq.len() {
                     self.exit();
@@ -295,7 +302,11 @@ impl Session {
         );
         self.background.tick(dt, slowdown_info.2);
         self.destroyed_objects.tick(dt);
-        collision_enemy(&mut self.enemy_pool, &mut self.player_bullet_pool, &mut self.destroyed_objects);
+        collision_enemy(
+            &mut self.enemy_pool,
+            &mut self.player_bullet_pool,
+            &mut self.destroyed_objects,
+        );
         if !self.player.hit_reset()
             && collision_player(
                 self.player.get_p(),
@@ -343,7 +354,9 @@ impl Session {
             return;
         }
         if self.replay == None {
-            self.record.operation.push((self.record.dt_seq.len(), key_id, updown));
+            self.record
+                .operation
+                .push((self.record.dt_seq.len(), key_id, updown));
         }
         if key_id == 4 {
             self.slowdown_manager.switch(updown);
