@@ -57,7 +57,7 @@ impl CannonGeneratorInterface for Shotgun {
         let bs_ff_k = rng.gen_range(0.8, 1.2);
         let mut bullet_speed = (bs_ff * bs_ff_k).sqrt();
         let fire_interval = 0.2 * bullet_speed / bs_ff;
-        bullet_speed *= 500.;
+        bullet_speed *= 600.;
         let open_angle: f32 = rng.gen_range(-1f32, 1.2f32).exp();
         Shotgun {
             p: Point2f::new(),

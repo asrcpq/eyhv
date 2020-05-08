@@ -1,10 +1,12 @@
+#[allow(unused_imports)]
+use crate::collision::CollisionPipeInterface; // for memleak
+
 use crate::background::Background;
 use crate::bullet_pool::BulletPool;
 use crate::canvas::Canvas;
-#[allow(unused_imports)]
-use crate::collision::CollisionPipeInterface; // for memleak
 use crate::collision::{collision_enemy, collision_player};
 use crate::destroy_effect::DestroyedObjects;
+use crate::difficulty_manager::DifficultyManager;
 use crate::enemy_pool::EnemyPool;
 use crate::graphic_object::{generate_thick_arc, GraphicObject, GraphicObjectsIntoIter};
 use crate::key_state::KeyState;
@@ -17,13 +19,13 @@ use crate::wave_generator::WaveGenerator;
 use crate::window_rect::WINDOW_SIZE;
 
 pub struct SessionGraphicObjectsIter {
+    background_iter: GraphicObjectsIntoIter,
     player_iter: GraphicObjectsIntoIter,
     player_bullet_iter: GraphicObjectsIntoIter,
     destroyed_objects_iter: GraphicObjectsIntoIter,
     enemy_iter: GraphicObjectsIntoIter,
     enemy_bullet_iter: GraphicObjectsIntoIter,
     statusbar_iter: GraphicObjectsIntoIter,
-    background_iter: GraphicObjectsIntoIter,
 }
 
 impl Iterator for SessionGraphicObjectsIter {
@@ -74,9 +76,7 @@ pub struct Session {
     replay: Option<(usize, usize)>,
     fast_replay: bool,
 
-    difficulty: f32,
-    difficulty_growth: f32,
-
+    difficulty_manager: DifficultyManager,
     wave_generator: WaveGenerator,
 
     // control
@@ -205,8 +205,7 @@ impl Session {
             record,
             replay,
             fast_replay: false,
-            difficulty: params.1,
-            difficulty_growth: params.2,
+            difficulty_manager: DifficultyManager::new(params.1, params.2),
             wave_generator: WaveGenerator::new(params.0),
             key_state: KeyState::new(),
             pause: false,
@@ -278,7 +277,9 @@ impl Session {
         let player_health = self.player.get_health_percent();
         // difficulty added before dt changed
         // not necessary to limit diffculty under 1.0
-        self.difficulty += self.difficulty_growth * dt * (player_health > 0.5) as i32 as f32;
+        if self.difficulty_manager.tick(dt, player_health) {
+            self.background.send_message(format!("       {: >2}   ", ((self.difficulty_manager.get_difficulty() * 100.) as u32).to_string()));
+        }
 
         self.player_bullet_pool.tick(dt);
         self.player_bullet_pool.extend(self.player.tick(
@@ -286,8 +287,10 @@ impl Session {
             self.key_state.directions,
             self.time_manager.get_state(),
         ));
-        self.enemy_pool
-            .extend(self.wave_generator.tick(dt, self.difficulty));
+        self.enemy_pool.extend(
+            self.wave_generator
+                .tick(dt, self.difficulty_manager.get_difficulty()),
+        );
         self.enemy_bullet_pool.tick(dt);
         self.enemy_bullet_pool
             .extend(self.enemy_pool.tick(dt, self.player.get_p()));
@@ -335,7 +338,10 @@ impl Session {
     }
 
     pub fn exit(&self) {
-        println!("Final difficulty: {}", self.difficulty);
+        println!(
+            "Final difficulty: {}",
+            self.difficulty_manager.get_difficulty()
+        );
         self.record.save(".eyhv_replay".to_string());
     }
 

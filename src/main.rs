@@ -10,6 +10,7 @@ mod cannon;
 mod canvas;
 mod collision;
 mod destroy_effect;
+mod difficulty_manager;
 mod enemy;
 mod enemy_path;
 mod enemy_pool;
