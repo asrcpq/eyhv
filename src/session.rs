@@ -2,6 +2,8 @@ use crate::background::Background;
 use crate::bullet_pool::BulletPool;
 use crate::canvas::Canvas;
 use crate::collision::{collision_enemy, collision_player};
+use crate::collision::CollisionPipeInterface; // for memleak
+use crate::destroy_effect::DestroyedObjects;
 use crate::enemy_pool::EnemyPool;
 use crate::graphic_object::{generate_thick_arc, GraphicObject, GraphicObjectsIntoIter};
 use crate::key_state::KeyState;
@@ -16,6 +18,7 @@ use crate::window_rect::WINDOW_SIZE;
 pub struct SessionGraphicObjectsIter {
     player_iter: GraphicObjectsIntoIter,
     player_bullet_iter: GraphicObjectsIntoIter,
+    destroyed_objects_iter: GraphicObjectsIntoIter,
     enemy_iter: GraphicObjectsIntoIter,
     enemy_bullet_iter: GraphicObjectsIntoIter,
     statusbar_iter: GraphicObjectsIntoIter,
@@ -31,6 +34,10 @@ impl Iterator for SessionGraphicObjectsIter {
             option => return option,
         }
         match self.player_bullet_iter.next() {
+            None => {}
+            option => return option,
+        }
+        match self.destroyed_objects_iter.next() {
             None => {}
             option => return option,
         }
@@ -58,6 +65,7 @@ pub struct Session {
     player: Player,
     player_bullet_pool: BulletPool,
     enemy_pool: EnemyPool,
+    destroyed_objects: DestroyedObjects,
     enemy_bullet_pool: BulletPool,
 
     record: Record,
@@ -185,6 +193,7 @@ impl Session {
             player: Player::new(params.3, params.4),
             player_bullet_pool: BulletPool::new(),
             enemy_pool: EnemyPool::new(),
+            destroyed_objects: DestroyedObjects::new(seed), //simply use the same seed
             enemy_bullet_pool: BulletPool::new(),
             record,
             replay,
@@ -213,6 +222,7 @@ impl Session {
         SessionGraphicObjectsIter {
             player_iter: self.player.graphic_objects_iter(),
             player_bullet_iter: self.player_bullet_pool.graphic_objects_iter(),
+            destroyed_objects_iter: self.destroyed_objects.graphic_objects_iter(),
             enemy_iter: self.enemy_pool.graphic_objects_iter(),
             enemy_bullet_iter: self.enemy_bullet_pool.graphic_objects_iter(),
             statusbar_iter: self.status_bar.graphic_objects_iter(),
@@ -284,7 +294,8 @@ impl Session {
             self.player.get_p(),
         );
         self.background.tick(dt, slowdown_info.2);
-        collision_enemy(&mut self.enemy_pool, &mut self.player_bullet_pool);
+        self.destroyed_objects.tick(dt);
+        collision_enemy(&mut self.enemy_pool, &mut self.player_bullet_pool, &mut self.destroyed_objects);
         if !self.player.hit_reset()
             && collision_player(
                 self.player.get_p(),
@@ -299,10 +310,11 @@ impl Session {
 
         // memleak monitor
         // println!(
-        //     "{} {} {}",
+        //     "{} {} {} {}",
         //     self.player_bullet_pool.len(),
         //     self.enemy_bullet_pool.len(),
-        //     self.enemy_pool.len()
+        //     self.enemy_pool.len(),
+        //     self.destroyed_objects.len(),
         // );
         if !self.fast_replay {
             std::thread::sleep(std::time::Duration::new(0, 1_000_000_000u32 / 100));

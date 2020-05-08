@@ -35,6 +35,15 @@ impl LineSegs2f {
     }
 
     #[inline]
+    pub fn shift(&self, dp: Point2f) -> LineSegs2f {
+        LineSegs2f {
+            vertices: self.vertices.iter().map(|x| *x + dp).collect(),
+            color: self.color,
+        }
+    }
+
+
+    #[inline]
     fn wu(x1: f32, y1: f32, x2: f32, y2: f32, color: [f32; 4], canvas: &mut Canvas) {
         let mut x1: i32 = x1.round() as i32;
         let mut y1: i32 = y1.round() as i32;
@@ -159,10 +168,7 @@ impl GraphicObject for LineSegs2f {
     }
 
     fn shift(&self, dp: Point2f) -> Box<dyn GraphicObject> {
-        Box::new(LineSegs2f {
-            vertices: self.vertices.iter().map(|x| *x + dp).collect(),
-            color: self.color,
-        })
+        Box::new(self.shift(dp))
     }
 
     fn rotate(&self, rotate_mat: Mat2x2f) -> Box<dyn GraphicObject> {
@@ -420,6 +426,12 @@ pub struct GraphicObjects {
 }
 
 impl GraphicObjects {
+    pub fn new(graphic_objects: Vec<Box<dyn GraphicObject>>) -> GraphicObjects {
+        GraphicObjects {
+            graphic_objects,
+        }
+    }
+
     pub fn shift(&self, point2f: Point2f) -> GraphicObjects {
         GraphicObjects {
             graphic_objects: self

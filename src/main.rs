@@ -9,6 +9,7 @@ mod bullet_pool;
 mod cannon;
 mod canvas;
 mod collision;
+mod destroy_effect;
 mod enemy;
 mod enemy_path;
 mod enemy_pool;

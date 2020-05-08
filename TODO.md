@@ -91,7 +91,7 @@
 
 	* [x] Slowdown background effect
 
-	* [ ] Destroy effect
+	* [x] Destroy effect
 
 	* [ ] Visualize difficulty
 
