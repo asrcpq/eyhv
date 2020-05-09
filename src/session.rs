@@ -278,7 +278,11 @@ impl Session {
         // difficulty added before dt changed
         // not necessary to limit diffculty under 1.0
         if self.difficulty_manager.tick(dt, player_health) {
-            self.background.send_message(format!("       {: >2}   ", ((self.difficulty_manager.get_difficulty() * 100.) as u32).to_string()));
+            self.background.send_message(format!(
+                "      {: >2}    ",
+                ((self.difficulty_manager.get_difficulty() * 100.) as u32).to_string()
+            ));
+            self.background.send_message("DIFFICULTYUP".to_string());
         }
 
         self.player_bullet_pool.tick(dt);

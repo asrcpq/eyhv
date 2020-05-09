@@ -1,7 +1,10 @@
 use crate::algebra::{Mat2x2f, Point2f};
 use crate::canvas::Canvas;
-use dyn_clone::DynClone;
 use std::any::Any;
+use std::collections::HashMap;
+
+use dyn_clone::DynClone;
+use lazy_static::lazy_static;
 
 #[derive(Clone, Debug)]
 pub struct LineSegs2f {
@@ -17,6 +20,7 @@ impl LineSegs2f {
         let mut vertices: Vec<Point2f> = Vec::new();
         let mut iter = floats.iter();
         let r = iter.next().unwrap();
+
         let g = iter.next().unwrap();
         let b = iter.next().unwrap();
         let a = iter.next().unwrap();
@@ -494,6 +498,89 @@ impl GraphicObjects {
             }
         }
         graphic_objects
+    }
+
+    pub fn fsd(c: char) -> GraphicObjects {
+        lazy_static! {
+            static ref SEGMENTS: Vec<GraphicObjects> = vec![
+                GraphicObjects::from_strs(vec![
+                    "l 1 1 1 1 0.2 0.1 0.3 0.2 0.7 0.2 0.8 0.1 0.2 0.1"
+                ]),
+                GraphicObjects::from_strs(vec![
+                    "l 1 1 1 1 0.7 0.2 0.8 0.1 0.8 0.5 0.7 0.5 0.7 0.2"
+                ]),
+                GraphicObjects::from_strs(vec![
+                    "l 1 1 1 1 0.7 0.5 0.7 0.8 0.8 0.9 0.8 0.5 0.7 0.5"
+                ]),
+                GraphicObjects::from_strs(vec![
+                    "l 1 1 1 1 0.8 0.9 0.2 0.9 0.3 0.8 0.7 0.8 0.8 0.9"
+                ]),
+                GraphicObjects::from_strs(vec![
+                    "l 1 1 1 1 0.2 0.9 0.3 0.8 0.3 0.5 0.2 0.5 0.2 0.9"
+                ]),
+                GraphicObjects::from_strs(vec![
+                    "l 1 1 1 1 0.3 0.5 0.3 0.2 0.2 0.1 0.2 0.5 0.3 0.5"
+                ]),
+                GraphicObjects::from_strs(vec![
+                    "l 1 1 1 1 0.3 0.45 0.45 0.45 0.5 0.5 0.45 0.55 0.3 0.55 0.3 0.45"
+                ]),
+                GraphicObjects::from_strs(vec![
+                    "l 1 1 1 1 0.55 0.55 0.5 0.5 0.55 0.45 0.7 0.45 0.7 0.55 0.55 0.55"
+                ]),
+                GraphicObjects::from_strs(vec![
+                    "l 1 1 1 1 0.3 0.2 0.45 0.325 0.45 0.45 0.3 0.325 0.3 0.2"
+                ]),
+                GraphicObjects::from_strs(vec![
+                    "l 1 1 1 1 0.45 0.2 0.55 0.2 0.55 0.45 0.5 0.5 0.45 0.45 0.45 0.2"
+                ]),
+                GraphicObjects::from_strs(vec![
+                    "l 1 1 1 1 0.7 0.2 0.55 0.325 0.55 0.45 0.7 0.325 0.7 0.2"
+                ]),
+                GraphicObjects::from_strs(vec![
+                    "l 1 1 1 1 0.3 0.8 0.3 0.675 0.45 0.55 0.45 0.675 0.3 0.8"
+                ]),
+                GraphicObjects::from_strs(vec![
+                    "l 1 1 1 1 0.45 0.55 0.5 0.5 0.55 0.55 0.55 0.8 0.45 0.8 0.45 0.55"
+                ]),
+                GraphicObjects::from_strs(vec![
+                    "l 1 1 1 1 0.7 0.8 0.7 0.675 0.55 0.55 0.55 0.675 0.7 0.8"
+                ]),
+            ];
+            static ref CHAR_MAP: HashMap<char, Vec<usize>> = "1234567890CDFILPTUY "
+                .chars()
+                .map(|c| (
+                    c,
+                    match c {
+                        '1' => vec![1, 2, 10],
+                        '2' => vec![0, 1, 3, 4, 6, 7],
+                        '3' => vec![0, 1, 2, 3, 7],
+                        '4' => vec![1, 2, 5, 6, 7],
+                        '5' => vec![0, 2, 3, 5, 6, 7],
+                        '6' => vec![0, 3, 4, 5, 6, 7],
+                        '7' => vec![0, 10, 12],
+                        '8' => vec![0, 1, 2, 3, 4, 5, 6, 7],
+                        '9' => vec![0, 1, 2, 5, 6, 7],
+                        '0' => vec![0, 1, 2, 3, 4, 5],
+                        'C' => vec![0, 3, 4, 5],
+                        'D' => vec![0, 1, 2, 3, 9, 12],
+                        'F' => vec![0, 4, 5, 6, 7],
+                        'I' => vec![0, 3, 9, 12],
+                        'L' => vec![3, 4, 5],
+                        'P' => vec![0, 1, 4, 5, 6, 7],
+                        'T' => vec![0, 9, 12],
+                        'U' => vec![1, 2, 3, 4, 5],
+                        'Y' => vec![8, 10, 12],
+                        ' ' => Vec::new(),
+                        _ => unreachable!(),
+                    }
+                ))
+                .collect();
+        }
+        let mut result: GraphicObjects = Default::default();
+        for id in CHAR_MAP.get(&c).unwrap_or(&Vec::new()) {
+            result.extend(SEGMENTS[*id].clone());
+        }
+        result
     }
 
     pub fn into_iter(self) -> GraphicObjectsIntoIter {

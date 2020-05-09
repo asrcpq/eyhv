@@ -16,7 +16,7 @@ impl DifficultyManager {
     }
 
     // return true if difficulty * 100 just passed an integer
-    pub fn tick(&mut self, dt: f32, player_health_percent: f32) -> bool{
+    pub fn tick(&mut self, dt: f32, player_health_percent: f32) -> bool {
         let last_difficulty: u32 = (self.difficulty * 100.) as u32;
         self.difficulty += self.difficulty_growth * dt * player_health_percent;
         (self.difficulty * 100.) as u32 > last_difficulty
