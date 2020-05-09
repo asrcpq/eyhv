@@ -68,6 +68,47 @@ impl EnemyPath {
         }
     }
 
+    pub fn generate_wanderer2(seed: u64) -> EnemyPath {
+        let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
+        let mut route: Vec<(Point2f, f32, bool)> = Vec::new();
+        const MAX_SHIFT: f32 = 0.2;
+        let stay_height_1: f32 = rng.gen_range(0.2, 0.3);
+        let stay_height_2: f32 = rng.gen_range(0.2, 0.3);
+        let start_p = Point2f::from_floats(rng.gen_range(0., 1.), 0.);
+        let stay1_p = Point2f::from_floats(
+            rng.gen_range(
+                0f32.max(start_p.x - MAX_SHIFT),
+                1f32.min(start_p.x + MAX_SHIFT),
+            ),
+            stay_height_1,
+        );
+        let stay2_p = Point2f::from_floats(
+            rng.gen_range(
+                0f32.max(stay1_p.x - MAX_SHIFT),
+                1f32.min(stay1_p.x + MAX_SHIFT),
+            ),
+            stay_height_2,
+        );
+        let end_p = Point2f::from_floats(
+            rng.gen_range(
+                0f32.max(stay2_p.x - MAX_SHIFT),
+                1f32.min(stay2_p.x + MAX_SHIFT),
+            ),
+            0.,
+        );
+        route.push((start_p * *WINDOW_SIZE, 1., false));
+        route.push((stay1_p * *WINDOW_SIZE, 2., true));
+        route.push((stay1_p * *WINDOW_SIZE, 0.5, false));
+        route.push((stay2_p * *WINDOW_SIZE, 2., true));
+        route.push((stay2_p * *WINDOW_SIZE, 1., false));
+        route.push((end_p * *WINDOW_SIZE, 0., false));
+        EnemyPath {
+            route,
+            index: 0,
+            timer: 0.,
+        }
+    }
+
     pub fn from_str(line: &str) -> EnemyPath {
         let mut route = Vec::new();
         let splited = line
