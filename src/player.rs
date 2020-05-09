@@ -18,6 +18,7 @@ pub struct Player {
     // Static
     graphic_objects: GraphicObjects,
     graphic_objects_hit: GraphicObjects,
+    mark: GraphicObjects,
 
     // params
     speed_fast: f32, // per second
@@ -50,6 +51,9 @@ impl Player {
             graphic_objects_hit: GraphicObjects::from_strs(vec![
                 "l 1 0 0 1 -10 8 0 -10 10 8 3 4 -3 4 -10 8",
             ]),
+            mark: GraphicObjects::from_strs(vec![
+                "p 1 1 0 1 5 2 5 -2 2 -5 -2 -5 -5 -2 -5 2 -2 5 2 5",
+            ]).zoom(1.6).shift(Point2f::from_floats(0.5, 0.5)),
             speed_fast: 800.0,
             speed_slow: 400.0,
             hit_reset: 1.,
@@ -117,11 +121,16 @@ impl Player {
         bullet_queue
     }
 
-    pub fn graphic_objects_iter(&self) -> GraphicObjectsIntoIter {
-        if self.hit_reset() {
-            return self.graphic_objects_hit.shift(self.p).into_iter();
+    pub fn graphic_objects_iter(&self, show_pos: bool) -> GraphicObjectsIntoIter {
+        let mut graphic_objects = if self.hit_reset() {
+            self.graphic_objects_hit.shift(self.p)
+        } else {
+            self.graphic_objects.shift(self.p)
+        };
+        if show_pos {
+            graphic_objects.extend(self.mark.shift(self.p));
         }
-        self.graphic_objects.shift(self.p).into_iter()
+        graphic_objects.into_iter()
     }
 
     pub fn switch_cannons(&mut self, switch: bool) {

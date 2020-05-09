@@ -1,9 +1,12 @@
 use std::collections::VecDeque;
 
+use crate::algebra::Point2f;
 use crate::bullet::Bullet;
 use crate::collision::CollisionPipeInterface;
 use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter};
 use crate::window_rect::WINDOW_RECT;
+
+use lazy_static::lazy_static;
 
 pub struct BulletPool {
     bullets: VecDeque<Box<dyn Bullet>>,
@@ -46,10 +49,19 @@ impl BulletPool {
         self.bullets.push_back(bullet)
     }
 
-    pub fn graphic_objects_iter(&self) -> GraphicObjectsIntoIter {
+    pub fn graphic_objects_iter(&self, show_pos: bool) -> GraphicObjectsIntoIter {
+        lazy_static! {
+            static ref MARK: GraphicObjects = GraphicObjects::from_strs(vec![
+                "l 1 1 1 1 -1 -1 1 1",
+                "l 1 1 1 1 1 -1 -1 1",
+            ]).zoom(2.);
+        }
         let mut graphic_objects: GraphicObjects = Default::default();
         for bullet in self.bullets.iter() {
             graphic_objects.extend(bullet.get_shifted_graphic_objects());
+            if show_pos {
+                graphic_objects.extend(MARK.shift(bullet.get_p()))
+            }
         }
         graphic_objects.into_iter()
     }
