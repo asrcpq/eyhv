@@ -347,7 +347,7 @@ impl Session {
         //     self.destroyed_objects.len(),
         // );
         if !self.fast_replay {
-            std::thread::sleep(std::time::Duration::new(0, 1_000_000_000u32 / 100));
+            std::thread::sleep(std::time::Duration::new(0, 1_000_000_000u32 / 120));
         }
 
         true

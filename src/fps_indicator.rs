@@ -17,7 +17,7 @@ impl FpsIndicator {
             switch: true,
             dt: 60.,
             skip_count: 0,
-            skip_frame: 3,
+            skip_frame: 5,
             graphic_objects: Default::default(),
         }
     }
@@ -29,7 +29,7 @@ impl FpsIndicator {
     pub fn tick(&mut self, dt: f32) {
         if self.skip_count >= self.skip_frame {
             let dt = self.dt / self.skip_count as f32;
-            let string = format!("{:.2}", 1. / dt);
+            let string = format!("{: >6.2}", 1. / dt);
             let len = string.len();
             self.graphic_objects = Default::default();
             for (i, ch) in string.chars().enumerate() {

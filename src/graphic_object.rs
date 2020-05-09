@@ -540,11 +540,12 @@ impl GraphicObjects {
                     "p 1 1 1 0.5 0.7 0.8 0.7 0.675 0.55 0.55 0.55 0.675"
                 ]),
             ];
-            static ref CHAR_MAP: HashMap<char, Vec<usize>> = "1234567890CDEFILPTUVY. "
+            static ref CHAR_MAP: HashMap<char, Vec<usize>> = "0123456789:CDEFILPSTUVY. "
                 .chars()
                 .map(|c| (
                     c,
                     match c {
+                        '0' => vec![0, 1, 2, 3, 4, 5],
                         '1' => vec![1, 2, 10],
                         '2' => vec![0, 1, 3, 4, 6, 7],
                         '3' => vec![0, 1, 2, 3, 7],
@@ -554,7 +555,7 @@ impl GraphicObjects {
                         '7' => vec![0, 10, 12],
                         '8' => vec![0, 1, 2, 3, 4, 5, 6, 7],
                         '9' => vec![0, 1, 2, 5, 6, 7],
-                        '0' => vec![0, 1, 2, 3, 4, 5],
+                        ':' => vec![9, 12],
                         'C' => vec![0, 3, 4, 5],
                         'D' => vec![0, 1, 2, 3, 9, 12],
                         'E' => vec![0, 3, 4, 5, 6, 7],
@@ -562,6 +563,7 @@ impl GraphicObjects {
                         'I' => vec![0, 3, 9, 12],
                         'L' => vec![3, 4, 5],
                         'P' => vec![0, 1, 4, 5, 6, 7],
+                        'S' => vec![0, 2, 3, 7, 8],
                         'T' => vec![0, 9, 12],
                         'U' => vec![1, 2, 3, 4, 5],
                         'V' => vec![4, 5, 10, 11],
