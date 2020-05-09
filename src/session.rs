@@ -238,7 +238,7 @@ impl Session {
 
     pub fn tick(&mut self, mut dt: f32) -> bool {
         if self.pause {
-            std::thread::sleep(std::time::Duration::new(0, 1_000_000_000u32 / 100));
+            std::thread::sleep(std::time::Duration::new(0, 1_000_000_000u32 / 120));
             return true;
         }
         match self.replay {

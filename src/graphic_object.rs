@@ -154,7 +154,7 @@ impl LineSegs2f {
     }
 }
 
-pub trait GraphicObject: DynClone + Sync + Any {
+pub trait GraphicObject: DynClone + Sync + Send + Any {
     fn as_any(&self) -> &dyn Any;
     fn shift(&self, dp: Point2f) -> Box<dyn GraphicObject>;
     fn rotate(&self, rotate_mat: Mat2x2f) -> Box<dyn GraphicObject>;

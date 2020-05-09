@@ -23,7 +23,7 @@ use rand::SeedableRng;
 use crate::algebra::Point2f;
 use crate::bullet::Bullet;
 
-pub trait CannonControllerInterface: DynClone {
+pub trait CannonControllerInterface: DynClone + Send {
     // once a cannon is turned off, it immediately resets the state of itself
     // static implementation
     fn switch(&mut self, switch: bool);

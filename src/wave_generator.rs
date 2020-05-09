@@ -272,6 +272,9 @@ pub struct WaveGenerator {
     wave_queue: VecDeque<CompiledWave>,
 
     last_type: Option<u32>,
+
+    handle: Option<std::thread::JoinHandle<(Option<u32>, CompiledWave)>>,
+    //handle: Option<std::thread::JoinHandle<u32>>,
 }
 
 impl WaveGenerator {
@@ -281,6 +284,7 @@ impl WaveGenerator {
             rng: rand_pcg::Pcg64Mcg::seed_from_u64(seed),
             wave_queue: VecDeque::new(),
             last_type: None,
+            handle: None,
         }
     }
 
@@ -320,14 +324,31 @@ impl WaveGenerator {
                     }
                 }
                 dt -= self.wave_cd;
-                let (last_type, compiled_wave) = wave_scheme_prototype::random_mapper(
-                    self.rng.gen::<u64>(),
-                    difficulty,
-                    self.last_type,
-                );
+
+                let seed = self.rng.gen::<u64>();
+                let last_type = self.last_type;
+
+                let (last_type, compiled_wave) = if self.handle.is_none() {
+                    println!("Hard wait on wave generation");
+                    wave_scheme_prototype::random_mapper(
+                        seed,
+                        difficulty,
+                        last_type,
+                    )
+                } else {
+                    self.handle.take().unwrap().join().unwrap()
+                };
                 self.last_type = last_type;
                 self.wave_queue.push_back(compiled_wave);
                 self.wave_cd = self.wave_queue.back().unwrap().next_wave * (1. - difficulty / 1.6);
+
+                self.handle = Some(std::thread::spawn(move || {
+                    wave_scheme_prototype::random_mapper(
+                        seed,
+                        difficulty,
+                        last_type,
+                    )
+                }));
             }
         }
         enemy_queue

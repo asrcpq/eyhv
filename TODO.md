@@ -117,12 +117,11 @@
 
 * [x] Split cannons file
 
+* [x] Asynchronous wave generator
+
 * [ ] Get fps above 40 in debug mode
 
 * [ ] Parallelize
-
-* [ ] Asynchronous wave generator
-(Not planed, not a bottleneck at present)
 
 ### GUI Graphics
 
