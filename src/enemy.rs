@@ -26,6 +26,14 @@ mod enemy_graphic_objects {
             "p 0.1 0.1 1 0.2 0 1 1.5 -0.5 -1.5 -0.5",
         ])
         .zoom(10.);
+        pub static ref SMALL3: GraphicObjects = GraphicObjects::from_strs(vec![
+            "l 0.7 0.4 1 0.6 0 1 1 -1 -1 -1 0 1",
+            "l 0.3 1 0.5 0.8 1 -1 2 0 2 1 0.3 0.4",
+            "p 0.3 0.2 1 0.2 1 -1 2 0 2 1 0.3 0.4 1 -1",
+            "l 0.3 1 0.5 0.8 -1 -1 -2 0 -2 1 -0.3 0.4",
+            "p 0.3 0.2 1 0.2 -1 -1 -2 0 -2 1 -0.3 0.4 -1 -1",
+        ])
+        .zoom(9.);
         pub static ref MEDIUM1: GraphicObjects = GraphicObjects::from_strs(vec![
             "l 1 0.2 0.2 1 0.7 -0.6 0.7 0.1 0.2 0.8 -0.2 0.8 -0.7 0.1 -0.7 -0.6 0.7 -0.6",
             "l 1 1 1 0.5 0.6 -0.1 1.2 -0.1 1.2 -1 3 -1 3 1 1.2 1 1.2 0.1 0.6 0.1",
@@ -93,6 +101,7 @@ pub mod enemy_prototype {
             graphic_objects_options: vec![
                 enemy_graphic_objects::SMALL1.clone(),
                 enemy_graphic_objects::SMALL2.clone(),
+                enemy_graphic_objects::SMALL3.clone(),
             ],
             cannon_pool: 0,
         };
