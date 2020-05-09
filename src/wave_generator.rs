@@ -351,11 +351,7 @@ impl WaveGenerator {
 
                 let (last_type, compiled_wave) = if self.handle.is_none() {
                     println!("Hard wait on wave generation");
-                    wave_scheme_prototype::random_mapper(
-                        seed,
-                        difficulty,
-                        last_type,
-                    )
+                    wave_scheme_prototype::random_mapper(seed, difficulty, last_type)
                 } else {
                     self.handle.take().unwrap().join().unwrap()
                 };
@@ -364,11 +360,7 @@ impl WaveGenerator {
                 self.wave_cd = self.wave_queue.back().unwrap().next_wave * (1. - difficulty / 1.6);
 
                 self.handle = Some(std::thread::spawn(move || {
-                    wave_scheme_prototype::random_mapper(
-                        seed,
-                        difficulty,
-                        last_type,
-                    )
+                    wave_scheme_prototype::random_mapper(seed, difficulty, last_type)
                 }));
             }
         }

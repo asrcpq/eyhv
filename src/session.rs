@@ -8,6 +8,7 @@ use crate::collision::{collision_enemy, collision_player};
 use crate::destroy_effect::DestroyedObjects;
 use crate::difficulty_manager::DifficultyManager;
 use crate::enemy_pool::EnemyPool;
+use crate::fps_indicator::FpsIndicator;
 use crate::graphic_object::{generate_thick_arc, GraphicObject, GraphicObjectsIntoIter};
 use crate::key_state::KeyState;
 use crate::player::Player;
@@ -26,6 +27,7 @@ pub struct SessionGraphicObjectsIter {
     enemy_iter: GraphicObjectsIntoIter,
     enemy_bullet_iter: GraphicObjectsIntoIter,
     statusbar_iter: GraphicObjectsIntoIter,
+    fpsindicator_iter: GraphicObjectsIntoIter,
 }
 
 impl Iterator for SessionGraphicObjectsIter {
@@ -49,6 +51,10 @@ impl Iterator for SessionGraphicObjectsIter {
             option => return option,
         }
         match self.statusbar_iter.next() {
+            None => {}
+            option => return option,
+        }
+        match self.fpsindicator_iter.next() {
             None => {}
             option => return option,
         }
@@ -86,6 +92,7 @@ pub struct Session {
     slowdown_manager: SlowdownManager,
     time_manager: TimeManager,
     status_bar: StatusBar,
+    fps_indicator: FpsIndicator,
     background: Background,
 
     pub canvas: Canvas,
@@ -212,6 +219,7 @@ impl Session {
             slowdown_manager: SlowdownManager::new(),
             time_manager: TimeManager::new(),
             status_bar: StatusBar::new(),
+            fps_indicator: FpsIndicator::new(),
             background: Background::new(),
             canvas: Canvas::new((WINDOW_SIZE.x as i32, WINDOW_SIZE.y as i32)),
             session_info: (
@@ -232,6 +240,7 @@ impl Session {
             enemy_iter: self.enemy_pool.graphic_objects_iter(),
             enemy_bullet_iter: self.enemy_bullet_pool.graphic_objects_iter(),
             statusbar_iter: self.status_bar.graphic_objects_iter(),
+            fpsindicator_iter: self.fps_indicator.graphic_objects_iter(),
             background_iter: self.background.graphic_objects_iter(),
         }
     }
@@ -243,6 +252,7 @@ impl Session {
         }
         match self.replay {
             None => {
+                // save unscaled time!
                 self.record.dt_seq.push(dt);
             }
             Some((tn, opn)) => {
@@ -250,6 +260,7 @@ impl Session {
                     self.exit();
                     return false;
                 }
+                // this is not scaled!
                 dt = self.record.dt_seq[tn];
                 let mut new_opn = opn;
                 loop {
@@ -272,12 +283,12 @@ impl Session {
         }
 
         self.time_manager.set_state(self.slowdown_manager.tick(dt));
-        dt *= self.time_manager.update_and_get_dt_scaler(dt);
+        let dt_scaled = dt * self.time_manager.update_and_get_dt_scaler(dt);
 
         let player_health = self.player.get_health_percent();
-        // difficulty added before dt changed
+
         // not necessary to limit diffculty under 1.0
-        if self.difficulty_manager.tick(dt, player_health) {
+        if self.difficulty_manager.tick(dt_scaled, player_health) {
             self.background.send_message(format!(
                 "      {: >2}    ",
                 ((self.difficulty_manager.get_difficulty() * 100.) as u32).to_string()
@@ -285,30 +296,31 @@ impl Session {
             self.background.send_message("   LEVELUP  ".to_string());
         }
 
-        self.player_bullet_pool.tick(dt);
+        self.player_bullet_pool.tick(dt_scaled);
         self.player_bullet_pool.extend(self.player.tick(
-            dt,
+            dt_scaled,
             self.key_state.directions,
             self.time_manager.get_state(),
         ));
         self.enemy_pool.extend(
             self.wave_generator
-                .tick(dt, self.difficulty_manager.get_difficulty()),
+                .tick(dt_scaled, self.difficulty_manager.get_difficulty()),
         );
-        self.enemy_bullet_pool.tick(dt);
+        self.enemy_bullet_pool.tick(dt_scaled);
         self.enemy_bullet_pool
-            .extend(self.enemy_pool.tick(dt, self.player.get_p()));
+            .extend(self.enemy_pool.tick(dt_scaled, self.player.get_p()));
         let slowdown_info = self.slowdown_manager.get_info();
         self.status_bar.tick(
-            dt,
+            dt_scaled,
             player_health,
             slowdown_info.0,
             slowdown_info.1,
             slowdown_info.2,
             self.player.get_p(),
         );
-        self.background.tick(dt, slowdown_info.2);
-        self.destroyed_objects.tick(dt);
+        self.fps_indicator.tick(dt);
+        self.background.tick(dt_scaled, slowdown_info.2);
+        self.destroyed_objects.tick(dt_scaled);
         collision_enemy(
             &mut self.enemy_pool,
             &mut self.player_bullet_pool,
@@ -357,10 +369,15 @@ impl Session {
         if key_id == 6 {
             self.toggle_pause();
             return;
-        } else if key_id == 7 {
+        }
+        if key_id == 7 {
             if self.replay != None {
                 self.fast_replay = updown;
             }
+            return;
+        }
+        if key_id == 8 {
+            self.fps_indicator.switch();
             return;
         }
         if self.replay == None {

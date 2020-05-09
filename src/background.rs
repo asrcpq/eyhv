@@ -101,8 +101,7 @@ impl Background {
                     let graphic_objects = GraphicObjects::fsd(ch);
                     for graphic_object in graphic_objects.clone().into_iter() {
                         let mut vertices = Vec::new();
-                        if let Some(line_segs) =
-                            graphic_object.as_any().downcast_ref::<Polygon2f>()
+                        if let Some(line_segs) = graphic_object.as_any().downcast_ref::<Polygon2f>()
                         {
                             for vertex in line_segs.vertices.iter() {
                                 vertices.push([

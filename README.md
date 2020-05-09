@@ -30,6 +30,8 @@ Game replay is automatically saved.
 
 * z: Fire, cause reduced moving speed
 
+* f: Toggle fps indicator
+
 * LAlt: Pause, press again to resume
 
 * LShift: World slowdown, in a limited time and will disable side cannons

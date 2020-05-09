@@ -14,6 +14,7 @@ mod difficulty_manager;
 mod enemy;
 mod enemy_path;
 mod enemy_pool;
+mod fps_indicator;
 mod graphic_object;
 mod key_state;
 mod player;
@@ -96,6 +97,7 @@ pub fn main() {
                     Keycode::Z => session.proc_key(5, true),
                     Keycode::LAlt => session.proc_key(6, true),
                     Keycode::Space => session.proc_key(7, true),
+                    Keycode::F => session.proc_key(8, true),
                     _ => {}
                 },
                 Event::KeyUp {

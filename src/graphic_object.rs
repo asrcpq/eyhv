@@ -429,6 +429,12 @@ pub struct GraphicObjects {
 }
 
 impl GraphicObjects {
+    // for debug
+    #[allow(dead_code)]
+    pub fn len(&self) -> usize {
+        self.graphic_objects.len()
+    }
+
     pub fn new(graphic_objects: Vec<Box<dyn GraphicObject>>) -> GraphicObjects {
         GraphicObjects { graphic_objects }
     }
@@ -503,50 +509,38 @@ impl GraphicObjects {
     pub fn fsd(c: char) -> GraphicObjects {
         lazy_static! {
             static ref SEGMENTS: Vec<GraphicObjects> = vec![
+                GraphicObjects::from_strs(vec!["p 1 1 1 0.5 0.2 0.1 0.3 0.2 0.7 0.2 0.8 0.1"]),
+                GraphicObjects::from_strs(vec!["p 1 1 1 0.5 0.7 0.2 0.8 0.1 0.8 0.5 0.7 0.5"]),
+                GraphicObjects::from_strs(vec!["p 1 1 1 0.5 0.7 0.5 0.7 0.8 0.8 0.9 0.8 0.5"]),
+                GraphicObjects::from_strs(vec!["p 1 1 1 0.5 0.8 0.9 0.2 0.9 0.3 0.8 0.7 0.8"]),
+                GraphicObjects::from_strs(vec!["p 1 1 1 0.5 0.2 0.9 0.3 0.8 0.3 0.5 0.2 0.5"]),
+                GraphicObjects::from_strs(vec!["p 1 1 1 0.5 0.3 0.5 0.3 0.2 0.2 0.1 0.2 0.5"]),
                 GraphicObjects::from_strs(vec![
-                  "p 1 1 1 1 0.2 0.1 0.3 0.2 0.7 0.2 0.8 0.1"
+                    "p 1 1 1 0.5 0.3 0.45 0.45 0.45 0.5 0.5 0.45 0.55 0.3 0.55"
                 ]),
                 GraphicObjects::from_strs(vec![
-                  "p 1 1 1 1 0.7 0.2 0.8 0.1 0.8 0.5 0.7 0.5"
+                    "p 1 1 1 0.5 0.55 0.55 0.5 0.5 0.55 0.45 0.7 0.45 0.7 0.55"
                 ]),
                 GraphicObjects::from_strs(vec![
-                  "p 1 1 1 1 0.7 0.5 0.7 0.8 0.8 0.9 0.8 0.5"
+                    "p 1 1 1 0.5 0.3 0.2 0.45 0.325 0.45 0.45 0.3 0.325"
                 ]),
                 GraphicObjects::from_strs(vec![
-                  "p 1 1 1 1 0.8 0.9 0.2 0.9 0.3 0.8 0.7 0.8"
+                    "p 1 1 1 0.5 0.45 0.2 0.55 0.2 0.55 0.45 0.5 0.5 0.45 0.45"
                 ]),
                 GraphicObjects::from_strs(vec![
-                  "p 1 1 1 1 0.2 0.9 0.3 0.8 0.3 0.5 0.2 0.5"
+                    "p 1 1 1 0.5 0.7 0.2 0.55 0.325 0.55 0.45 0.7 0.325"
                 ]),
                 GraphicObjects::from_strs(vec![
-                  "p 1 1 1 1 0.3 0.5 0.3 0.2 0.2 0.1 0.2 0.5"
+                    "p 1 1 1 0.5 0.3 0.8 0.3 0.675 0.45 0.55 0.45 0.675"
                 ]),
                 GraphicObjects::from_strs(vec![
-                  "p 1 1 1 1 0.3 0.45 0.45 0.45 0.5 0.5 0.45 0.55 0.3 0.55"
+                    "p 1 1 1 0.5 0.45 0.55 0.5 0.5 0.55 0.55 0.55 0.8 0.45 0.8"
                 ]),
                 GraphicObjects::from_strs(vec![
-                  "p 1 1 1 1 0.55 0.55 0.5 0.5 0.55 0.45 0.7 0.45 0.7 0.55"
-                ]),
-                GraphicObjects::from_strs(vec![
-                  "p 1 1 1 1 0.3 0.2 0.45 0.325 0.45 0.45 0.3 0.325"
-                ]),
-                GraphicObjects::from_strs(vec![
-                  "p 1 1 1 1 0.45 0.2 0.55 0.2 0.55 0.45 0.5 0.5 0.45 0.45"
-                ]),
-                GraphicObjects::from_strs(vec![
-                  "p 1 1 1 1 0.7 0.2 0.55 0.325 0.55 0.45 0.7 0.325"
-                ]),
-                GraphicObjects::from_strs(vec![
-                  "p 1 1 1 1 0.3 0.8 0.3 0.675 0.45 0.55 0.45 0.675"
-                ]),
-                GraphicObjects::from_strs(vec![
-                  "p 1 1 1 1 0.45 0.55 0.5 0.5 0.55 0.55 0.55 0.8 0.45 0.8"
-                ]),
-                GraphicObjects::from_strs(vec![
-                  "p 1 1 1 1 0.7 0.8 0.7 0.675 0.55 0.55 0.55 0.675"
+                    "p 1 1 1 0.5 0.7 0.8 0.7 0.675 0.55 0.55 0.55 0.675"
                 ]),
             ];
-            static ref CHAR_MAP: HashMap<char, Vec<usize>> = "1234567890CDEFILPTUVY "
+            static ref CHAR_MAP: HashMap<char, Vec<usize>> = "1234567890CDEFILPTUVY. "
                 .chars()
                 .map(|c| (
                     c,
@@ -572,6 +566,7 @@ impl GraphicObjects {
                         'U' => vec![1, 2, 3, 4, 5],
                         'V' => vec![4, 5, 10, 11],
                         'Y' => vec![8, 10, 12],
+                        '.' => vec![12],
                         ' ' => Vec::new(),
                         _ => unreachable!(),
                     }

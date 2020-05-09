@@ -93,13 +93,9 @@
 
 	* [x] Destroy effect
 
-	* [ ] Visualize difficulty
+	* [x] Visualize difficulty
 
-	* [ ] Hitboxes
-
-	* [ ] fps indicator
-
-	* [ ] Destroy can break line(?)
+	* [x] fps indicator
 
 * Replay
 
@@ -118,8 +114,6 @@
 * [x] Split cannons file
 
 * [x] Asynchronous wave generator
-
-* [ ] Get fps above 40 in debug mode
 
 * [ ] Parallelize
 
