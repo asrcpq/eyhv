@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 
 use crate::algebra::Point2f;
-use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter, LineSegs2f};
+use crate::graphic_object::{GraphicObjects, GraphicObjectsIntoIter, LineSegs2f, Polygon2f};
 
 pub struct Background {
     lines_h: VecDeque<Vec<Vec<[f32; 3]>>>,
@@ -101,7 +101,7 @@ impl Background {
                     for graphic_object in graphic_objects.clone().into_iter() {
                         let mut vertices = Vec::new();
                         if let Some(line_segs) =
-                            graphic_object.as_any().downcast_ref::<LineSegs2f>()
+                            graphic_object.as_any().downcast_ref::<Polygon2f>()
                         {
                             for vertex in line_segs.vertices.iter() {
                                 vertices.push([
@@ -110,6 +110,8 @@ impl Background {
                                     0.,
                                 ]);
                             }
+                        } else {
+                            unreachable!();
                         }
                         lines.push(vertices);
                     }
@@ -179,7 +181,7 @@ impl Background {
             ],
             [0., 0.8 - self.shift * 0.5, 1., 0.35],
             [0., 0.8 - self.shift * 0.5, 1., 0.35],
-            [1., 0.6, 1., 0.5],
+            [1., 0., 0., 0.2],
         ];
 
         for layer in 0..5 {
@@ -226,10 +228,17 @@ impl Background {
                             WINDOW_SCALER * (-vertex[1] / vertex[2]) + WINDOW_SHIFT_Y,
                         ));
                     }
-                    graphic_objects.push(Box::new(LineSegs2f {
-                        vertices,
-                        color: each_color[layer],
-                    }))
+                    if layer == 4 {
+                        graphic_objects.push(Box::new(Polygon2f {
+                            vertices,
+                            color: each_color[layer],
+                        }))
+                    } else {
+                        graphic_objects.push(Box::new(LineSegs2f {
+                            vertices,
+                            color: each_color[layer],
+                        }))
+                    }
                 }
             }
         }
