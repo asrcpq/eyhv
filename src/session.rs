@@ -224,13 +224,13 @@ impl Session {
         }
     }
 
-    fn graphic_object_iter(&self, slowdown: bool) -> SessionGraphicObjectsIter {
+    fn graphic_object_iter(&self) -> SessionGraphicObjectsIter {
         SessionGraphicObjectsIter {
-            player_iter: self.player.graphic_objects_iter(slowdown),
-            player_bullet_iter: self.player_bullet_pool.graphic_objects_iter(false),
+            player_iter: self.player.graphic_objects_iter(),
+            player_bullet_iter: self.player_bullet_pool.graphic_objects_iter(),
             destroyed_objects_iter: self.destroyed_objects.graphic_objects_iter(),
             enemy_iter: self.enemy_pool.graphic_objects_iter(),
-            enemy_bullet_iter: self.enemy_bullet_pool.graphic_objects_iter(slowdown),
+            enemy_bullet_iter: self.enemy_bullet_pool.graphic_objects_iter(),
             statusbar_iter: self.status_bar.graphic_objects_iter(),
             background_iter: self.background.graphic_objects_iter(),
         }
@@ -380,7 +380,7 @@ impl Session {
     pub fn render(&mut self) {
         if !self.pause {
             self.canvas.flush();
-            for graphic_object in self.graphic_object_iter(self.slowdown_manager.get_info().2) {
+            for graphic_object in self.graphic_object_iter() {
                 graphic_object.render(&mut self.canvas);
             }
         }

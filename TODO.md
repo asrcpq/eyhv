@@ -93,11 +93,13 @@
 
 	* [x] Destroy effect
 
-	* [x] Visualize difficulty
+	* [ ] Visualize difficulty
 
-	* [x] Hitboxes in slowmode
+	* [ ] Hitboxes
 
 	* [ ] fps indicator
+
+	* [ ] Destroy can break line(?)
 
 * Replay
 

@@ -30,7 +30,7 @@ impl SlowdownManager {
         if self.slowing && !switch {
             self.slowing = false;
             false
-        } else if switch {
+        } else {
             // prevent setting frequently
             if self.quick > EPS || self.slow > EPS {
                 self.slowing = true;
@@ -38,8 +38,6 @@ impl SlowdownManager {
             } else {
                 false
             }
-        } else {
-            false
         }
     }
 
