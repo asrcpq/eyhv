@@ -62,6 +62,7 @@ impl Background {
             println!("Message: \"{}\" overflow!", string);
             return;
         }
+        assert_eq!(string.len(), 12);
         self.message_queue.push_back(string);
     }
 
@@ -181,7 +182,7 @@ impl Background {
             ],
             [0., 0.8 - self.shift * 0.5, 1., 0.35],
             [0., 0.8 - self.shift * 0.5, 1., 0.35],
-            [1., 0., 0., 0.2],
+            [1., 0., 0.3, 0.2],
         ];
 
         for layer in 0..5 {

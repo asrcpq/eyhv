@@ -58,6 +58,8 @@ pub fn collision_enemy(
 
                     if keep_bullet {
                         player_bullet_pool.push(bullet);
+                    } else {
+                        destroyed_objects.push(bullet.get_shifted_graphic_objects());
                     }
                 }
             }

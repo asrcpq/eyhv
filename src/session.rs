@@ -282,7 +282,7 @@ impl Session {
                 "      {: >2}    ",
                 ((self.difficulty_manager.get_difficulty() * 100.) as u32).to_string()
             ));
-            self.background.send_message("DIFFICULTYUP".to_string());
+            self.background.send_message("   LEVELUP  ".to_string());
         }
 
         self.player_bullet_pool.tick(dt);
