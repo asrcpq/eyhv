@@ -22,7 +22,7 @@ Game replay is automatically saved.
 
 * Time in game always synchronized: player will suffer, not benefit from low FPS
 
-* Everything drawed, no resource file, replaceable GUI frontend
+* Software rendering with high portability, no resource file
 
 ## Gameplay
 

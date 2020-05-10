@@ -31,7 +31,7 @@ pub struct PlayerLocker {
     open_angle: f32,
     count: u32,
 
-    bullet_speed: f32,
+    bullet_accel: f32,
 
     // status
     switch: bool, // on/off
@@ -40,7 +40,7 @@ pub struct PlayerLocker {
 impl CannonGeneratorInterface for PlayerLocker {
     fn generate(seed: u64, difficulty: f32, correlation: f32) -> PlayerLocker {
         // difficulty expression
-        // difficulty = fire_duration * count * (bullet_speed / fire_interval)
+        // difficulty = fire_duration * count * (bullet_accel / fire_interval)
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
         // cn * bs_ff^2
         let generated = simple_try(
@@ -53,9 +53,9 @@ impl CannonGeneratorInterface for PlayerLocker {
         );
         let (count, bs_ff) = (generated[0], generated[1]);
         let bs_ff_k = rng.gen_range(0.8, 1.2);
-        let mut bullet_speed = (bs_ff * bs_ff_k).sqrt();
-        let fire_interval = 0.3 * bullet_speed / bs_ff;
-        bullet_speed *= 600.;
+        let mut bullet_accel = (bs_ff * bs_ff_k).sqrt();
+        let fire_interval = 0.3 * bullet_accel / bs_ff;
+        bullet_accel *= 700.;
         let open_angle: f32 = rng.gen_range(5f32.to_radians(), 120f32.to_radians());
         PlayerLocker {
             p: Point2f::new(),
@@ -65,7 +65,7 @@ impl CannonGeneratorInterface for PlayerLocker {
             open_angle,
             count: count as u32,
             switch: true,
-            bullet_speed,
+            bullet_accel,
             phase_timer: 0.,
         }
     }
@@ -114,8 +114,8 @@ impl CannonControllerInterface for PlayerLocker {
                 );
                 bullet_queue.push_back(Box::new(SimpleBullet::new(
                     self.p + host_p,
-                    normed_vec2f * self.bullet_speed,
                     Point2f::new(),
+                    normed_vec2f * self.bullet_accel,
                     dt,
                     BULLET_RADIUS,
                     bullet_graphic_objects::WEDGE.rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),
