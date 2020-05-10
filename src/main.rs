@@ -132,7 +132,7 @@ pub fn main() {
             .update(None, &session.canvas.data, WINDOW_SIZE.x as usize * 3)
             .unwrap();
 
-        canvas.set_draw_color(Color::RGB(0, 0, 0));
+        canvas.set_draw_color(Color::RGBA(0, 0, 0, 255));
         canvas.clear();
         canvas.copy(&texture, None, None).unwrap();
         canvas.present();

@@ -26,10 +26,11 @@ impl Canvas {
         if x < 0 || y < 0 || x >= self.size.0 || y >= self.size.1 {
             return;
         }
-        for i in 0usize..3usize {
-            let pos = ((y * self.size.0 + x) * 3) as usize + i;
-            self.data[pos] =
-                (self.data[pos] as f32 * (1. - alpha) + self.color[i] * 255. * alpha) as u8;
-        }
+        let mut pos = ((y * self.size.0 + x) * 3) as usize;
+        self.data[pos] = (self.data[pos] as f32 * (1. - alpha) + self.color[0] * 255. * alpha) as u8;
+        pos += 1;
+        self.data[pos] = (self.data[pos] as f32 * (1. - alpha) + self.color[1] * 255. * alpha) as u8;
+        pos += 1;
+        self.data[pos] = (self.data[pos] as f32 * (1. - alpha) + self.color[2] * 255. * alpha) as u8;
     }
 }

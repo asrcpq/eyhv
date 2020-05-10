@@ -109,6 +109,10 @@
 
 	* [ ] Audio backend and PCM buffer interface
 
+* [ ] Frame lock
+
+* [ ] Graphics cropping
+
 ### Performance
 
 * [x] Split cannons file
