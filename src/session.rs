@@ -174,11 +174,11 @@ impl Session {
             Some(difficulty_growth) => difficulty_growth.parse::<f32>().unwrap(),
         };
         let health_max = match matches.value_of("health max") {
-            None => 10.,
+            None => 8.,
             Some(health_max) => health_max.parse::<f32>().unwrap(),
         };
         let health_regen = match matches.value_of("health regen") {
-            None => 0.07,
+            None => 0.1,
             Some(health_regen) => health_regen.parse::<f32>().unwrap(),
         };
         let replay: Option<String> = matches.value_of("replay file").map(|s| s.to_string());

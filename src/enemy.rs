@@ -131,9 +131,11 @@ pub mod enemy_prototype {
             cannon_pits: vec![
                 vec![
                     Point2f::from_floats(-45., 30.),
+                    Point2f::from_floats(45., 30.),
+                ],
+                vec![
                     Point2f::from_floats(-15., 30.),
                     Point2f::from_floats(15., 30.),
-                    Point2f::from_floats(45., 30.),
                 ],
                 vec![
                     Point2f::from_floats(-75., 20.),

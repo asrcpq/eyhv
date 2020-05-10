@@ -32,14 +32,14 @@ pub struct Rotor {
 }
 
 impl CannonGeneratorInterface for Rotor {
-    fn generate(seed: u64, difficulty: f32, correlation: f32) -> Rotor {
+    fn generate(seed: u64, difficulty: f32, _: f32) -> Rotor {
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
         // difficulty = bullet_speed / fire_interval
         let generated = simple_try(
             TRY_TIMES,
             |x| x[0] / x[1],
-            vec![(100., 600.), (0.2, 0.03)],
-            correlation,
+            vec![(100., 700.), (0.2, 0.02)],
+            0.7,
             difficulty,
             rng.gen::<u64>(),
         );
