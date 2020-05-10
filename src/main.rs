@@ -1,13 +1,12 @@
 extern crate rand;
 extern crate rand_pcg;
 extern crate sdl2;
+extern crate mray;
 
-mod algebra;
 mod background;
 mod bullet;
 mod bullet_pool;
 mod cannon;
-mod canvas;
 mod collision;
 mod destroy_effect;
 mod difficulty_manager;
@@ -15,7 +14,6 @@ mod enemy;
 mod enemy_path;
 mod enemy_pool;
 mod fps_indicator;
-mod graphic_object;
 mod key_state;
 mod player;
 mod random_tools;
@@ -26,6 +24,10 @@ mod status_bar;
 mod time_manager;
 mod wave_generator;
 mod window_rect;
+
+use mray::algebra;
+use mray::canvas;
+use mray::graphic_object;
 
 use session::Session;
 use window_rect::WINDOW_SIZE;

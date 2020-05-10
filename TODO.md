@@ -51,6 +51,8 @@
 
 	* [x] New Cannon: Ring
 
+	* [ ] New path: appear
+
 * [x] Pause
 
 * [x] WavePool
@@ -126,3 +128,5 @@
 * [x] Simple line and polygon drawing
 
 * [x] Thick arc generator
+
+* [ ] Retro line

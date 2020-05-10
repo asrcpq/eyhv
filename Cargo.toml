@@ -4,11 +4,6 @@ version = "0.1.0"
 authors = ["asrcpq <asrcpq@gmail.com>"]
 edition = "2018"
 
-[dependencies.sdl2]
-version = "0.34"
-default-features = false
-features = ["gfx", "mixer"]
-
 [dependencies]
 derive_more = "0.99.0"
 lazy_static = "1.4.0"
@@ -18,3 +13,5 @@ dyn-clone = "1.0.1"
 clap = "2.33.0"
 serde = { version = "1.0", features = ["derive"] }
 bincode = "1.2.1"
+sdl2 = "0.34"
+mray = {git = "https://github.com/asrcpq/mray", rev = "c3b615c56545637e472a0f9594e1956929068dba"}

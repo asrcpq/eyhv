@@ -55,7 +55,7 @@ impl CannonGeneratorInterface for PlayerLocker {
         let bs_ff_k = rng.gen_range(0.8, 1.2);
         let mut bullet_accel = (bs_ff * bs_ff_k).sqrt();
         let fire_interval = 0.3 * bullet_accel / bs_ff;
-        bullet_accel *= 700.;
+        bullet_accel *= 600.;
         let open_angle: f32 = rng.gen_range(5f32.to_radians(), 120f32.to_radians());
         PlayerLocker {
             p: Point2f::new(),
