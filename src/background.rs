@@ -98,7 +98,7 @@ impl Background {
                 let mut id: f32 = -self.timer_h * SPEED_SCALER_H;
                 for ch in string.chars() {
                     let mut lines = Vec::new();
-                    let graphic_objects = GraphicObjects::fsd(ch);
+                    let graphic_objects = mray::fsd::fsd(ch);
                     for graphic_object in graphic_objects.clone().into_iter() {
                         let mut vertices = Vec::new();
                         if let Some(line_segs) = graphic_object.as_any().downcast_ref::<Polygon2f>()

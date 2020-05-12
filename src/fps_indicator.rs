@@ -34,7 +34,7 @@ impl FpsIndicator {
             self.graphic_objects = Default::default();
             for (i, ch) in string.chars().enumerate() {
                 self.graphic_objects.extend(
-                    GraphicObjects::fsd(ch)
+                    mray::fsd::fsd(ch)
                         .zoom(20.)
                         .shift(Point2f::from_floats(500. - (len - i) as f32 * 20., 10.)),
                 )
