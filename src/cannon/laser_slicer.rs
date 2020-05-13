@@ -70,7 +70,7 @@ impl CannonGeneratorInterface for LaserSlicer {
             fire_interval,
             fire_cd: fire_interval,
             theta: vec![0.; count as usize], // uninitialized
-            rng: Some(rand_pcg::Pcg64Mcg::seed_from_u64(seed)),
+            rng: None,
             switch: true,
             bullet_speed,
             count,

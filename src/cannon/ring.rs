@@ -23,7 +23,7 @@ pub struct Ring {
     count: u32,
     bullet_speed: f32,
 
-    rng: rand_pcg::Pcg64Mcg,
+    rng: Option<rand_pcg::Pcg64Mcg>,
 
     // status
     switch: bool, // on/off
@@ -49,7 +49,7 @@ impl CannonGeneratorInterface for Ring {
             fire_cd: fire_interval,
             count,
             bullet_speed,
-            rng: rand_pcg::Pcg64Mcg::seed_from_u64(rng.gen::<u64>()),
+            rng: None,
             switch: true,
         }
     }
@@ -76,7 +76,7 @@ impl CannonControllerInterface for Ring {
             }
             dt -= self.fire_cd;
             let d_theta = 2. * std::f32::consts::PI / self.count as f32;
-            let mut theta = self.rng.gen_range(0., d_theta);
+            let mut theta = self.rng.as_mut().unwrap().gen_range(0., d_theta);
             for _ in 0..self.count {
                 theta += d_theta;
                 let normed_vec2f = Point2f::from_theta(theta);
@@ -97,5 +97,9 @@ impl CannonControllerInterface for Ring {
 
     fn set_p(&mut self, p: Point2f) {
         self.p = p;
+    }
+
+    fn set_rng(&mut self, seed: u64) {
+        self.rng = Some(rand_pcg::Pcg64Mcg::seed_from_u64(seed));
     }
 }

@@ -232,6 +232,7 @@ impl Background {
                         graphic_objects.push(Box::new(Polygon2f {
                             vertices,
                             color: each_color[layer],
+                            border_color: each_color[layer],
                         }))
                     } else {
                         graphic_objects.push(Box::new(LineSegs2f {
