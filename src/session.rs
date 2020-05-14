@@ -290,8 +290,8 @@ impl Session {
         // not necessary to limit diffculty under 1.0
         if self.difficulty_manager.tick(dt_scaled, player_health) {
             self.background.send_message(format!(
-                "      {: >2}    ",
-                ((self.difficulty_manager.get_difficulty() * 100.) as u32).to_string()
+                "     {: >3}    ",
+                ((1f32.min(self.difficulty_manager.get_difficulty()) * 100.) as u32).to_string()
             ));
             self.background.send_message("   LEVELUP  ".to_string());
         }
