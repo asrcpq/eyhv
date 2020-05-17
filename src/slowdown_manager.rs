@@ -27,7 +27,7 @@ impl SlowdownManager {
     // return slowing status
     pub fn switch(&mut self, switch: bool) -> bool {
         const EPS: f32 = 0.1;
-        if self.slowing && !switch {
+        if !switch {
             self.slowing = false;
             false
         } else {
