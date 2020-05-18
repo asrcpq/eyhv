@@ -178,7 +178,7 @@ impl Session {
             Some(health_max) => health_max.parse::<f32>().unwrap(),
         };
         let health_regen = match matches.value_of("health regen") {
-            None => 0.1,
+            None => 0.2,
             Some(health_regen) => health_regen.parse::<f32>().unwrap(),
         };
         let replay: Option<String> = matches.value_of("replay file").map(|s| s.to_string());

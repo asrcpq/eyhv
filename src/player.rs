@@ -52,7 +52,7 @@ impl Player {
             ]),
             speed_fast: 800.0,
             speed_slow: 400.0,
-            hit_reset: 1.,
+            hit_reset: 0.15,
             hit_reset_timer: 0.,
 
             health: health_max,
