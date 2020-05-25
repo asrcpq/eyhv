@@ -161,15 +161,15 @@ impl Session {
         };
         let start_difficulty = match matches.value_of("start difficulty") {
             None => {
-                println!("Using default start difficulty 0.2");
-                0.2
+                println!("Using default start difficulty 0.24");
+                0.24
             }
             Some(start_difficulty) => start_difficulty.parse::<f32>().unwrap(),
         };
         let difficulty_growth = match matches.value_of("difficulty growth") {
             None => {
-                println!("Using default difficulty growth rate 0.001");
-                0.001
+                println!("Using default difficulty growth rate 0.0006");
+                0.0006
             }
             Some(difficulty_growth) => difficulty_growth.parse::<f32>().unwrap(),
         };

@@ -76,9 +76,7 @@ impl StatusBar {
         self.quick_percent = quick_percent;
         self.slow_percent = slow_percent;
         self.player_p = player_p;
-        self.self_p += (player_p - self.self_p) * dt * 20.;
-        const MOMENTUM_SCALER: f32 = 0.2;
-        self.self_p = self.self_p * MOMENTUM_SCALER + player_p * (1. - MOMENTUM_SCALER);
+        self.self_p += (player_p - self.self_p) * dt * 50.;
         for i in 0..3 {
             self.rs[i] = self.rs_small[i] * (1. - self.shift) + self.rs_large[i] * self.shift;
         }
