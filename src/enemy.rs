@@ -64,18 +64,6 @@ pub enum EnemyTickReturnOption {
     Removed,
 }
 
-#[derive(Clone)]
-pub struct Enemy {
-    p: Option<Point2f>,
-    last_p: Option<Point2f>,
-    path: EnemyPath,
-    speed: f32,
-    life: f32,
-    cannons: Vec<Box<dyn CannonControllerInterface>>,
-    graphic_objects: GraphicObjects,
-    hitboxes: Vec<Circle2f>,
-}
-
 pub mod enemy_prototype {
     use super::enemy_graphic_objects;
     use crate::algebra::{Circle2f, Point2f};
@@ -95,7 +83,7 @@ pub mod enemy_prototype {
     lazy_static! {
         pub static ref SMALL: EnemyPrototype = EnemyPrototype {
             speed: 1.,
-            life: 3.,
+            life: 9.,
             cannon_pits: vec![vec![Point2f::new()]],
             hitboxes: vec![Circle2f::from_floats(0., 0., 20.)],
             graphic_objects_options: vec![
@@ -107,7 +95,7 @@ pub mod enemy_prototype {
         };
         pub static ref MEDIUM: EnemyPrototype = EnemyPrototype {
             speed: 0.5,
-            life: 15.,
+            life: 25.,
             cannon_pits: vec![
                 vec![
                     Point2f::from_floats(-30., 0.),
@@ -154,6 +142,20 @@ pub mod enemy_prototype {
     }
 }
 
+#[derive(Clone)]
+pub struct Enemy {
+    p: Option<Point2f>,
+    last_p: Option<Point2f>,
+    path: EnemyPath,
+    speed: f32,
+    life: f32,
+    // life_autodrop is designed to prevent enemy defeated too early
+    life_autodrop: f32,
+    cannons: Vec<Box<dyn CannonControllerInterface>>,
+    graphic_objects: GraphicObjects,
+    hitboxes: Vec<Circle2f>,
+}
+
 impl Enemy {
     pub fn new(
         path: EnemyPath,
@@ -168,6 +170,7 @@ impl Enemy {
             last_p: None,
             path,
             life,
+            life_autodrop: 3.,
             speed,
             cannons,
             graphic_objects,
@@ -187,6 +190,8 @@ impl Enemy {
                 }
             }
         }
+
+        self.life -= self.life_autodrop * dt;
 
         let mut bullet_queue = VecDeque::new();
         // path is executed before update_theta so unwrap p should be safe

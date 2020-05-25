@@ -83,8 +83,8 @@ impl CannonControllerInterface for Rotor {
             dt -= self.fire_cd;
             bullet_queue.push_back(Box::new(RotateBullet::new(
                 self.p + host_p,
-                Point2f::from_polar(self.bullet_speed, self.theta),
                 Point2f::new(),
+                Point2f::from_polar(self.bullet_speed, self.theta),
                 dt,
                 BULLET_RADIUS,
                 rotate_matrix,

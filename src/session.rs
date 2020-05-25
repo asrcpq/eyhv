@@ -131,7 +131,7 @@ impl Session {
                     .short("h")
                     .long("health-max")
                     .takes_value(true)
-                    .help("max healyh"),
+                    .help("max health"),
             )
             .arg(
                 Arg::with_name("health regen")
