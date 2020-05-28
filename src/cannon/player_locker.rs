@@ -42,21 +42,20 @@ impl CannonGeneratorInterface for PlayerLocker {
         // difficulty expression
         // difficulty = fire_duration * count * (bullet_accel / fire_interval)
         let mut rng = rand_pcg::Pcg64Mcg::seed_from_u64(seed);
-        // cn * bs_ff^2
+        // cn * bs_ff^2 * oa
         let generated = simple_try(
             TRY_TIMES,
-            |x| x[0] * x[1].powi(2),
-            vec![(1., 7.), (0.2, 1.5)],
+            |x| x[0] * x[1].powi(2) * x[2],
+            vec![(1., 7.), (0.2, 1.5), (0.01, 1.)],
             correlation,
             difficulty,
             rng.gen::<u64>(),
         );
-        let (count, bs_ff) = (generated[0], generated[1]);
+        let (count, bs_ff, open_angle) = (generated[0], generated[1], generated[2]);
         let bs_ff_k = rng.gen_range(0.8, 1.2);
         let mut bullet_accel = (bs_ff * bs_ff_k).sqrt();
         let fire_interval = 0.3 * bullet_accel / bs_ff;
         bullet_accel *= 600.;
-        let open_angle: f32 = rng.gen_range(5f32.to_radians(), 120f32.to_radians());
         PlayerLocker {
             p: Point2f::new(),
             fire_interval,
