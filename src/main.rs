@@ -1,7 +1,7 @@
+extern crate mray;
 extern crate rand;
 extern crate rand_pcg;
 extern crate sdl2;
-extern crate mray;
 
 mod background;
 mod bullet;

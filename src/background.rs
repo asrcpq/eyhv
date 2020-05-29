@@ -179,8 +179,18 @@ impl Background {
                 0.2 + self.shift * 0.8,
                 0.25 + self.shift * 0.2,
             ],
-            [0., 0.8 - self.shift * 0.5, 1., 0.35],
-            [0., 0.8 - self.shift * 0.5, 1., 0.35],
+            [
+                1. - (self.shift - 0.5).abs() * 2.,
+                1. - (self.shift - 0.5).abs() * 2.,
+                1.,
+                0.35,
+            ],
+            [
+                1. - (self.shift - 0.5).abs() * 2.,
+                1. - (self.shift - 0.5).abs() * 2.,
+                1.,
+                0.35,
+            ],
             [1., 1., 1., 0.2],
         ];
 
