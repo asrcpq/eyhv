@@ -50,8 +50,8 @@ impl Player {
             graphic_objects_hit: GraphicObjects::from_strs(vec![
                 "l 1 0 0 1 -10 8 0 -10 10 8 3 4 -3 4 -10 8",
             ]),
-            speed_fast: 800.0,
-            speed_slow: 400.0,
+            speed_fast: 1000.0,
+            speed_slow: 500.0,
             hit_reset: 0.15,
             hit_reset_timer: 0.,
 

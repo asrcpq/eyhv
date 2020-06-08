@@ -46,7 +46,7 @@ impl CannonGeneratorInterface for Ring {
         Ring {
             p: Point2f::new(),
             fire_interval,
-            fire_cd: fire_interval,
+            fire_cd: 0.,
             count,
             bullet_speed,
             rng: None,
