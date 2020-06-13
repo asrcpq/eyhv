@@ -55,7 +55,7 @@ impl Player {
             hit_reset: 0.15,
             hit_reset_timer: 0.,
 
-            health: health_max,
+            health: health_max / 4.,
             health_max,
             health_regen,
         }

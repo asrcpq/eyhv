@@ -97,7 +97,7 @@ impl StatusBar {
         let mut graphic_objects = generate_thick_arc(
             self.self_p,
             (self.rs[0], self.rs[1]),
-            (0., &self.health_percent * 2. * std::f32::consts::PI),
+            (0., -&self.health_percent * 2. * std::f32::consts::PI),
             None,
             Some([
                 if self.health_percent > 0.99 { 0.2 } else { 0.4 },
@@ -111,8 +111,8 @@ impl StatusBar {
                 self.self_p,
                 (self.rs[0], self.rs[1]),
                 (
-                    &self.health_percent * 2. * std::f32::consts::PI,
-                    &self.health_early * 2. * std::f32::consts::PI,
+                    -&self.health_percent * 2. * std::f32::consts::PI,
+                    -&self.health_early * 2. * std::f32::consts::PI,
                 ),
                 None,
                 Some([1.0, 0.4, 0.4, 0.3]),
