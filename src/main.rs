@@ -30,7 +30,7 @@ use mray::canvas;
 use mray::graphic_object;
 
 use session::Session;
-use window_rect::WINDOW_SIZE;
+use window_rect::WINDOW_SIZE_SCALED;
 
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
@@ -53,7 +53,7 @@ pub fn main() {
     let video_subsystem = sdl_context.video().unwrap();
 
     let window = video_subsystem
-        .window("eyhv", WINDOW_SIZE.x as u32, WINDOW_SIZE.y as u32)
+        .window("eyhv", WINDOW_SIZE_SCALED.x as u32, WINDOW_SIZE_SCALED.y as u32)
         .opengl()
         .position_centered()
         .build()
@@ -69,8 +69,8 @@ pub fn main() {
     let mut texture = texture_creator
         .create_texture_static(
             Some(sdl2::pixels::PixelFormatEnum::RGB24),
-            WINDOW_SIZE.x as u32,
-            WINDOW_SIZE.y as u32,
+            WINDOW_SIZE_SCALED.x as u32,
+            WINDOW_SIZE_SCALED.y as u32,
         )
         .unwrap();
     let mut event_pump = sdl_context.event_pump().unwrap();
@@ -81,7 +81,7 @@ pub fn main() {
             match event {
                 Event::Quit { .. }
                 | Event::KeyDown {
-                    keycode: Some(Keycode::Escape),
+                    keycode: Some(Keycode::Q),
                     ..
                 } => {
                     session.exit();
@@ -131,7 +131,7 @@ pub fn main() {
         session.render();
 
         texture
-            .update(None, &session.canvas.data, WINDOW_SIZE.x as usize * 3)
+            .update(None, &session.canvas.data, WINDOW_SIZE_SCALED.x as usize * 3)
             .unwrap();
 
         canvas.set_draw_color(Color::RGBA(0, 0, 0, 255));

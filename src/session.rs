@@ -17,7 +17,7 @@ use crate::slowdown_manager::SlowdownManager;
 use crate::status_bar::StatusBar;
 use crate::time_manager::TimeManager;
 use crate::wave_generator::WaveGenerator;
-use crate::window_rect::WINDOW_SIZE;
+use crate::window_rect::{WINDOW_SIZE, SCALER};
 
 pub struct SessionGraphicObjectsIter {
     background_iter: GraphicObjectsIntoIter,
@@ -221,7 +221,10 @@ impl Session {
             status_bar: StatusBar::new(),
             fps_indicator: FpsIndicator::new(),
             background: Background::new(),
-            canvas: Canvas::new((WINDOW_SIZE.x as i32, WINDOW_SIZE.y as i32)),
+            canvas: Canvas::new(
+                (WINDOW_SIZE.x as i32, WINDOW_SIZE.y as i32),
+                *SCALER,
+            ),
             session_info: (
                 seed,
                 start_difficulty,
