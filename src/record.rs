@@ -9,7 +9,7 @@ pub struct Record {
     // times 1. 2. 3.
     // operations[0] is executed in times = 1.
     // so when an operation is recorded, that frame's tick() has not been called
-    pub params: (u64, f32, f32, f32, f32),
+    pub params: (u64, f32, f32, f32),
     pub dt_seq: Vec<f32>,
     pub operation: Vec<(usize, i8, bool)>, //frame, key_id, updown
 }

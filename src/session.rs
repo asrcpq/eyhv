@@ -98,7 +98,7 @@ pub struct Session {
     pub canvas: Canvas,
 
     #[allow(dead_code)]
-    session_info: (u64, f32, f32, f32, f32),
+    session_info: (u64, f32, f32, f32),
 }
 
 impl Session {
@@ -127,18 +127,11 @@ impl Session {
                     .help("difficulty growth per second"),
             )
             .arg(
-                Arg::with_name("health max")
-                    .short("h")
-                    .long("health-max")
+                Arg::with_name("difficulty drop")
+                    .short("D")
+                    .long("difficulty-drop")
                     .takes_value(true)
-                    .help("max health"),
-            )
-            .arg(
-                Arg::with_name("health regen")
-                    .short("r")
-                    .long("health-regen")
-                    .takes_value(true)
-                    .help("regeneration of health per second"),
+                    .help("difficulty drop on each hit"),
             )
             .arg(
                 Arg::with_name("replay file")
@@ -162,7 +155,7 @@ impl Session {
         let start_difficulty = match matches.value_of("start difficulty") {
             None => {
                 println!("Using default start difficulty 0.24");
-                0.24
+                0.2
             }
             Some(start_difficulty) => start_difficulty.parse::<f32>().unwrap(),
         };
@@ -173,13 +166,9 @@ impl Session {
             }
             Some(difficulty_growth) => difficulty_growth.parse::<f32>().unwrap(),
         };
-        let health_max = match matches.value_of("health max") {
-            None => 8.,
-            Some(health_max) => health_max.parse::<f32>().unwrap(),
-        };
-        let health_regen = match matches.value_of("health regen") {
-            None => 0.2,
-            Some(health_regen) => health_regen.parse::<f32>().unwrap(),
+        let difficulty_drop = match matches.value_of("difficulty drop") {
+            None => 0.001,
+            Some(difficulty_drop) => difficulty_drop.parse::<f32>().unwrap(),
         };
         let replay: Option<String> = matches.value_of("replay file").map(|s| s.to_string());
         let params;
@@ -191,8 +180,7 @@ impl Session {
                     seed,
                     start_difficulty,
                     difficulty_growth,
-                    health_max,
-                    health_regen,
+                    difficulty_drop,
                 );
                 record.params = params;
                 None
@@ -204,7 +192,7 @@ impl Session {
             }
         };
         Session {
-            player: Player::new(params.3, params.4),
+            player: Player::new(),
             player_bullet_pool: BulletPool::new(),
             enemy_pool: EnemyPool::new(),
             destroyed_objects: DestroyedObjects::new(seed), //simply use the same seed
@@ -212,13 +200,13 @@ impl Session {
             record,
             replay,
             fast_replay: false,
-            difficulty_manager: DifficultyManager::new(params.1, params.2),
+            difficulty_manager: DifficultyManager::new(params.1, params.2, params.3),
             wave_generator: WaveGenerator::new(params.0),
             key_state: KeyState::new(),
             pause: false,
             slowdown_manager: SlowdownManager::new(),
             time_manager: TimeManager::new(),
-            status_bar: StatusBar::new(),
+            status_bar: StatusBar::new(params.1),
             fps_indicator: FpsIndicator::new(),
             background: Background::new(),
             canvas: Canvas::new(
@@ -229,8 +217,7 @@ impl Session {
                 seed,
                 start_difficulty,
                 difficulty_growth,
-                health_max,
-                health_regen,
+                difficulty_drop,
             ),
         }
     }
@@ -288,13 +275,12 @@ impl Session {
         self.time_manager.set_state(self.slowdown_manager.tick(dt));
         let dt_scaled = dt * self.time_manager.update_and_get_dt_scaler(dt);
 
-        let player_health = self.player.get_health_percent();
-
+        let current_difficulty = self.difficulty_manager.get_difficulty();
         // not necessary to limit diffculty under 1.0
-        if self.difficulty_manager.tick(dt_scaled, player_health) {
+        if self.difficulty_manager.tick(dt_scaled) {
             self.background.send_message(format!(
                 "     {: >3}    ",
-                ((1f32.min(self.difficulty_manager.get_difficulty()) * 100.) as u32).to_string()
+                ((1f32.min(current_difficulty) * 100.) as u32).to_string()
             ));
             self.background.send_message("   LEVELUP  ".to_string());
         }
@@ -307,7 +293,7 @@ impl Session {
         ));
         self.enemy_pool.extend(
             self.wave_generator
-                .tick(dt_scaled, self.difficulty_manager.get_difficulty()),
+                .tick(dt_scaled, current_difficulty),
         );
         self.enemy_bullet_pool.tick(dt_scaled);
         self.enemy_bullet_pool
@@ -315,7 +301,7 @@ impl Session {
         let slowdown_info = self.slowdown_manager.get_info();
         self.status_bar.tick(
             dt_scaled,
-            player_health,
+            current_difficulty,
             slowdown_info.0,
             slowdown_info.1,
             slowdown_info.2,
@@ -329,16 +315,16 @@ impl Session {
             &mut self.player_bullet_pool,
             &mut self.destroyed_objects,
         );
+        // no need to calculate collision if hit_reset-ing
         if !self.player.hit_reset()
             && collision_player(
                 self.player.get_p(),
                 self.player.get_last_p(),
                 &mut self.enemy_bullet_pool,
             )
-            && !self.player.hit()
         {
-            self.exit();
-            return false;
+            self.player.hit();
+            self.difficulty_manager.drop();
         }
 
         // memleak monitor

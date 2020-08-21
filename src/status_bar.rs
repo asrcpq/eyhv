@@ -1,18 +1,21 @@
 use crate::algebra::Point2f;
+use crate::difficulty_manager::DIFFICULTY_MULTIPLIER;
 use crate::graphic_object::{generate_thick_arc, GraphicObjectsIntoIter};
 
 // this is used for visualize, calculation only works as effects
 pub struct StatusBar {
     // update data
-    health_percent: f32,
-    health_last: f32,
-    health_early: f32,
-    health_timer: f32,
+    difficulty_percent: f32,
+    difficulty_layer: i32,
+    difficulty_last: f32,
+    difficulty_early: f32,
+    difficulty_timer: f32,
 
     quick_percent: f32,
     slow_percent: f32,
     slowing: bool,
     shift: f32,
+    //shift_layer: f32,
     player_p: Point2f,
     self_p: Point2f,
 
@@ -24,9 +27,11 @@ pub struct StatusBar {
 }
 
 impl StatusBar {
-    pub fn new() -> StatusBar {
+    pub fn new(initial_difficulty: f32) -> StatusBar {
         let rs_small = [70., 80., 90.];
         let rs_large = [180., 195., 210.];
+        let difficulty_layer = (initial_difficulty * DIFFICULTY_MULTIPLIER) as i32;
+        let difficulty_percent = initial_difficulty * DIFFICULTY_MULTIPLIER - difficulty_layer as f32;
         StatusBar {
             // these data should never be used
             quick_percent: 0.,
@@ -40,38 +45,42 @@ impl StatusBar {
             rs_large,
             split_angle: std::f32::consts::FRAC_PI_2,
 
-            health_percent: 1.0,
-            health_last: 1.0,
-            health_early: 1.0,
-            health_timer: 5.,
+            difficulty_percent,
+            difficulty_layer,
+            difficulty_last: difficulty_percent,
+            difficulty_early: difficulty_percent,
+            difficulty_timer: 5.,
         }
     }
+
+    // pub fn hit
 
     pub fn tick(
         &mut self,
         dt: f32,
-        health_percent: f32,
+        difficulty: f32,
         quick_percent: f32,
         slow_percent: f32,
         slowing: bool,
         player_p: Point2f,
     ) {
-        self.health_percent = health_percent;
-        const HEALTH_CD: f32 = 1.;
-        const HEALTH_ROLL: f32 = 1.;
-        if self.health_percent > self.health_early {
-            self.health_timer = HEALTH_CD;
-            self.health_early = self.health_percent;
+        self.difficulty_layer = (difficulty * DIFFICULTY_MULTIPLIER) as i32;
+        self.difficulty_percent = difficulty * DIFFICULTY_MULTIPLIER - self.difficulty_layer as f32;
+        const DIFFICULTY_CD: f32 = 0.5;
+        const DIFFICULTY_ROLL: f32 = 1.;
+        if self.difficulty_percent > self.difficulty_early {
+            self.difficulty_timer = DIFFICULTY_CD;
+            self.difficulty_early = self.difficulty_percent;
         }
-        if self.health_percent < self.health_last {
-            self.health_timer = HEALTH_CD;
-        } else if self.health_percent < self.health_early {
-            if self.health_timer < 0. {
-                self.health_early -= HEALTH_ROLL * dt;
+        if self.difficulty_percent < self.difficulty_last {
+            self.difficulty_timer = DIFFICULTY_CD;
+        } else if self.difficulty_percent < self.difficulty_early {
+            if self.difficulty_timer < 0. {
+                self.difficulty_early -= DIFFICULTY_ROLL * dt;
             }
-            self.health_timer -= dt;
+            self.difficulty_timer -= dt;
         }
-        self.health_last = self.health_percent;
+        self.difficulty_last = self.difficulty_percent;
 
         self.quick_percent = quick_percent;
         self.slow_percent = slow_percent;
@@ -97,22 +106,22 @@ impl StatusBar {
         let mut graphic_objects = generate_thick_arc(
             self.self_p,
             (self.rs[0], self.rs[1]),
-            (0., -&self.health_percent * 2. * std::f32::consts::PI),
+            (0., -&self.difficulty_percent * 2. * std::f32::consts::PI),
             None,
             Some([
-                if self.health_percent > 0.99 { 0.2 } else { 0.4 },
+                if self.difficulty_percent > 0.99 { 0.2 } else { 0.4 },
                 0.4,
                 0.4,
                 0.6,
             ]),
         );
-        if self.health_early > self.health_percent {
+        if self.difficulty_early > self.difficulty_percent {
             graphic_objects.extend(generate_thick_arc(
                 self.self_p,
                 (self.rs[0], self.rs[1]),
                 (
-                    -&self.health_percent * 2. * std::f32::consts::PI,
-                    -&self.health_early * 2. * std::f32::consts::PI,
+                    -&self.difficulty_percent * 2. * std::f32::consts::PI,
+                    -&self.difficulty_early * 2. * std::f32::consts::PI,
                 ),
                 None,
                 Some([1.0, 0.4, 0.4, 0.3]),

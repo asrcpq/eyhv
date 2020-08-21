@@ -9,9 +9,7 @@ pub struct Background {
     lines_font: VecDeque<Vec<Vec<[f32; 3]>>>,
 
     timer_v: f32,
-    timer_h: f32,
-    line_count_h: u32,
-    line_count_v: u32,
+    timer_h: f32, line_count_h: u32, line_count_v: u32,
 
     shift: f32,
 
@@ -171,27 +169,27 @@ impl Background {
                 0.7,
                 0.8 - self.shift * 0.8,
                 0.2 + self.shift * 0.8,
-                0.25 + self.shift * 0.2,
+                0.45 + self.shift * 0.2,
             ],
             [
                 0.7,
                 0.8 - self.shift * 0.8,
                 0.2 + self.shift * 0.8,
-                0.25 + self.shift * 0.2,
+                0.45 + self.shift * 0.2,
             ],
             [
                 1. - (self.shift - 0.5).abs() * 2.,
                 1. - (self.shift - 0.5).abs() * 2.,
                 1.,
-                0.35,
+                0.55,
             ],
             [
                 1. - (self.shift - 0.5).abs() * 2.,
                 1. - (self.shift - 0.5).abs() * 2.,
                 1.,
-                0.35,
+                0.55,
             ],
-            [1., 1., 1., 0.2],
+            [1., 1., 1., 0.3],
         ];
 
         for layer in 0..5 {

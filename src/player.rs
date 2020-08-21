@@ -25,14 +25,10 @@ pub struct Player {
 
     hit_reset: f32,
     hit_reset_timer: f32,
-
-    health: f32,
-    health_max: f32,
-    health_regen: f32,
 }
 
 impl Player {
-    pub fn new(health_max: f32, health_regen: f32) -> Player {
+    pub fn new() -> Player {
         let window_size = *WINDOW_SIZE;
         let p0 = Point2f::from_floats(window_size.x / 2., window_size.y - 50.) + WINDOW_RECT.lu;
         Player {
@@ -54,10 +50,6 @@ impl Player {
             speed_slow: 500.0,
             hit_reset: 0.15,
             hit_reset_timer: 0.,
-
-            health: health_max / 4.,
-            health_max,
-            health_regen,
         }
     }
 
@@ -108,8 +100,6 @@ impl Player {
         self.p = WINDOW_RECT.nearest(self.p);
         self.hit_reset_timer -= dt;
 
-        self.health = self.health_max.min(self.health + self.health_regen * dt);
-
         let mut bullet_queue = VecDeque::new();
         for cannon in self.cannons.iter_mut() {
             bullet_queue.extend(cannon.tick(self.p, dt, world_slowdown));
@@ -131,17 +121,11 @@ impl Player {
         }
     }
 
-    pub fn hit(&mut self) -> bool {
+    pub fn hit(&mut self) {
         if self.hit_reset_timer > 0. {
             panic!("hit reset not work!");
         }
         self.hit_reset_timer = self.hit_reset;
-        self.health -= 1.;
-        self.health > 0.
-    }
-
-    pub fn get_health_percent(&self) -> f32 {
-        self.health as f32 / self.health_max as f32
     }
 
     pub fn hit_reset(&self) -> bool {

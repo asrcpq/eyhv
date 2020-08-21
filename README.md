@@ -15,7 +15,7 @@
 * High speed and high fault tolerance of player performance,
 which is evaluated by final global difficulty at death.
 
-* Minimalist design: No bombs, drop items, etc.
+* Minimalist design: No bombs, drop items etc.
 
 * Randomly generated and reproducible(by seed number) stages.
 Game replay is automatically saved.
