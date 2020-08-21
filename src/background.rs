@@ -9,7 +9,9 @@ pub struct Background {
     lines_font: VecDeque<Vec<Vec<[f32; 3]>>>,
 
     timer_v: f32,
-    timer_h: f32, line_count_h: u32, line_count_v: u32,
+    timer_h: f32,
+    line_count_h: u32,
+    line_count_v: u32,
 
     shift: f32,
 

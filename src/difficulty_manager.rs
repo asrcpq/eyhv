@@ -8,10 +8,7 @@ pub struct DifficultyManager {
 }
 
 impl DifficultyManager {
-    pub fn new(difficulty: f32,
-        difficulty_growth: f32,
-        difficulty_drop: f32) -> DifficultyManager
-    {
+    pub fn new(difficulty: f32, difficulty_growth: f32, difficulty_drop: f32) -> DifficultyManager {
         DifficultyManager {
             difficulty,
             difficulty_growth,
@@ -25,7 +22,9 @@ impl DifficultyManager {
 
     pub fn drop(&mut self) {
         self.difficulty -= self.difficulty_drop;
-        if self.difficulty < 0. { self.difficulty = 0.; }
+        if self.difficulty < 0. {
+            self.difficulty = 0.;
+        }
     }
 
     // return true if difficulty * DIFFICULTY_MULTIPLIER just passed an integer

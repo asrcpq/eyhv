@@ -17,7 +17,7 @@ use crate::slowdown_manager::SlowdownManager;
 use crate::status_bar::StatusBar;
 use crate::time_manager::TimeManager;
 use crate::wave_generator::WaveGenerator;
-use crate::window_rect::{WINDOW_SIZE, SCALER};
+use crate::window_rect::{SCALER, WINDOW_SIZE};
 
 pub struct SessionGraphicObjectsIter {
     background_iter: GraphicObjectsIntoIter,
@@ -176,12 +176,7 @@ impl Session {
         let replay = match replay {
             None => {
                 record = Default::default();
-                params = (
-                    seed,
-                    start_difficulty,
-                    difficulty_growth,
-                    difficulty_drop,
-                );
+                params = (seed, start_difficulty, difficulty_growth, difficulty_drop);
                 record.params = params;
                 None
             }
@@ -209,16 +204,8 @@ impl Session {
             status_bar: StatusBar::new(params.1),
             fps_indicator: FpsIndicator::new(),
             background: Background::new(),
-            canvas: Canvas::new(
-                (WINDOW_SIZE.x as i32, WINDOW_SIZE.y as i32),
-                *SCALER,
-            ),
-            session_info: (
-                seed,
-                start_difficulty,
-                difficulty_growth,
-                difficulty_drop,
-            ),
+            canvas: Canvas::new((WINDOW_SIZE.x as i32, WINDOW_SIZE.y as i32), *SCALER),
+            session_info: (seed, start_difficulty, difficulty_growth, difficulty_drop),
         }
     }
 
@@ -291,10 +278,8 @@ impl Session {
             self.key_state.directions,
             self.time_manager.get_state(),
         ));
-        self.enemy_pool.extend(
-            self.wave_generator
-                .tick(dt_scaled, current_difficulty),
-        );
+        self.enemy_pool
+            .extend(self.wave_generator.tick(dt_scaled, current_difficulty));
         self.enemy_bullet_pool.tick(dt_scaled);
         self.enemy_bullet_pool
             .extend(self.enemy_pool.tick(dt_scaled, self.player.get_p()));
@@ -325,6 +310,7 @@ impl Session {
         {
             self.player.hit();
             self.difficulty_manager.drop();
+            self.status_bar.hit();
         }
 
         // memleak monitor

@@ -18,6 +18,7 @@ pub struct StatusBar {
     //shift_layer: f32,
     player_p: Point2f,
     self_p: Point2f,
+    self_v: Point2f,
 
     rs: [f32; 3],
     rs_small: [f32; 3],
@@ -31,7 +32,8 @@ impl StatusBar {
         let rs_small = [70., 80., 90.];
         let rs_large = [180., 195., 210.];
         let difficulty_layer = (initial_difficulty * DIFFICULTY_MULTIPLIER) as i32;
-        let difficulty_percent = initial_difficulty * DIFFICULTY_MULTIPLIER - difficulty_layer as f32;
+        let difficulty_percent =
+            initial_difficulty * DIFFICULTY_MULTIPLIER - difficulty_layer as f32;
         StatusBar {
             // these data should never be used
             quick_percent: 0.,
@@ -40,6 +42,7 @@ impl StatusBar {
             shift: 0.,
             player_p: Point2f::new(),
             self_p: Point2f::from_floats(250., 700.),
+            self_v: Point2f::new(),
             rs: rs_small,
             rs_small,
             rs_large,
@@ -53,7 +56,9 @@ impl StatusBar {
         }
     }
 
-    // pub fn hit
+    pub fn hit(&mut self) {
+        self.self_v.y += 100.;
+    }
 
     pub fn tick(
         &mut self,
@@ -85,7 +90,9 @@ impl StatusBar {
         self.quick_percent = quick_percent;
         self.slow_percent = slow_percent;
         self.player_p = player_p;
-        self.self_p += (player_p - self.self_p) * dt * 50.;
+        let dp = player_p - self.self_p;
+        self.self_v += dp;
+        self.self_p += (self.self_v * 3. + dp * 15.) * dt;
         for i in 0..3 {
             self.rs[i] = self.rs_small[i] * (1. - self.shift) + self.rs_large[i] * self.shift;
         }
@@ -109,7 +116,11 @@ impl StatusBar {
             (0., -&self.difficulty_percent * 2. * std::f32::consts::PI),
             None,
             Some([
-                if self.difficulty_percent > 0.99 { 0.2 } else { 0.4 },
+                if self.difficulty_percent > 0.99 {
+                    0.2
+                } else {
+                    0.4
+                },
                 0.4,
                 0.4,
                 0.6,
@@ -136,8 +147,8 @@ impl StatusBar {
             ),
             None,
             Some([
-                0.4,
-                1.0,
+                0.6,
+                0.8,
                 0.3,
                 if self.quick_percent > 0.99 { 0.2 } else { 0.4 },
             ]),
@@ -150,7 +161,7 @@ impl StatusBar {
                 self.split_angle + self.slow_percent * SLOW_SPLIT,
             ),
             None,
-            Some([0.5, 0.3, 1.0, 0.4 + 0.2 * self.shift]),
+            Some([0.5, 0.4, 0.8, 0.4 + 0.2 * self.shift]),
         ));
         graphic_objects.into_iter()
     }
