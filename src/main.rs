@@ -38,113 +38,113 @@ use sdl2::pixels::Color;
 use std::time::SystemTime;
 
 fn find_sdl_gl_driver() -> Option<u32> {
-    for (index, item) in sdl2::render::drivers().enumerate() {
-        if item.name == "opengl" {
-            return Some(index as u32);
-        }
-    }
-    None
+	for (index, item) in sdl2::render::drivers().enumerate() {
+		if item.name == "opengl" {
+			return Some(index as u32);
+		}
+	}
+	None
 }
 
 pub fn main() {
-    let mut session = Session::new();
+	let mut session = Session::new();
 
-    let sdl_context = sdl2::init().unwrap();
-    let video_subsystem = sdl_context.video().unwrap();
+	let sdl_context = sdl2::init().unwrap();
+	let video_subsystem = sdl_context.video().unwrap();
 
-    let window = video_subsystem
-        .window(
-            "eyhv",
-            WINDOW_SIZE_SCALED.x as u32,
-            WINDOW_SIZE_SCALED.y as u32,
-        )
-        .opengl()
-        .position_centered()
-        .build()
-        .unwrap();
+	let window = video_subsystem
+		.window(
+			"eyhv",
+			WINDOW_SIZE_SCALED.x as u32,
+			WINDOW_SIZE_SCALED.y as u32,
+		)
+		.opengl()
+		.position_centered()
+		.build()
+		.unwrap();
 
-    let mut canvas = window
-        .into_canvas()
-        .index(find_sdl_gl_driver().unwrap())
-        .build()
-        .unwrap();
-    canvas.present();
-    let texture_creator = canvas.texture_creator();
-    let mut texture = texture_creator
-        .create_texture_static(
-            Some(sdl2::pixels::PixelFormatEnum::RGB24),
-            WINDOW_SIZE_SCALED.x as u32,
-            WINDOW_SIZE_SCALED.y as u32,
-        )
-        .unwrap();
-    let mut event_pump = sdl_context.event_pump().unwrap();
+	let mut canvas = window
+		.into_canvas()
+		.index(find_sdl_gl_driver().unwrap())
+		.build()
+		.unwrap();
+	canvas.present();
+	let texture_creator = canvas.texture_creator();
+	let mut texture = texture_creator
+		.create_texture_static(
+			Some(sdl2::pixels::PixelFormatEnum::RGB24),
+			WINDOW_SIZE_SCALED.x as u32,
+			WINDOW_SIZE_SCALED.y as u32,
+		)
+		.unwrap();
+	let mut event_pump = sdl_context.event_pump().unwrap();
 
-    let mut last_time = SystemTime::now();
-    'running: loop {
-        for event in event_pump.poll_iter() {
-            match event {
-                Event::Quit { .. }
-                | Event::KeyDown {
-                    keycode: Some(Keycode::Q),
-                    ..
-                } => {
-                    session.exit();
-                    break 'running;
-                }
-                Event::KeyDown {
-                    keycode: Some(keycode),
-                    ..
-                } => match keycode {
-                    Keycode::Left => session.proc_key(0, true),
-                    Keycode::Up => session.proc_key(1, true),
-                    Keycode::Right => session.proc_key(2, true),
-                    Keycode::Down => session.proc_key(3, true),
-                    Keycode::LShift => session.proc_key(4, true),
-                    Keycode::Z => session.proc_key(5, true),
-                    Keycode::LAlt => session.proc_key(6, true),
-                    Keycode::Space => session.proc_key(7, true),
-                    Keycode::F => session.proc_key(8, true),
-                    _ => {}
-                },
-                Event::KeyUp {
-                    keycode: Some(keycode),
-                    ..
-                } => match keycode {
-                    Keycode::Left => session.proc_key(0, false),
-                    Keycode::Up => session.proc_key(1, false),
-                    Keycode::Right => session.proc_key(2, false),
-                    Keycode::Down => session.proc_key(3, false),
-                    Keycode::LShift => session.proc_key(4, false),
-                    Keycode::Z => session.proc_key(5, false),
-                    Keycode::Space => session.proc_key(7, false),
-                    _ => (),
-                },
-                _ => {}
-            }
-        }
-        // The rest of the game loop goes here...
-        let current_time = SystemTime::now();
-        let duration_secs = current_time
-            .duration_since(last_time)
-            .expect("Time error")
-            .as_secs_f32();
-        last_time = current_time;
-        if !session.tick(duration_secs) {
-            break 'running;
-        }
-        session.render();
+	let mut last_time = SystemTime::now();
+	'running: loop {
+		for event in event_pump.poll_iter() {
+			match event {
+				Event::Quit { .. }
+				| Event::KeyDown {
+					keycode: Some(Keycode::Q),
+					..
+				} => {
+					session.exit();
+					break 'running;
+				}
+				Event::KeyDown {
+					keycode: Some(keycode),
+					..
+				} => match keycode {
+					Keycode::Left => session.proc_key(0, true),
+					Keycode::Up => session.proc_key(1, true),
+					Keycode::Right => session.proc_key(2, true),
+					Keycode::Down => session.proc_key(3, true),
+					Keycode::LShift => session.proc_key(4, true),
+					Keycode::Z => session.proc_key(5, true),
+					Keycode::LAlt => session.proc_key(6, true),
+					Keycode::Space => session.proc_key(7, true),
+					Keycode::F => session.proc_key(8, true),
+					_ => {}
+				},
+				Event::KeyUp {
+					keycode: Some(keycode),
+					..
+				} => match keycode {
+					Keycode::Left => session.proc_key(0, false),
+					Keycode::Up => session.proc_key(1, false),
+					Keycode::Right => session.proc_key(2, false),
+					Keycode::Down => session.proc_key(3, false),
+					Keycode::LShift => session.proc_key(4, false),
+					Keycode::Z => session.proc_key(5, false),
+					Keycode::Space => session.proc_key(7, false),
+					_ => (),
+				},
+				_ => {}
+			}
+		}
+		// The rest of the game loop goes here...
+		let current_time = SystemTime::now();
+		let duration_secs = current_time
+			.duration_since(last_time)
+			.expect("Time error")
+			.as_secs_f32();
+		last_time = current_time;
+		if !session.tick(duration_secs) {
+			break 'running;
+		}
+		session.render();
 
-        texture
-            .update(
-                None,
-                &session.canvas.data,
-                WINDOW_SIZE_SCALED.x as usize * 3,
-            )
-            .unwrap();
+		texture
+			.update(
+				None,
+				&session.canvas.data,
+				WINDOW_SIZE_SCALED.x as usize * 3,
+			)
+			.unwrap();
 
-        canvas.set_draw_color(Color::RGBA(0, 0, 0, 255));
-        canvas.clear();
-        canvas.copy(&texture, None, None).unwrap();
-        canvas.present();
-    }
+		canvas.set_draw_color(Color::RGBA(0, 0, 0, 255));
+		canvas.clear();
+		canvas.copy(&texture, None, None).unwrap();
+		canvas.present();
+	}
 }
