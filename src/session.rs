@@ -6,7 +6,7 @@ use crate::bullet_pool::BulletPool;
 use crate::canvas::Canvas;
 use crate::collision::{collision_enemy, collision_player};
 use crate::destroy_effect::DestroyedObjects;
-use crate::difficulty_manager::DifficultyManager;
+use crate::difficulty_manager::{DifficultyManager, DIFFICULTY_MULTIPLIER};
 use crate::enemy_pool::EnemyPool;
 use crate::fps_indicator::FpsIndicator;
 use crate::graphic_object::{generate_thick_arc, GraphicObject, GraphicObjectsIntoIter};
@@ -83,6 +83,7 @@ pub struct Session {
 	fast_replay: bool,
 
 	difficulty_manager: DifficultyManager,
+	current_difficulty: f32,
 	wave_generator: WaveGenerator,
 
 	// control
@@ -162,7 +163,7 @@ impl Session {
 		let difficulty_growth = match matches.value_of("difficulty growth") {
 			None => {
 				println!("Using default difficulty growth rate 0.0006");
-				0.0006
+				0.0005
 			}
 			Some(difficulty_growth) => difficulty_growth.parse::<f32>().unwrap(),
 		};
@@ -196,6 +197,7 @@ impl Session {
 			replay,
 			fast_replay: false,
 			difficulty_manager: DifficultyManager::new(params.1, params.2, params.3),
+			current_difficulty: params.1,
 			wave_generator: WaveGenerator::new(params.0),
 			key_state: KeyState::new(),
 			pause: false,
@@ -262,14 +264,26 @@ impl Session {
 		self.time_manager.set_state(self.slowdown_manager.tick(dt));
 		let dt_scaled = dt * self.time_manager.update_and_get_dt_scaler(dt);
 
-		let current_difficulty = self.difficulty_manager.get_difficulty();
-		// not necessary to limit diffculty under 1.0
-		if self.difficulty_manager.tick(dt_scaled) {
-			self.background.send_message(format!(
-				"     {: >3}    ",
-				((1f32.min(current_difficulty) * 100.) as u32).to_string()
-			));
-			self.background.send_message("   LEVELUP  ".to_string());
+		let difficulty_change = self.difficulty_manager.tick(dt_scaled);
+		self.current_difficulty = self.difficulty_manager.get_difficulty();
+		match difficulty_change {
+			std::cmp::Ordering::Equal => {}
+			std::cmp::Ordering::Less => {
+				self.background.send_message(format!(
+					"     {: >3}    ",
+					((1f32.min(self.current_difficulty) * DIFFICULTY_MULTIPLIER) as u32)
+						.to_string()
+				));
+				self.background.send_message("    LV-DOWN ".to_string());
+			}
+			std::cmp::Ordering::Greater => {
+				self.background.send_message(format!(
+					"     {: >3}    ",
+					((1f32.min(self.current_difficulty) * DIFFICULTY_MULTIPLIER) as u32)
+						.to_string()
+				));
+				self.background.send_message("    LV-UP   ".to_string());
+			}
 		}
 
 		self.player_bullet_pool.tick(dt_scaled);
@@ -279,14 +293,14 @@ impl Session {
 			self.time_manager.get_state(),
 		));
 		self.enemy_pool
-			.extend(self.wave_generator.tick(dt_scaled, current_difficulty));
+			.extend(self.wave_generator.tick(dt_scaled, self.current_difficulty));
 		self.enemy_bullet_pool.tick(dt_scaled);
 		self.enemy_bullet_pool
 			.extend(self.enemy_pool.tick(dt_scaled, self.player.get_p()));
 		let slowdown_info = self.slowdown_manager.get_info();
 		self.status_bar.tick(
 			dt_scaled,
-			current_difficulty,
+			self.current_difficulty,
 			slowdown_info.0,
 			slowdown_info.1,
 			slowdown_info.2,
@@ -329,8 +343,8 @@ impl Session {
 
 	pub fn exit(&self) {
 		println!(
-			"Final difficulty: {}",
-			self.difficulty_manager.get_difficulty()
+			"Score(max difficulty): {}",
+			self.difficulty_manager.get_max_difficulty()
 		);
 		self.record.save(".eyhv_replay".to_string());
 	}

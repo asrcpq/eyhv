@@ -12,10 +12,10 @@
 
 ## Key features
 
-* High speed and high fault tolerance of player performance,
-which is evaluated by final global difficulty at death.
+* High speed and high fault tolerance of player performance
+which is evaluated by maximum global difficulty.
 
-* Minimalist design: No bombs, drop items etc.
+* Minimalist design: No bombs, drop items, player life etc.
 
 * Randomly generated and reproducible(by seed number) stages.
 Game replay is automatically saved.
