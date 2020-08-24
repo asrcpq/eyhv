@@ -168,7 +168,7 @@ impl Session {
 			Some(difficulty_growth) => difficulty_growth.parse::<f32>().unwrap(),
 		};
 		let difficulty_drop = match matches.value_of("difficulty drop") {
-			None => 0.001,
+			None => 0.002,
 			Some(difficulty_drop) => difficulty_drop.parse::<f32>().unwrap(),
 		};
 		let replay: Option<String> = matches.value_of("replay file").map(|s| s.to_string());

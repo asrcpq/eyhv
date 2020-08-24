@@ -113,7 +113,7 @@ mod wave_scheme_prototype {
 		static ref MID_LARGE1: WaveSchemePrototype = WaveSchemePrototype {
 			enemies: vec![(
 				enemy_prototype::LARGE1.clone(),
-				vec![(enemy_paths::MID_STRAIGHT_DOWN.clone(), vec![1.],)]
+				vec![(enemy_paths::MID_DOWN_BACK.clone(), vec![1.],)]
 			)],
 			next_wave: 4.,
 			difficulty_scaler: 1.3,

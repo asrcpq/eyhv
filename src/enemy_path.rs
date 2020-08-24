@@ -11,6 +11,8 @@ pub mod enemy_paths {
 	lazy_static! {
 		pub static ref LEFT_STRAIGHT_DOWN: EnemyPath = EnemyPath::from_str("0.3 0 9 1 0.3 1 0 0");
 		pub static ref MID_STRAIGHT_DOWN: EnemyPath = EnemyPath::from_str("0.5 0 9 1 0.5 1 0 0");
+		pub static ref MID_DOWN_BACK: EnemyPath =
+			EnemyPath::from_str("0.5 0 5 1 0.5 0.25 5 1 0.5 0.25 5 1 0.5 0 0 0");
 		pub static ref RIGHT_STRAIGHT_DOWN: EnemyPath = EnemyPath::from_str("0.7 0 9 1 0.7 1 0 0");
 		pub static ref CLOCKWISE_ROLL: EnemyPath =
 			EnemyPath::from_str("0.3 0 2 1 0.2 0.4 1 1 0.3 0.6 5 1 1 0.7 0 0");
