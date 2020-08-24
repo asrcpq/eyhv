@@ -8,6 +8,8 @@ use crate::bullet::{bullet_graphic_objects, Bullet, RotateBullet};
 use crate::cannon::{CannonControllerInterface, CannonGeneratorInterface};
 use crate::random_tools::simple_try;
 
+use mray::graphic_object::GraphicObjects;
+
 const TRY_TIMES: u32 = 10;
 
 #[derive(Clone)]
@@ -24,8 +26,10 @@ pub struct Rotor {
 	// rotating angle and speed
 	theta: f32,
 	omega: f32,
+	flipped: bool,
 
 	bullet_speed: f32,
+	bullet: GraphicObjects,
 
 	// status
 	switch: bool, // on/off
@@ -45,6 +49,7 @@ impl CannonGeneratorInterface for Rotor {
 		);
 		let (bullet_speed, fire_interval) = (generated[0], generated[1]);
 		let omega: f32 = rng.gen_range(0.5, 5.);
+		let flipped = rng.gen::<bool>();
 		// let theta: f32 = rng.gen_range(0., 2. * std::f32::consts::PI);
 		let theta: f32 = 0.;
 		Rotor {
@@ -52,8 +57,14 @@ impl CannonGeneratorInterface for Rotor {
 			fire_interval,
 			fire_cd: fire_interval,
 			theta,
+			flipped,
 			omega,
 			bullet_speed,
+			bullet: if flipped {
+				bullet_graphic_objects::DIAMOND2.clone()
+			} else {
+				bullet_graphic_objects::DIAMOND.clone()
+			},
 			switch: true,
 		}
 	}
@@ -72,7 +83,11 @@ impl CannonControllerInterface for Rotor {
 
 	fn tick(&mut self, host_p: Point2f, _: Point2f, mut dt: f32) -> VecDeque<Box<dyn Bullet>> {
 		let mut bullet_queue = VecDeque::new();
-		self.theta += self.omega * dt;
+		if self.flipped {
+			self.theta -= self.omega * dt;
+		} else {
+			self.theta += self.omega * dt;
+		}
 		const BULLET_RADIUS: f32 = 3.;
 		let rotate_matrix: Mat2x2f = Mat2x2f::from_theta(0.1);
 		loop {
@@ -88,7 +103,7 @@ impl CannonControllerInterface for Rotor {
 				dt,
 				BULLET_RADIUS,
 				rotate_matrix,
-				bullet_graphic_objects::DIAMOND.clone(),
+				self.bullet.clone(),
 			)));
 			self.fire_cd = self.fire_interval;
 		}

@@ -8,6 +8,8 @@ use crate::bullet::{bullet_graphic_objects, Bullet, SimpleBullet};
 use crate::cannon::{CannonControllerInterface, CannonGeneratorInterface};
 use crate::random_tools::simple_try;
 
+use mray::graphic_object::GraphicObjects;
+
 const TRY_TIMES: u32 = 10;
 
 #[derive(Clone)]
@@ -32,6 +34,7 @@ pub struct PlayerLocker {
 	count: u32,
 
 	bullet_accel: f32,
+	bullet: GraphicObjects,
 
 	// status
 	switch: bool, // on/off
@@ -52,6 +55,7 @@ impl CannonGeneratorInterface for PlayerLocker {
 			rng.gen::<u64>(),
 		);
 		let (count, bs_ff, open_angle) = (generated[0], generated[1], generated[2]);
+		let count: u32 = count as u32;
 		let bs_ff_k = rng.gen_range(0.8, 1.2);
 		let mut bullet_accel = (bs_ff * bs_ff_k).sqrt();
 		let fire_interval = 0.3 * bullet_accel / bs_ff;
@@ -62,9 +66,14 @@ impl CannonGeneratorInterface for PlayerLocker {
 			fire_cd: fire_interval,
 			theta: 0., // uninitialized
 			open_angle,
-			count: count as u32,
+			count: count,
 			switch: true,
 			bullet_accel,
+			bullet: if count % 2 == 0 {
+				bullet_graphic_objects::WEDGE2.clone()
+			} else {
+				bullet_graphic_objects::WEDGE.clone()
+			},
 			phase_timer: 0.,
 		}
 	}
@@ -117,7 +126,7 @@ impl CannonControllerInterface for PlayerLocker {
 					normed_vec2f * self.bullet_accel,
 					dt,
 					BULLET_RADIUS,
-					bullet_graphic_objects::WEDGE.rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),
+					self.bullet.rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),
 				)));
 			}
 			self.fire_cd = self.fire_interval;

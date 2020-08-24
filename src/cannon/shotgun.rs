@@ -8,6 +8,8 @@ use crate::bullet::{bullet_graphic_objects, Bullet, RotateBullet};
 use crate::cannon::{CannonControllerInterface, CannonGeneratorInterface};
 use crate::random_tools::simple_try;
 
+use mray::graphic_object::GraphicObjects;
+
 const TRY_TIMES: u32 = 10;
 
 #[derive(Clone)]
@@ -33,6 +35,7 @@ pub struct Shotgun {
 	rng: Option<rand_pcg::Pcg64Mcg>,
 
 	bullet_speed: f32,
+	bullet: GraphicObjects,
 
 	// status
 	switch: bool, // on/off
@@ -58,7 +61,8 @@ impl CannonGeneratorInterface for Shotgun {
 		let mut bullet_speed = (bs_ff * bs_ff_k).sqrt();
 		let fire_interval = 0.2 * bullet_speed / bs_ff;
 		bullet_speed *= 700.;
-		let open_angle: f32 = rng.gen_range(-1f32, 1.2f32).exp();
+		const ANGLE_RANGE: (f32, f32) = (-1f32, 1.2f32);
+		let open_angle: f32 = rng.gen_range(ANGLE_RANGE.0, ANGLE_RANGE.1).exp();
 		Shotgun {
 			p: Point2f::new(),
 			fire_interval,
@@ -69,6 +73,11 @@ impl CannonGeneratorInterface for Shotgun {
 			rng: None,
 			switch: true,
 			bullet_speed,
+			bullet: if open_angle > ((ANGLE_RANGE.0 + ANGLE_RANGE.1) / 2.).exp() {
+				bullet_graphic_objects::SQUARE.clone()
+			} else {
+				bullet_graphic_objects::SQUARE2.clone()
+			},
 			phase_timer: 0.,
 		}
 	}
@@ -126,7 +135,7 @@ impl CannonControllerInterface for Shotgun {
 					dt,
 					BULLET_RADIUS,
 					rotate_matrix,
-					bullet_graphic_objects::SQUARE.rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),
+					self.bullet.rotate(Mat2x2f::from_normed_vec2f(normed_vec2f)),
 				)));
 			}
 			self.fire_cd = self.fire_interval;

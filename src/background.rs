@@ -168,28 +168,28 @@ impl Background {
 
 		let each_color = [
 			[
+				1. - (self.shift - 0.5).abs() * 2.,
+				0.,
+				1. - (self.shift - 0.5).abs() * 2.,
 				0.7,
-				0.8 - self.shift * 0.8,
-				0.2 + self.shift * 0.8,
-				0.45 + self.shift * 0.2,
 			],
 			[
+				1. - (self.shift - 0.5).abs() * 2.,
+				0.,
+				1. - (self.shift - 0.5).abs() * 2.,
 				0.7,
-				0.8 - self.shift * 0.8,
-				0.2 + self.shift * 0.8,
-				0.45 + self.shift * 0.2,
 			],
 			[
+				self.shift,
+				1. - self.shift,
 				1. - (self.shift - 0.5).abs() * 2.,
-				1. - (self.shift - 0.5).abs() * 2.,
-				1.,
-				0.55,
+				0.5 + self.shift * 0.5,
 			],
 			[
+				self.shift,
+				1. - self.shift,
 				1. - (self.shift - 0.5).abs() * 2.,
-				1. - (self.shift - 0.5).abs() * 2.,
-				1.,
-				0.55,
+				0.5 + self.shift * 0.5,
 			],
 			[1., 1., 1., 0.3],
 		];
