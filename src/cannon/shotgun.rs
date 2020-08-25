@@ -35,6 +35,7 @@ pub struct Shotgun {
 	rng: Option<rand_pcg::Pcg64Mcg>,
 
 	bullet_speed: f32,
+	subtype: i32,
 	bullet: GraphicObjects,
 
 	// status
@@ -61,8 +62,16 @@ impl CannonGeneratorInterface for Shotgun {
 		let mut bullet_speed = (bs_ff * bs_ff_k).sqrt();
 		let fire_interval = 0.2 * bullet_speed / bs_ff;
 		bullet_speed *= 700.;
-		const ANGLE_RANGE: (f32, f32) = (-1f32, 1.2f32);
+		const ANGLE_RANGE: (f32, f32) = (-1.2f32, 1.2f32);
 		let open_angle: f32 = rng.gen_range(ANGLE_RANGE.0, ANGLE_RANGE.1).exp();
+		let subtype: i32;
+		let bullet = if open_angle > ((ANGLE_RANGE.0 + ANGLE_RANGE.1) / 2.).exp() {
+			subtype = 1;
+			bullet_graphic_objects::SQUARE.clone()
+		} else {
+			subtype = 2;
+			bullet_graphic_objects::SQUARE2.clone()
+		};
 		Shotgun {
 			p: Point2f::new(),
 			fire_interval,
@@ -73,11 +82,8 @@ impl CannonGeneratorInterface for Shotgun {
 			rng: None,
 			switch: true,
 			bullet_speed,
-			bullet: if open_angle > ((ANGLE_RANGE.0 + ANGLE_RANGE.1) / 2.).exp() {
-				bullet_graphic_objects::SQUARE.clone()
-			} else {
-				bullet_graphic_objects::SQUARE2.clone()
-			},
+			subtype,
+			bullet,
 			phase_timer: 0.,
 		}
 	}
@@ -85,6 +91,10 @@ impl CannonGeneratorInterface for Shotgun {
 
 impl Shotgun {
 	fn update_theta(&mut self, player_p: Point2f, self_p: Point2f) {
+		if self.subtype == 1 {
+			self.theta = std::f32::consts::PI / 2.;
+			return;
+		}
 		// r points to player
 		let r = player_p - self_p;
 		self.theta = r.y.atan2(r.x);

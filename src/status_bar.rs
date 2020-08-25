@@ -25,6 +25,8 @@ pub struct StatusBar {
 	rs_large: [f32; 3],
 
 	split_angle: f32,
+
+	pub score_update: bool,
 }
 
 impl StatusBar {
@@ -53,6 +55,8 @@ impl StatusBar {
 			difficulty_last: difficulty_percent,
 			difficulty_early: difficulty_percent,
 			difficulty_timer: 5.,
+
+			score_update: false,
 		}
 	}
 
@@ -116,14 +120,10 @@ impl StatusBar {
 			(0., -&self.difficulty_percent * 2. * std::f32::consts::PI),
 			None,
 			Some([
-				if self.difficulty_percent > 0.99 {
-					0.2
-				} else {
-					0.4
-				},
-				0.4,
-				0.4,
 				0.6,
+				0.9,
+				1.0 - self.score_update as i32 as f32 * 0.5,
+				0.3 + self.score_update as i32 as f32 * 0.2,
 			]),
 		);
 		if self.difficulty_early > self.difficulty_percent {

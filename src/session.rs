@@ -264,9 +264,9 @@ impl Session {
 		self.time_manager.set_state(self.slowdown_manager.tick(dt));
 		let dt_scaled = dt * self.time_manager.update_and_get_dt_scaler(dt);
 
-		let difficulty_change = self.difficulty_manager.tick(dt_scaled);
+		let (level_change, score_update) = self.difficulty_manager.tick(dt_scaled);
 		self.current_difficulty = self.difficulty_manager.get_difficulty();
-		match difficulty_change {
+		match level_change {
 			std::cmp::Ordering::Equal => {}
 			std::cmp::Ordering::Less => {
 				self.background.send_message(format!(
@@ -297,6 +297,7 @@ impl Session {
 		self.enemy_bullet_pool.tick(dt_scaled);
 		self.enemy_bullet_pool
 			.extend(self.enemy_pool.tick(dt_scaled, self.player.get_p()));
+
 		let slowdown_info = self.slowdown_manager.get_info();
 		self.status_bar.tick(
 			dt_scaled,
@@ -306,6 +307,8 @@ impl Session {
 			slowdown_info.2,
 			self.player.get_p(),
 		);
+		self.status_bar.score_update = score_update;
+
 		self.fps_indicator.tick(dt);
 		self.background.tick(dt_scaled, slowdown_info.2);
 		self.destroyed_objects.tick(dt_scaled);
@@ -343,7 +346,7 @@ impl Session {
 
 	pub fn exit(&self) {
 		println!(
-			"Score(max difficulty): {}",
+			"Score(max difficulty): {:?}",
 			self.difficulty_manager.get_max_difficulty()
 		);
 		self.record.save(".eyhv_replay".to_string());

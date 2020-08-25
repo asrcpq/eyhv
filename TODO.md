@@ -130,3 +130,9 @@
 * [x] Thick arc generator
 
 * [ ] Retro line
+
+### File manage
+
+* [ ] save & load replay from/to XDG\_DATA\_HOME
+
+* [ ] save high score by version

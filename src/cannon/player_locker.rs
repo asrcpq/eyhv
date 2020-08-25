@@ -66,7 +66,7 @@ impl CannonGeneratorInterface for PlayerLocker {
 			fire_cd: fire_interval,
 			theta: 0., // uninitialized
 			open_angle,
-			count: count,
+			count,
 			switch: true,
 			bullet_accel,
 			bullet: if count % 2 == 0 {
