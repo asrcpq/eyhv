@@ -8,6 +8,7 @@ use crate::collision::{collision_enemy, collision_player};
 use crate::destroy_effect::DestroyedObjects;
 use crate::difficulty_manager::{DifficultyManager, DIFFICULTY_MULTIPLIER};
 use crate::enemy_pool::EnemyPool;
+use crate::file_manager::FileManager;
 use crate::fps_indicator::FpsIndicator;
 use crate::graphic_object::{generate_thick_arc, GraphicObject, GraphicObjectsIntoIter};
 use crate::key_state::KeyState;
@@ -78,6 +79,7 @@ pub struct Session {
 	enemy_bullet_pool: BulletPool,
 
 	record: Record,
+	file_manager: FileManager,
 	// ticks, operations
 	replay: Option<(usize, usize)>,
 	fast_replay: bool,
@@ -194,6 +196,7 @@ impl Session {
 			destroyed_objects: DestroyedObjects::new(seed), //simply use the same seed
 			enemy_bullet_pool: BulletPool::new(),
 			record,
+			file_manager: FileManager::new(),
 			replay,
 			fast_replay: false,
 			difficulty_manager: DifficultyManager::new(params.1, params.2, params.3),
@@ -349,7 +352,7 @@ impl Session {
 			"Score(max difficulty): {:?}",
 			self.difficulty_manager.get_max_difficulty()
 		);
-		self.record.save(".eyhv_replay".to_string());
+		self.record.save(self.file_manager.get_replay_path());
 	}
 
 	fn toggle_pause(&mut self) {

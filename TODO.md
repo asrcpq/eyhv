@@ -131,8 +131,8 @@
 
 * [ ] Retro line
 
-### File manage
+### File Management
 
-* [ ] save & load replay from/to XDG\_DATA\_HOME
+* [x] save & load replay from/to XDG\_DATA\_HOME
 
-* [ ] save high score by version
+* [ ] save high score by version, save replay that produced high score

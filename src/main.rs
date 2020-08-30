@@ -13,6 +13,7 @@ mod difficulty_manager;
 mod enemy;
 mod enemy_path;
 mod enemy_pool;
+mod file_manager;
 mod fps_indicator;
 mod key_state;
 mod player;
