@@ -12,12 +12,10 @@ impl FileManager {
 			},
 		};
 		std::fs::create_dir_all(eyhv_data_dir.clone()).unwrap();
-		FileManager {
-			eyhv_data_dir
-		}
+		FileManager { eyhv_data_dir }
 	}
 
 	pub fn get_replay_path(&self) -> String {
-		return self.eyhv_data_dir.clone() + "/latest_replay"
+		return self.eyhv_data_dir.clone() + "/latest_replay";
 	}
 }

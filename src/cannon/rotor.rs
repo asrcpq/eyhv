@@ -51,7 +51,7 @@ impl CannonGeneratorInterface for Rotor {
 		let omega: f32 = rng.gen_range(0.5, 5.);
 		let flipped = rng.gen::<bool>();
 		// let theta: f32 = rng.gen_range(0., 2. * std::f32::consts::PI);
-		let theta: f32 = 0.;
+		let theta: f32 = if flipped { std::f32::consts::PI } else { 0. };
 		Rotor {
 			p: Point2f::new(),
 			fire_interval,

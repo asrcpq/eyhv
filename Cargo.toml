@@ -1,6 +1,6 @@
 [package]
 name = "eyhv"
-version = "0.2.2"
+version = "0.2.3"
 authors = ["asrcpq <asrcpq@gmail.com>"]
 edition = "2018"
 
