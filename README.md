@@ -1,6 +1,6 @@
 # eyhv
 
-![demo](https://asrcpq.github.io/resources/2005/eyhv_demo.gif)
+[demo](https://asrcpq.github.io/resources/2005/eyhv_demo.gif)
 
 ## Run
 
