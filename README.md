@@ -8,8 +8,6 @@
 
 * Run eyhv --help to get more options
 
-* Caution: a .eyhv\_replay file will be created under working directory
-
 ## Key features
 
 * High speed and high fault tolerance of player performance
